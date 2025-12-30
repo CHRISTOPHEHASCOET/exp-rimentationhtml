@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FMS Pilot Profile — Christophe Hascœët</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+
+  <style>
+    :root {
+      /* Palette Cockpit de Nuit */
+      --primary: #050A15;        /* Fond cabine noir profond */
+      --panel-bg: #121926;       /* Gris métal cockpit */
+      --screen-bg: #070B14;      /* Fond écran radar */
+      --accent-cyan: #00D9FF;    /* Systèmes OK */
+      --accent-green: #27E08A;   /* Navigation / Landing */
+      --accent-red: #FF3B3B;     /* Alertes / Master Warning */
+      --accent-amber: #FACC15;   /* Warnings mineurs */
+      --text: #E6EEF8;
+      --text-dim: #7B8BA3;
+      
+      --font-display: 'Oswald', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --glass: rgba(255, 255, 255, 0.03);
+      --neon-glow: 0 0 15px rgba(0, 217, 255, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--primary);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      /* Scanlines effet écran radar */
+      background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 3px 100%;
+    }
+
+    /* --- BACKGROUND HUD --- */
+    .hud-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.15;
+    }
+
+    /* --- HEADER : BANDEAU DE VOL --- */
+    .flight-status-bar {
+      position: fixed;
+      top: 0; width: 100%; height: 60px;
+      background: #000;
+      border-bottom: 2px solid var(--text-dim);
+      display: flex; align-items: center; justify-content: space-around;
+      font-family: var(--font-mono); font-size: 0.75rem;
+      z-index: 1000;
+    }
+    .status-item span { color: var(--accent-green); }
+
+    /* --- LAYOUT COCKPIT --- */
+    main {
+      max-width: 1200px;
+      margin: 80px auto 40px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+
+    .cockpit-panel {
+      background: var(--panel-bg);
+      border: 2px solid #2D364D;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* --- SECTION IDENTITÉ : PFD (Primary Flight Display) --- */
+    .pfd-header {
+      grid-column: span 12;
+      height: 250px;
+      background: var(--screen-bg);
+      border: 4px solid #333;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    /* Horizon Artificiel */
+    .horizon {
+      position: absolute; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, #1E3A5F 50%, #5D3A1A 50%);
+      opacity: 0.2;
+      transform: rotate(2deg);
+    }
+    .pilot-info {
+      position: relative; z-index: 2; text-align: center;
+    }
+    .pilot-info h1 {
+      font-family: var(--font-display); font-size: 3.5rem; letter-spacing: 10px;
+      text-shadow: var(--neon-glow);
+    }
+    .pilot-rank {
+      font-family: var(--font-mono); color: var(--accent-cyan);
+      background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 4px;
+    }
+
+    /* --- EXPÉRIENCES : LE JOURNAL DE BORD (Logbook) --- */
+    .logbook {
+      grid-column: span 8;
+      padding: 20px;
+    }
+    .panel-label {
+      position: absolute; top: -10px; left: 20px;
+      background: var(--panel-bg); padding: 0 10px;
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);
+    }
+    .entry {
+      border-left: 2px solid var(--accent-cyan);
+      margin: 20px 0; padding-left: 20px;
+      position: relative;
+    }
+    .entry::before {
+      content: '●'; position: absolute; left: -7px; color: var(--accent-cyan);
+    }
+    .entry-date { color: var(--accent-amber); font-family: var(--font-mono); font-size: 0.8rem; }
+    .entry-title { font-family: var(--font-display); font-size: 1.4rem; color: #FFF; }
+
+    /* --- COMPÉTENCES : LES RADARS DE NAVIGATION --- */
+    .nav-display {
+      grid-column: span 4;
+      background: var(--screen-bg);
+      padding: 20px;
+      border: 2px solid #222;
+    }
+    .radar-circle {
+      width: 100%; aspect-ratio: 1;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      border-radius: 50%;
+      position: relative;
+      background: repeating-radial-gradient(circle, transparent, transparent 20px, rgba(0, 217, 255, 0.05) 21px);
+    }
+    .radar-sweep {
+      position: absolute; inset: 0;
+      background: conic-gradient(from 0deg, rgba(0, 217, 255, 0.2), transparent 40%);
+      border-radius: 50%;
+    }
+    .skill-blip {
+      position: absolute; width: 6px; height: 6px; background: var(--accent-green);
+      border-radius: 50%; box-shadow: 0 0 10px var(--accent-green);
+    }
+
+    /* --- FORMATIONS : CHECKLIST D'APPROCHE --- */
+    .checklist {
+      grid-column: span 12;
+      padding: 20px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .check-item {
+      background: rgba(0,0,0,0.3); padding: 15px; border-radius: 4px;
+      border: 1px solid #333; display: flex; align-items: center; justify-content: space-between;
+    }
+    .check-item span { font-family: var(--font-mono); font-size: 0.9rem; }
+    .status-box { 
+      width: 50px; height: 20px; border: 1px solid var(--accent-green); 
+      color: var(--accent-green); font-size: 0.6rem; text-align: center; line-height: 18px;
+    }
+
+    /* --- BOUTON MASTER WARNING (CTA) --- */
+    .master-warning-container {
+      grid-column: span 12;
+      padding: 40px; text-align: center;
+    }
+    .btn-warning {
+      background: var(--accent-red);
+      color: #000;
+      font-family: var(--font-display); font-weight: 700;
+      padding: 20px 60px; border: none; border-radius: 4px;
+      font-size: 1.5rem; cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 59, 59, 0.4);
+      transition: 0.2s;
+    }
+    .btn-warning:hover { transform: scale(1.05); background: #FF5D5D; }
+
+    /* Footer */
+    footer {
+      text-align: center; padding: 40px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);
+    }
+
+    @media (max-width: 900px) {
+      .logbook, .nav-display { grid-column: span 12; }
+      .checklist { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hud-overlay"></div>
+
+  <!-- BARRE DE STATUT SUPÉRIEURE -->
+  <header class="flight-status-bar">
+    <div class="status-item">FLT: <span>CH2025</span></div>
+    <div class="status-item">ALT: <span>35000 FT</span></div>
+    <div class="status-item">SPD: <span>MACH 0.82</span></div>
+    <div class="status-item">AP: <span>ENGAGED</span></div>
+    <div class="status-item">FUEL: <span>94%</span></div>
+  </header>
+
+  <main>
+    
+    <!-- ECRAN PRINCIPAL (PFD) -->
+    <section class="cockpit-panel pfd-header">
+      <div class="horizon"></div>
+      <div class="pilot-info">
+        <p class="pilot-rank">COMMANDANT DE BORD / DEV FULLSTACK</p>
+        <h1>C. HASCOËT</h1>
+        <p class="pilot-rank" style="margin-top: 10px; color: var(--accent-amber);">BASE: LORIENT, FR (LFRH)</p>
+      </div>
+    </section>
+
+    <!-- LOGBOOK (EXPÉRIENCES) -->
+    <section class="cockpit-panel logbook">
+      <span class="panel-label">FLIGHT LOG / EXPÉRIENCES</span>
+      
+      <div class="entry">
+        <p class="entry-date">2023 - PRÉSENT // ROUTE : LEAD UX/UI</p>
+        <h3 class="entry-title">CHEF DE CABINE DIGITAL - AGENCE XYZ</h3>
+        <p>Pilotage de design systems complexes. Optimisation de l'expérience passager (UX). Navigation sous GSAP et React.</p>
+      </div>
+
+      <div class="entry">
+        <p class="entry-date">2021 - 2023 // ROUTE : DEVELOPPER</p>
+        <h3 class="entry-title">OFFICIER PILOTE DE LIGNE - STARTUP TECH</h3>
+        <p>Développement d'infrastructures robustes. Maintenance en plein vol d'APIs critiques.</p>
+      </div>
+
+      <div class="entry">
+        <p class="entry-date">2019 - 2021 // ROUTE : WEB DESIGN</p>
+        <h3 class="entry-title">ÉCOLE DE PILOTAGE - STUDIO CRÉATIF</h3>
+        <p>Premiers décollages. Apprentissage des courants porteurs HTML/CSS et de l'aérodynamisme visuel.</p>
+      </div>
+    </section>
+
+    <!-- RADAR DE NAVIGATION (COMPÉTENCES) -->
+    <aside class="cockpit-panel nav-display">
+      <span class="panel-label">NAV DISPLAY / SKILLS</span>
+      <div class="radar-circle">
+        <div class="radar-sweep"></div>
+        <!-- Blips de compétences -->
+        <div class="skill-blip" style="top:20%; left:30%;" title="React"></div>
+        <div class="skill-blip" style="top:40%; left:70%;" title="JavaScript"></div>
+        <div class="skill-blip" style="top:60%; left:40%;" title="GSAP"></div>
+        <div class="skill-blip" style="top:10%; left:50%;" title="Figma"></div>
+      </div>
+      <div style="margin-top: 20px; font-family: var(--font-mono); font-size: 0.7rem;">
+        <p>> REACT ........ DETECTED</p>
+        <p>> GSAP ......... STABLE</p>
+        <p>> UI/UX ........ OPTIMAL</p>
+        <p>> LARAVEL ...... IN RANGE</p>
+      </div>
+    </aside>
+
+    <!-- CHECKLIST (FORMATIONS) -->
+    <section class="cockpit-panel checklist">
+      <span class="panel-label">PRE-FLIGHT CHECKLIST / FORMATIONS</span>
+      
+      <div class="check-item">
+        <span>MASTER JAVASCRIPT</span>
+        <div class="status-box">SET</div>
+      </div>
+      <div class="check-item">
+        <span>CERTIF UX DESIGN</span>
+        <div class="status-box">SET</div>
+      </div>
+      <div class="check-item">
+        <span>AGILE METHODOLOGY</span>
+        <div class="status-box">SET</div>
+      </div>
+      <div class="check-item">
+        <span>REACT FRAMEWORK</span>
+        <div class="status-box">SET</div>
+      </div>
+      <div class="check-item">
+        <span>ENGLISH (ICAO 5)</span>
+        <div class="status-box">SET</div>
+      </div>
+      <div class="check-item">
+        <span>ACCESSIBILITY AA</span>
+        <div class="status-box">SET</div>
+      </div>
+    </section>
+
+    <!-- MASTER WARNING (CTA) -->
+    <section class="master-warning-container">
+      <button class="btn-warning" onclick="window.location.href='contact.html'">
+        PUSH TO TALK / CONTACT
+      </button>
+      <p style="margin-top: 15px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-red);">
+        WARNING: DISPONIBLE POUR NOUVELLES MISSIONS
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>// CH-2025 // TOUTES LES UNITÉS SONT OPÉRATIONNELLES // RESTER DANS L'AXE DE LA PISTE //</p>
+  </footer>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Animation du balayage radar
+      gsap.to(".radar-sweep", {
+        rotation: 360,
+        duration: 4,
+        repeat: -1,
+        ease: "none"
+      });
+
+      // Animation des entrées du logbook au scroll
+      gsap.utils.toArray(".entry").forEach(entry => {
+        gsap.from(entry, {
+          x: -50,
+          opacity: 0,
+          duration: 1,
+          scrollTrigger: {
+            trigger: entry,
+            start: "top 85%"
+          }
+        });
+      });
+
+      // Animation des check-items
+      gsap.from(".check-item", {
+        scale: 0.8,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        scrollTrigger: {
+          trigger: ".checklist",
+          start: "top 80%"
+        }
+      });
+    });
+  </script>
+</body>
+</html>

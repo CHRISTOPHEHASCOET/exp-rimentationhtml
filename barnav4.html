@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal DEV-CX001</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== TES COULEURS EXACTES ===== */
+    :root {
+      --primary: #0A0E27;
+      --primary-2: #1A1F3A;
+      --door-bg: #252B4B;
+      --door-gradient: #2D345A;
+      --accent: #00D9FF;
+      --accent-dim: #00A0C7;
+      --warning: #FF2D55;
+      --text: #E0E6ED;
+      --text-dim: #ADB5BD;
+    }
+
+    /* ===== RESET MINIMAL ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--primary); color: var(--text); }
+
+    /* ===== TERMINAL HEADER ===== */
+    .airport-terminal {
+      background: var(--primary-2);
+      border-bottom: 1px solid var(--door-gradient);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .terminal-topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.8rem 2rem; background: var(--door-bg);
+    }
+    .terminal-logo {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .logo-airport { font-family: 'Oswald', sans-serif; color: var(--accent); font-size: 1.5rem; text-shadow: 0 0 5px rgba(0, 217, 255, 0.3); }
+    .terminal-label {
+      font-size: 0.7rem; background: var(--warning); color: white;
+      padding: 0.2rem 0.5rem; border-radius: 2px; margin-left: 0.5rem;
+    }
+    .pilot-badge {
+      display: flex; align-items: center; gap: 0.8rem; background: rgba(0, 0, 0, 0.2);
+      padding: 0.5rem 1rem; border-left: 2px solid var(--accent);
+    }
+    .badge-photo { width: 36px; height: 36px; border-radius: 4px; object-fit: cover; border: 1px solid var(--accent); }
+    .badge-info { display: flex; flex-direction: column; font-size: 0.7rem; }
+    .pilot-name { color: var(--text); font-weight: bold; }
+    .pilot-role { color: var(--accent); font-size: 0.6rem; text-transform: uppercase; }
+
+    /* ===== MENU GATES ===== */
+    .terminal-nav { display: flex; background: var(--door-bg); }
+    .nav-gate {
+      flex: 1; padding: 1rem 0.5rem; text-align: center; color: var(--text-dim);
+      border-right: 1px solid var(--door-gradient); position: relative;
+      transition: all 0.3s ease; background: linear-gradient(to bottom, var(--door-gradient), var(--door-bg));
+    }
+    .nav-gate:last-child { border-right: none; }
+    .nav-gate.active, .nav-gate:hover {
+      color: var(--accent); background: rgba(0, 217, 255, 0.08);
+      box-shadow: inset 0 -3px 0 var(--accent);
+    }
+    .gate-number {
+      display: block; background: var(--warning); color: white; width: 24px; height: 24px;
+      border-radius: 50%; margin: 0 auto 0.5rem; line-height: 24px; font-size: 0.7rem;
+    }
+
+    /* ===== FLIGHT TICKER ===== */
+    .flight-ticker {
+      background: var(--primary); padding: 0.5rem 0; overflow: hidden;
+      border-top: 1px solid var(--door-gradient); font-size: 0.7rem; color: var(--text-dim);
+    }
+    .ticker-text { animation: ticker 40s linear infinite; }
+    @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+    /* ===== AVION CURSEUR ===== */
+    .airplane-cursor {
+      position: absolute; bottom: -12px; left: 0; display: none;
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+    .terminal-nav:hover .airplane-cursor { display: block; }
+
+    /* ===== FOOTER RUNWAY ===== */
+    .airport-runway {
+      background: var(--primary); border-top: 1px solid var(--door-gradient);
+      padding: 2rem 0; font-family: 'JetBrains Mono', monospace;
+    }
+    .runway-markings {
+      display: flex; justify-content: center; align-items: center; margin-bottom: 2rem;
+    }
+    .runway-line { width: 20%; height: 2px; background: var(--warning); margin: 0 1rem; }
+    .runway-sign {
+      background: var(--warning); color: var(--primary); padding: 0.5rem 1rem;
+      border-radius: 4px; text-align: center; transform: skewX(-10deg);
+    }
+    .sign-text { display: block; font-size: 1.2rem; letter-spacing: 2px; }
+    .ground-control { display: flex; justify-content: space-around; margin-bottom: 2rem; }
+    .status-bar { display: flex; justify-content: space-around; background: rgba(0, 0, 0, 0.2); padding: 1rem 0; }
+    .final-message { text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--door-gradient); }
+    .cta-button {
+      background: var(--warning); color: white; padding: 0.8rem 2rem; text-decoration: none;
+      font-family: 'Oswald', sans-serif; border-radius: 4px; transition: all 0.3s ease;
+    }
+    .cta-button:hover { background: var(--accent); box-shadow: 0 0 15px rgba(0, 217, 255, 0.5); }
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <header class="airport-terminal">
+    <div class="terminal-topbar">
+      <div class="terminal-logo">
+        <span class="logo-airport">DEV</span>
+        <span class="logo-flight">✈ VOL CX-2025</span>
+        <span class="terminal-label">TERMINAL</span>
+      </div>
+      <div class="terminal-clock" id="utc-clock">14:32 UTC</div>
+      <div class="pilot-badge">
+        <img src="https://via.placeholder.com/36" alt="Commandant de Bord" class="badge-photo">
+        <div class="badge-info">
+          <span class="pilot-name">[TON NOM]</span>
+          <span class="pilot-role">COMMANDANT DE BORD</span>
+          <span class="pilot-id">ID: CX-001</span>
+        </div>
+      </div>
+    </div>
+    <nav class="terminal-nav">
+      <a href="index.html" class="nav-gate active" data-gate="T1">
+        <span class="gate-number">T1</span>
+        <span class="gate-label">HALL<br>DÉPARTS</span>
+      </a>
+      <a href="passeport.html" class="nav-gate" data-gate="T2">
+        <span class="gate-number">T2</span>
+        <span class="gate-label">PASSEPORT<br>DU PILOTE</span>
+      </a>
+      <a href="embarquement.html" class="nav-gate" data-gate="T3">
+        <span class="gate-number">T3</span>
+        <span class="gate-label">ZONE<br>EMBARQUEMENT</span>
+      </a>
+      <a href="plandevol.html" class="nav-gate" data-gate="T4">
+        <span class="gate-number">T4</span>
+        <span class="gate-label">PLANS<br>DE VOL</span>
+      </a>
+      <a href="profile.html" class="nav-gate" data-gate="T5">
+        <span class="gate-number">T5</span>
+        <span class="gate-label">COCKPIT</span>
+      </a>
+    </nav>
+    <div class="flight-ticker">
+      <span class="ticker-text">
+        Prochain vol: Projet React → Porte T3 █ Embarquement ouvert █ Statut: À l'heure █ Destination: Full Stack █
+      </span>
+    </div>
+    <div class="airplane-cursor" id="plane-cursor">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <path d="M22 16v-2l-8.5-5.1-3.5 2.1 4.5 2.6-1.5 1.7L11 13l-7-2.5L2 10l1.5-1 4 3 2.5-1.5L7 7l2 1 5-6.5L19 6l-2.5 1.5L15 3l1.5 1L22 2v7l-4 2.5z" fill="var(--accent)"/>
+      </svg>
+    </div>
+  </header>
+
+  <!-- ===== CONTENU DE TA PAGE (À INSÉRER ICI) ===== -->
+  <main style="min-height: 100vh; padding: 2rem;">
+    <!-- Ton contenu existant vient ici -->
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="airport-runway">
+    <div class="runway-markings">
+      <div class="runway-line"></div>
+      <div class="runway-sign">
+        <span class="sign-text">STOP</span>
+        <span class="sign-subtext">END OF RUNWAY</span>
+      </div>
+      <div class="runway-line"></div>
+    </div>
+    <div class="ground-control">
+      <div class="control-section">
+        <h3 class="section-title">▲ GROUND CONTROL</h3>
+        <div class="control-info">
+          <div class="info-line">✉ Email: <span class="info-value">contact@tonmail.com</span></div>
+          <div class="info-line">📡 Base: <span class="info-value">Lorient, France</span></div>
+        </div>
+      </div>
+      <div class="control-section">
+        <h3 class="section-title">🛩️ NAV CHANNELS</h3>
+        <div class="control-info">
+          <div class="info-line">GitHub: <span class="info-value">github.com/tonsite</span></div>
+          <div class="info-line">LinkedIn: <span class="info-value">linkedin.com/in/tonprofil</span></div>
+        </div>
+      </div>
+      <div class="control-section">
+        <h3 class="section-title">📄 FLIGHT DOCS</h3>
+        <div class="control-info">
+          <div class="info-line">CV PDF: <span class="info-value">Disponible</span></div>
+          <div class="info-line">Portfolio: <span class="info-value">Thème Immersif</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="status-label">PROJETS LIVRÉS</span>
+        <span class="status-value">42</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">ANNÉES DE VOL</span>
+        <span class="status-value">4</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">CLIENTS</span>
+        <span class="status-value">25</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">COMMITS</span>
+        <span class="status-value">>1200</span>
+      </div>
+    </div>
+    <div class="final-message">
+      <span class="message-text">PRÊT POUR LE DÉCOLLAGE ?</span>
+      <a href="contact.html" class="cta-button">DEMANDER AUTORISATION</a>
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script>
+    // 1. Horloge UTC en temps réel
+    function updateClock() {
+      const now = new Date();
+      const utcHours = now.getUTCHours().toString().padStart(2, '0');
+      const utcMinutes = now.getUTCMinutes().toString().padStart(2, '0');
+      document.getElementById('utc-clock').textContent = `${utcHours}:${utcMinutes} UTC`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // 2. Animation avion curseur
+    const planeCursor = document.getElementById('plane-cursor');
+    const navGates = document.querySelectorAll('.nav-gate');
+
+    navGates.forEach(gate => {
+      gate.addEventListener('mouseenter', (e) => {
+        const gateRect = gate.getBoundingClientRect();
+        const terminalNav = document.querySelector('.terminal-nav');
+        const navRect = terminalNav.getBoundingClientRect();
+
+        gsap.to(planeCursor, {
+          left: gateRect.left - navRect.left + gateRect.width / 2 - 12,
+          duration: 0.6,
+          ease: "power2.out"
+        });
+      });
+    });
+
+    // 3. Effet glow sur les gates actives
+    document.querySelectorAll('.nav-gate').forEach(gate => {
+      gate.addEventListener('mouseenter', () => {
+        gsap.to(gate, { boxShadow: `0 0 15px rgba(0, 217, 255, 0.3)`, duration: 0.3 });
+      });
+      gate.addEventListener('mouseleave', () => {
+        gsap.to(gate, { boxShadow: 'none', duration: 0.3 });
+      });
+    });
+  </script>
+</body>
+</html>

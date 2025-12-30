@@ -1,0 +1,146 @@
+/* base.css - Reset & Variables globales */
+
+/* ===== NORMALIZE & RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--primary);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* ===== VARIABLES CSS ===== */
+:root {
+    /* Couleurs principales - Palette aéroport */
+    --primary: #0A0E27;
+    --primary-2: #0f1630;
+    --door-light: #2a3358;
+    --accent: #8B1E3F;
+    --accent-blue: #66CCFF;
+    --text: #E6EEF8;
+    --text-secondary: #9FA8B3;
+    --splitflap-word-bg: #1A244A;
+    --splitflap-text-default: #3A476F;
+    
+    /* Couleurs statut */
+    --status-on-time: #4CAF50;
+    --status-delayed: #FF9800;
+    --status-boarding: #2196F3;
+    --status-scheduled: #9C27B0;
+    --status-cancelled: #F44336;
+    
+    /* Typographie */
+    --font-heading: 'Oswald', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Espacements */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 2rem;
+    --space-xl: 4rem;
+    
+    /* Animations */
+    --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ===== TYPOGRAPHIE ===== */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+p {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* ===== ÉLÉMENTS GLOBAUX ===== */
+a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: color 0.3s var(--easing-standard);
+}
+
+a:hover {
+    color: var(--text);
+}
+
+button {
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    color: inherit;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ===== UTILITAIRES ===== */
+.screen-reader-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ===== ÉTATS D'ACCESSIBILITÉ ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== MODE CLAIR (optionnel pour accessibilité) */
+@media (prefers-color-scheme: light) {
+    :root {
+        --primary: #E6EEF8;
+        --text: #0A0E27;
+        --text-secondary: #4A5568;
+    }
+}

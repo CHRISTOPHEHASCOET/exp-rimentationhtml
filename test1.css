@@ -1,0 +1,307 @@
+/* VOS COULEURS EXACTES */
+:root {
+  --primary: #0A0E27;          /* Fond principal */
+  --primary-2: #0f1630;        /* Fond secondaire */
+  --door-light: #2a3358;       /* Couleur des portes */
+  --accent: #8B1E3F;           /* Couleur rouge pour les poignées */
+  --accent-blue: #66CCFF;      /* Bleu pour le texte final */
+  --text: #E6EEF8;             /* Texte principal */
+  --text-secondary: #9FA8B3;   /* Texte secondaire */
+  --splitflap-word-bg: #1A244A; /* Fond des tuiles de mots */
+  --splitflap-text-default: #3A476F; /* Texte par défaut */
+  --radius: 8px;               /* Rayon des éléments */
+  --max-width: 1200px;         /* Largeur maximale */
+}
+
+/* RESET TOTAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--primary);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* HEADER FIXE */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(10, 14, 39, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--splitflap-word-bg);
+}
+
+.header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+
+.nav-desktop {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link.active, .nav-link:hover {
+  color: var(--accent-blue);
+}
+
+/* HÉROS */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-top: 100px;
+  padding-bottom: 80px;
+}
+
+/* PORTES D'OUVERTURE */
+.door-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+}
+
+.door {
+  width: 50%;
+  height: 100%;
+  background-color: var(--door-light);
+  border: 2px solid var(--splitflap-word-bg);
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.door-left { border-right: 1px solid var(--splitflap-word-bg); }
+.door-right { border-left: 1px solid var(--splitflap-word-bg); }
+
+/* POIGNÉE ROUGE AVEC DEUX POINTS BLANCS */
+.handle-red {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 60px;
+  background-color: var(--accent); /* Rouge du site */
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--accent);
+  position: relative;
+}
+
+/* Deux points blancs sur la poignée */
+.handle-red::before, .handle-red::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: var(--text); /* Points blancs */
+  border-radius: 50%;
+}
+
+.handle-red::before { top: 15px; }
+.handle-red::after { bottom: 15px; }
+
+.door-left .handle-red { right: 32px; }
+.door-right .handle-red { left: 32px; }
+
+/* TABLEAU AÉROPORT (Texte final en bleu) */
+.flipboard-container {
+  max-width: var(--max-width);
+  width: 100%;
+  z-index: 1;
+  background-color: var(--primary-2);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  border: 2px solid var(--splitflap-word-bg);
+}
+
+.flipboard-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--splitflap-word-bg);
+}
+
+.header-icon {
+  font-size: 2rem;
+  color: var(--accent-blue);
+}
+
+.flipboard-header h2 {
+  color: var(--accent-blue);
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.flipboard-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.flipboard-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flip-tile {
+  width: 28px;
+  height: 40px;
+  background-color: var(--splitflap-word-bg);
+  border: 1px solid var(--splitflap-text-default);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  position: relative;
+  perspective: 600px;
+  overflow: hidden;
+}
+
+/* Couleurs d'animation : Bleu pendant rotation, Bleu pour le texte final */
+.flip-tile .front, .flip-tile .back {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--splitflap-word-bg);
+  backface-visibility: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.flip-tile .front {
+  color: var(--accent-blue); /* Bleu pendant la rotation */
+  opacity: 0.7;
+}
+
+.flip-tile .back {
+  transform: rotateX(90deg);
+  color: var(--accent-blue); /* Bleu pour le texte final */
+}
+
+/* BOUTONS CTA */
+.hero-cta {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn, .btn-ghost {
+  padding: 12px 28px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.btn {
+  background-color: var(--accent);
+  color: var(--text);
+  border: 1px solid var(--accent);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--splitflap-word-bg);
+}
+
+.btn:hover, .btn-ghost:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* FOOTER */
+.footer {
+  background-color: var(--primary-2);
+  padding: 40px 24px;
+  border-top: 2px solid var(--splitflap-word-bg);
+  color: var(--text-secondary);
+}
+
+.footer-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-right: 32px;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--accent-blue);
+}
+
+/* RESPONSIVE MOBILE (seul le header desktop est visible) */
+@media (max-width: 768px) {
+  .nav-desktop {
+    gap: 16px;
+  }
+  .flip-tile {
+    width: 22px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+  .flipboard-container {
+    padding: 20px;
+  }
+}
+
+/* ACCESSIBILITÉ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

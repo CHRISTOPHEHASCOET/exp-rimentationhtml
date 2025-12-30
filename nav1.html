@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>C.Hascoët — Terminal Interactif</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            /* Couleurs exactes de l'image */
+            --bg-page: #050816;
+            --board-border: #1a1d2e;
+            --tile-bg: #0c1226; /* Le bleu sombre des boîtiers */
+            --tile-bg-light: #161c33;
+            --accent-red: #8B1E3F;
+            --accent-pink: #A23E5B;
+            --text-white: #FFFFFF;
+            --text-obs: #A23E5B; /* Le rose/rouge des observations */
+            
+            --tile-w: 24px;
+            --tile-h: 38px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: var(--bg-page); 
+            display: flex; align-items: center; justify-content: center; 
+            min-height: 100vh; overflow: hidden;
+        }
+
+        /* --- LE CADRE DU TABLEAU --- */
+        .airport-board {
+            background: #02040a;
+            padding: 40px;
+            border-radius: 12px;
+            border: 12px solid var(--board-border);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        /* --- EN-TETES --- */
+        .board-header {
+            display: grid;
+            grid-template-columns: 150px 480px 150px 80px 300px;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-left: 5px;
+        }
+        .header-label {
+            color: var(--accent-red);
+            font-family: 'Oswald';
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- RANGÉES --- */
+        .board-row {
+            display: grid;
+            grid-template-columns: 150px 480px 150px 80px 300px;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .flap-group {
+            display: flex;
+            gap: 2px;
+        }
+
+        /* --- CHAQUE BOÎTIER (CASE) --- */
+        .flap {
+            width: var(--tile-w);
+            height: var(--tile-h);
+            background: var(--tile-bg);
+            border-radius: 2px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            /* L'effet de relief des boîtiers vides */
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 1px 1px 1px rgba(255,255,255,0.05);
+        }
+
+        /* La fente au milieu du clapet */
+        .flap::after {
+            content: "";
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%; height: 1px;
+            background: rgba(0,0,0,0.6);
+            z-index: 2;
+        }
+
+        .char {
+            color: var(--text-white);
+            font-family: 'Oswald';
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 1;
+        }
+
+        /* Couleur spécifique pour la colonne Observations */
+        .col-obs .char {
+            color: var(--text-obs);
+            text-shadow: 0 0 5px rgba(162, 62, 91, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="airport-board">
+        <div class="board-header">
+            <div class="header-label">VOL</div>
+            <div class="header-label">DESTINATION</div>
+            <div class="header-label">HEURE</div>
+            <div class="header-label">PORTE</div>
+            <div class="header-label">OBSERVATIONS</div>
+        </div>
+        <div id="board-body"></div>
+    </div>
+
+    <script>
+        const chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:.-%";
+        
+        // Tes vrais projets et infos
+        const flights = [
+            { vol: "CKW01", dest: "COOK'N WAY", time: "09:00", gate: "A4", obs: "TERMINE" },
+            { vol: "CAM02", dest: "CAMI COURSES EXPRESS", time: "10:10", gate: "B2", obs: "LIVRE" },
+            { vol: "FKM03", dest: "MOBILITE INCLUSIVE", time: "12:20", gate: "C3", obs: "VALIDE" },
+            { vol: "HDR10", dest: "CHEF DE PROJET AGILE", time: "06:30", gate: "D1", obs: "ACTIF" },
+            { vol: "DEV21", dest: "DEVELOPPEMENT WEB", time: "16:40", gate: "A1", obs: "OPERATIONNEL" },
+            { vol: "SEO88", dest: "SEO / ACCESSIBILITE", time: "02:50", gate: "B4", obs: "100%" },
+            { vol: "JSS08", dest: "JAVASCRIPT", time: "12:00", gate: "C2", obs: "EN COURS" },
+            { vol: "API42", dest: "BACKEND LARAVEL", time: "22:10", gate: "D3", obs: "EN COURS" },
+            { vol: "404ER", dest: "DEBUGGING SYSTEM", time: "--:--", gate: "X0", obs: "RESOLU" }
+        ];
+
+        // Configuration des colonnes (nombre de cases)
+        const layout = [
+            { key: 'vol', size: 6 },
+            { key: 'dest', size: 19 },
+            { key: 'time', size: 5 },
+            { key: 'gate', size: 2 },
+            { key: 'obs', size: 11 }
+        ];
+
+        function createRow(data) {
+            const row = document.createElement('div');
+            row.className = 'board-row';
+
+            layout.forEach(col => {
+                const group = document.createElement('div');
+                group.className = 'flap-group ' + (col.key === 'obs' ? 'col-obs' : '');
+                
+                const text = data[col.key].toUpperCase().padEnd(col.size, " ");
+                
+                for (let i = 0; i < col.size; i++) {
+                    const flap = document.createElement('div');
+                    flap.className = 'flap';
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'char';
+                    charSpan.dataset.target = text[i];
+                    charSpan.innerText = " "; // Vide au début
+                    flap.appendChild(charSpan);
+                    group.appendChild(flap);
+                }
+                row.appendChild(group);
+            });
+
+            return row;
+        }
+
+        const body = document.getElementById('board-body');
+        flights.forEach(f => body.appendChild(createRow(f)));
+
+        // Animation mécanique
+        window.onload = () => {
+            document.querySelectorAll('.char').forEach((el, i) => {
+                const target = el.dataset.target;
+                if (target === " ") return; // Ne pas animer les cases vides
+
+                setTimeout(() => {
+                    let cycles = 0;
+                    const maxCycles = 10 + Math.floor(Math.random() * 15);
+                    
+                    const interval = setInterval(() => {
+                        el.innerText = chars[Math.floor(Math.random() * chars.length)];
+                        
+                        // Petit effet de vibration GSAP sur le parent (le clapet)
+                        gsap.fromTo(el.parentElement, 
+                            { rotationX: -30 }, 
+                            { rotationX: 0, duration: 0.1 }
+                        );
+
+                        cycles++;
+                        if (cycles >= maxCycles) {
+                            clearInterval(interval);
+                            el.innerText = target;
+                        }
+                    }, 40);
+                }, i * 5); // Effet cascade très rapide
+            });
+        };
+    </script>
+</body>
+</html>

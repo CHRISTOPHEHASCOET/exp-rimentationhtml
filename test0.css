@@ -1,0 +1,234 @@
+/* ===================================================== */
+/* Hero / Board */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 86px;
+    padding-bottom: 60px;
+    position: relative
+}
+
+.board-inner {
+    width: 100%;
+    background: linear-gradient(180deg, var(--primary-2), rgba(10, 14, 39, 0.6));
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+    border: 1px solid rgba(255, 255, 255, .02);
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .45s ease, visibility .01s linear .45s
+}
+
+
+.board-head {
+    display: grid;
+    grid-template-columns: 120px 1fr 200px;
+    gap: 12px;
+    padding: 12px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, .03);
+    align-items: center
+}
+
+.col-title {
+    color: var(--text-secondary);
+    font-weight: 700;
+    letter-spacing: 1px
+}
+
+.board-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 6px
+}
+
+.board-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 200px;
+    gap: 12px;
+    align-items: center;
+    min-height: 64px;
+    padding: 6px 8px;
+    border-radius: 6px
+}
+
+.board-row:hover {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02))
+}
+
+
+/* Tiles container : les mots ne sont pas coupés (white-space:nowrap sur .word) */
+.cell-tiles {
+    display: flex;
+    gap: var(--tile-gap);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start
+}
+
+.word {
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+    align-items: center
+}
+
+.tile {
+    width: var(--tile-w);
+    height: var(--tile-h);
+    background: linear-gradient(180deg, #0a2436, #051428);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 -6px 12px rgba(0, 0, 0, .6), 0 12px 30px rgba(0, 0, 0, .6);
+    border: 3px solid rgba(0, 0, 0, .6);
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--text-secondary);
+    perspective: 800px;
+    position: relative;
+    transform-style: preserve-3d;
+    overflow: visible
+}
+
+.tile .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    padding: 2px 6px;
+    letter-spacing: 2px
+}
+
+.tile .front {
+    transform: rotateX(0deg);
+    transform-origin: center bottom;
+    color: var(--text-secondary)
+}
+
+.tile .back {
+    transform: rotateX(90deg);
+    transform-origin: center top;
+    color: var(--text);
+    background: linear-gradient(180deg, #031018, #072033);
+    border-radius: 4px
+}
+
+
+.caption-row .caption {
+    grid-column: 1/-1;
+    background: rgba(255, 255, 255, .02);
+    padding: 10px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: .95rem
+}
+
+
+/* Door overlay */
+.door-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    z-index: 50;
+    pointer-events: none
+}
+
+.door {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(180deg, var(--door-light), #051225)
+}
+
+.door-left {
+    border-right: 2px solid rgba(255, 255, 255, .02)
+}
+
+.door-right {
+    border-left: 2px solid rgba(255, 255, 255, .02)
+}
+
+.handle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 72px;
+    height: 30px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.handle-red {
+    background: linear-gradient(180deg, var(--accent), var(--accent-bright));
+    box-shadow: 0 6px 18px rgba(139, 30, 63, .45)
+}
+
+.handle-red .dot {
+    width: 7px;
+    height: 7px;
+    background: var(--text);
+    border-radius: 50%;
+    margin: 0 4px
+}
+
+.door-left .handle {
+    right: 36px
+}
+
+.door-right .handle {
+    left: 36px
+}
+
+
+/* Responsive : on réduit la taille des tiles mais on garde l'uniformité et empêche la coupure des mots */
+@media(max-width:920px) {
+    :root {
+        --tile-w: 34px;
+        --tile-h: 46px
+    }
+
+    .board-head,
+    .board-row {
+        grid-template-columns: 110px 1fr 140px
+    }
+
+    .tile {
+        font-size: 14px
+    }
+}
+
+@media(max-width:640px) {
+
+    .board-head,
+    .board-row {
+        grid-template-columns: 1fr;
+        gap: 8px
+    }
+
+    .cell-tiles {
+        justify-content: center
+    }
+
+    .sr-only {
+        position: absolute;
+        left: -9999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden
+    }
+}

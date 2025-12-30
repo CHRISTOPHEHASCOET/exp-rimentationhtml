@@ -1,0 +1,279 @@
+/* ========================================= */
+/* BASE.CSS - Reset, Variables, Typographie */
+/* ========================================= */
+
+/* 1. Reset CSS basique */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* 2. Variables CSS pour la cohérence visuelle */
+:root {
+    /* Couleurs de fond (mode nuit premium) */
+    --color-bg-dark: #1A1A2E;
+    /* Noir très profond, presque charbon */
+    --color-bg-medium: #27273E;
+    /* Bleu nuit très foncé, texturé */
+    --color-bg-light: #3D4C5E;
+    /* Un gris-bleu plus clair pour certains éléments */
+
+    /* Couleurs de texte */
+    --color-text-light: #E0E0E0;
+    /* Blanc cassé / gris très clair */
+    --color-text-dark: #1A1A2E;
+    /* Pour les éléments clairs */
+    --color-text-muted: #9AA4B0;
+    /* Texte secondaire, moins contrasté */
+
+    /* Couleurs d'accentuation (pour les "signalétiques" et états) */
+    --color-accent-amber: #FFB84C;
+    /* Ambre subtil, voyant lumineux */
+    --color-accent-blue: #00E0FF;
+    /* Bleu électrique/cyan */
+    --color-accent-red: #FF416C;
+    /* Rouge fort pour les alertes/spécifiques à l'accueil */
+
+    /* Couleurs des flaps du tableau de départ */
+    --color-flap-bg: #2D323E;
+    /* Gris-bleu très sombre pour le fond des flaps */
+    --color-flap-text: var(--color-text-light);
+    /* Texte des flaps */
+
+    /* Couleurs de statut */
+    --color-status-embarking: #2ECC71;
+    /* Vert émeraude pour EMBARQUEMENT */
+    --color-status-in-flight: #3498DB;
+    /* Bleu acier pour EN VOL */
+    --color-status-preparation: #F39C12;
+    /* Orange pour PRÉPARATION */
+    --color-status-pending: #7F8C8D;
+    /* Gris pour EN ATTENTE */
+
+    /* Typographie */
+    --font-primary: 'Orbitron', sans-serif;
+    /* Pour les titres, chiffres, look technique */
+    --font-secondary: 'Roboto Mono', monospace;
+    /* Pour le contenu du tableau, code */
+    --font-body: 'Open Sans', sans-serif;
+    /* Pour le texte courant */
+
+    /* Espacements */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+
+    /* Rayons de bordure */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+}
+
+/* Importation des polices Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap');
+
+
+/* 3. Styles de base du corps de page */
+body {
+    font-family: var(--font-body);
+    color: var(--color-text-light);
+    background-color: var(--color-bg-dark);
+    line-height: 1.6;
+    margin: 0;
+    overflow-x: hidden;
+    /* Empêche le défilement horizontal non désiré */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Styles pour l'accessibilité */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Liens globaux */
+a {
+    color: var(--color-accent-blue);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-accent-amber);
+}
+
+/* Conteneurs principaux */
+.main-content {
+    max-width: 1400px;
+    margin: var(--space-lg) auto;
+    padding: 0 var(--space-md);
+    position: relative;
+    z-index: 1;
+    /* S'assure que le contenu est au-dessus du preloader une fois disparu */
+}
+
+/* ========================================= */
+/* HEADER - Navigation et infos pilote */
+/* ========================================= */
+.main-header {
+    background-color: var(--color-bg-medium);
+    padding: var(--space-sm) var(--space-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(var(--color-accent-blue), 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    /* Assure que le header est toujours au-dessus */
+}
+
+.airport-terminal-nav {
+    display: flex;
+    gap: var(--space-sm);
+    position: relative;
+    /* Pour l'avion indicateur */
+}
+
+.airport-terminal-nav a {
+    color: var(--color-text-muted);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--border-radius-sm);
+    position: relative;
+    overflow: hidden;
+    /* Pour l'effet de survol ou l'avion */
+}
+
+.airport-terminal-nav a:hover {
+    color: var(--color-text-light);
+    background-color: rgba(var(--color-accent-blue), 0.1);
+}
+
+.airport-terminal-nav a.current {
+    color: var(--color-text-light);
+    background-color: rgba(var(--color-accent-blue), 0.2);
+}
+
+.pilot-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.pilot-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-accent-blue);
+}
+
+.pilot-id {
+    font-family: var(--font-secondary);
+    font-size: 0.8rem;
+    color: var(--color-accent-amber);
+    text-shadow: 0 0 5px rgba(var(--color-accent-amber), 0.5);
+}
+
+.airplane-indicator {
+    /* Cet élément sera positionné et animé par GSAP */
+    position: absolute;
+    width: 20px;
+    /* Taille de l'avion */
+    height: 20px;
+    background-color: var(--color-accent-blue);
+    /* Couleur de l'avion */
+    clip-path: polygon(70% 0, 100% 30%, 100% 50%, 70% 70%, 50% 100%, 30% 70%, 0 50%, 0 30%, 30% 0, 50% 30%);
+    /* Forme d'avion stylisée */
+    opacity: 0;
+    pointer-events: none;
+    /* Ne doit pas interférer avec les clics sur les liens */
+    transition: opacity 0.3s ease;
+    /* Pour l'apparition/disparition */
+    transform: translateY(-50%) rotate(45deg);
+    /* Positionnement initial et rotation pour l'angle de vol */
+}
+
+
+/* ========================================= */
+/* INTRO GATE ANIMATION */
+/* ========================================= */
+#intro-gate-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    /* Toujours au-dessus de tout */
+    background-color: var(--color-bg-dark);
+    /* Couleur de fond des portes fermées */
+    overflow: hidden;
+}
+
+.gate {
+    width: 50%;
+    height: 100%;
+    background-color: var(--color-bg-medium);
+    /* Couleur des portes elles-mêmes */
+    position: absolute;
+    top: 0;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left-gate {
+    left: 0;
+    transform-origin: right center;
+    /* Point de rotation/déplacement */
+    border-right: 1px solid rgba(var(--color-accent-blue), 0.3);
+}
+
+.right-gate {
+    right: 0;
+    transform-origin: left center;
+    /* Point de rotation/déplacement */
+    border-left: 1px solid rgba(var(--color-accent-blue), 0.3);
+}
+
+.gate-logo {
+    position: relative;
+    z-index: 10000;
+    /* Au-dessus des portes */
+    color: var(--color-accent-amber);
+    text-align: center;
+    opacity: 0;
+    /* Caché par défaut, sera animé par GSAP */
+}
+
+.gate-logo .fas.fa-plane {
+    font-size: 4rem;
+    margin-bottom: var(--space-sm);
+    text-shadow: 0 0 15px rgba(var(--color-accent-amber), 0.6);
+}
+
+.gate-logo h1 {
+    font-family: var(--font-primary);
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(var(--color-accent-amber), 0.4);
+}

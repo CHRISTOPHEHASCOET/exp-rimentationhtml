@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FMS - Flight Management System // Profil</title>
+
+    <!-- Polices Aviation & Data -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #0a0e27;
+        --secondary: #1a1f3a;
+        --door-bg: #252b4b;
+        --door-grad: #2d345a;
+        --accent: #a82046; /* Ajusté WCAG AA */
+        --accent-bright: #00d9ff;
+        --accent-green: #39ff14;
+        --text: #e0e6ed;
+        --text-dim: #adb5bd;
+        --font-display: "Oswald", sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--primary);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+        line-height: 1.5;
+        /* Scanlines sombres pour effet cockpit sans éblouissement */
+        background-image: linear-gradient(
+            rgba(10, 14, 39, 0.9) 50%,
+            rgba(0, 0, 0, 0.2) 50%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.01),
+            rgba(0, 255, 0, 0.01),
+            rgba(0, 0, 255, 0.01)
+          );
+        background-size: 100% 3px, 3px 100%;
+      }
+
+      /* --- BARRE DE STATUT (HUD TOP) --- */
+      .flight-status-bar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 40px;
+        background: #000;
+        border-bottom: 1px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        z-index: 1100;
+        color: var(--text-dim);
+        text-transform: uppercase;
+      }
+      .status-item span {
+        color: var(--accent-bright);
+      }
+
+      /* --- NAVIGATION TERMINAL (IMAGE 1 STYLE) --- */
+      .site-header {
+        position: fixed;
+        top: 40px;
+        width: 100%;
+        z-index: 1000;
+        background: rgba(10, 14, 39, 0.95);
+        border-bottom: 1px solid var(--door-bg);
+        backdrop-filter: blur(10px);
+      }
+      .header-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .nav-links {
+        display: flex;
+        gap: 15px;
+      }
+      .nav-link {
+        text-decoration: none;
+        color: var(--text-dim);
+        font-family: var(--font-display);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 5px 12px;
+        border-radius: 4px;
+        transition: 0.3s;
+      }
+      .nav-link span {
+        color: var(--accent-bright);
+        font-size: 0.6rem;
+        margin-left: 5px;
+        opacity: 0.7;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        background: var(--door-bg);
+        color: #fff;
+        border: 1px solid var(--accent-bright);
+      }
+
+      /* --- LAYOUT --- */
+      main {
+        max-width: 1200px;
+        margin: 160px auto 60px;
+        padding: 0 20px;
+      }
+
+      /* --- MASTER BLOCKS (CARDS INDUSTRIELLES) --- */
+      .master-bloc {
+        background: var(--secondary);
+        border: 2px solid var(--door-bg);
+        margin-bottom: 40px;
+        position: relative;
+        padding: 30px;
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5),
+          0 20px 40px rgba(0, 0, 0, 0.6);
+      }
+      /* Rivets décoratifs */
+      .rivet {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: #000;
+        border-radius: 50%;
+        border: 1px solid #333;
+      }
+      .rivet.tl {
+        top: 10px;
+        left: 10px;
+      }
+      .rivet.tr {
+        top: 10px;
+        right: 10px;
+      }
+      .rivet.bl {
+        bottom: 10px;
+        left: 10px;
+      }
+      .rivet.br {
+        bottom: 10px;
+        right: 10px;
+      }
+
+      .bloc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+      }
+      .bloc-title {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+      .bloc-tag {
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--accent-bright);
+        border: 1px solid var(--accent-bright);
+        padding: 2px 8px;
+      }
+
+      /* --- HERO PFD DISPLAY --- */
+      .hero {
+        text-align: center;
+        border: 2px double var(--accent-bright);
+        padding: 40px;
+        background: rgba(0, 217, 255, 0.02);
+      }
+      .hero-title {
+        font-family: var(--font-display);
+        font-size: 4rem;
+        letter-spacing: 12px;
+        text-shadow: 0 0 20px var(--accent-bright);
+      }
+      .hero-rank {
+        font-family: var(--font-mono);
+        color: var(--accent-green);
+        background: #000;
+        padding: 5px 20px;
+        display: inline-block;
+        margin-top: 15px;
+      }
+
+      /* --- TRIPLE RADAR UNIT --- */
+      .radars-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .radar-box {
+        background: #000;
+        padding: 20px;
+        border: 1px solid #222;
+        border-radius: 4px;
+        text-align: center;
+      }
+      .radar-box h3 {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        margin-bottom: 15px;
+      }
+      .radar-screen {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 1px solid var(--accent-bright);
+        position: relative;
+        background: radial-gradient(
+          circle,
+          rgba(0, 217, 255, 0.05) 0%,
+          transparent 80%
+        );
+      }
+      .radar-sweep {
+        position: absolute;
+        inset: 0;
+        background: conic-gradient(
+          from 0deg,
+          rgba(0, 217, 255, 0.3),
+          transparent 50%
+        );
+        border-radius: 50%;
+      }
+      .radar-blip {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: var(--accent-green);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--accent-green);
+      }
+
+      /* --- TIMELINE PLAN DE VOL --- */
+      .flight-log {
+        position: relative;
+        padding-left: 50px;
+      }
+      .log-line {
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        border-left: 1px dashed var(--accent);
+      }
+      .plane-marker {
+        position: absolute;
+        left: 10px;
+        top: 0;
+        color: var(--accent);
+        font-size: 1.5rem;
+        z-index: 10;
+      }
+      .waypoint {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 25px;
+        margin-bottom: 30px;
+        border: 1px solid #222;
+      }
+      .waypoint-header {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-display);
+        margin-bottom: 10px;
+      }
+      .waypoint-date {
+        color: var(--accent-bright);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+      }
+
+      /* --- CHECKLIST FORMATIONS --- */
+      .checklist-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+      }
+      .check-card {
+        background: #000;
+        border: 1px solid #333;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .check-card span {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+      }
+      .check-status {
+        color: var(--accent-green);
+        font-size: 0.6rem;
+        border: 1px solid var(--accent-green);
+        padding: 2px 6px;
+      }
+
+      /* --- COMMS BLOCK (LANGUES & INTÉRÊTS) --- */
+      .comms-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+      .comms-box {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        border-top: 2px solid var(--accent-bright);
+      }
+
+      /* --- CTA : MASTER WARNING --- */
+      .cta-box {
+        text-align: center;
+        background: rgba(168, 32, 70, 0.05);
+        border: 2px solid var(--accent);
+        padding: 50px;
+      }
+      .launch-btn {
+        display: inline-block;
+        padding: 20px 50px;
+        background: var(--accent-bright);
+        color: #000;
+        text-decoration: none;
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        box-shadow: 0 0 25px rgba(0, 217, 255, 0.4);
+        transition: 0.3s;
+      }
+      .launch-btn:hover {
+        background: #fff;
+        transform: scale(1.05);
+      }
+
+      /* --- FOOTER : GROUND CONTROL (IMAGE 2 STYLE) --- */
+      .ground-footer {
+        background: #000;
+        border-top: 2px solid var(--accent);
+        padding: 60px 40px 20px;
+      }
+      .footer-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+      }
+      .footer-title {
+        font-family: var(--font-display);
+        color: var(--accent-bright);
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+      }
+      .footer-links a {
+        color: var(--text-dim);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        font-family: var(--font-mono);
+      }
+      .footer-links a:hover {
+        color: var(--accent-bright);
+      }
+      .runway-end {
+        text-align: center;
+        margin-top: 50px;
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 8px;
+      }
+
+      @media (max-width: 900px) {
+        .radars-grid,
+        .checklist-grid,
+        .comms-grid,
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-title {
+          font-size: 2.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HUD TOP BAR -->
+    <div class="flight-status-bar">
+      <div class="status-item">VOL: <span>CH-2025</span></div>
+      <div class="status-item">SECTEUR: <span>FR-EU</span></div>
+      <div class="status-item">SPD: <span>M0.82</span></div>
+      <div class="status-item">AP: <span>ENGAGED</span></div>
+    </div>
+
+    <!-- HEADER NAVIGATION -->
+    <header class="site-header">
+      <div class="header-inner">
+        <a
+          href="#"
+          class="nav-link active"
+          style="font-weight: 700; font-size: 1.2rem"
+          >CH</a
+        >
+        <nav class="nav-links">
+          <a href="#" class="nav-link">ACCUEIL <span>T1 • A01</span></a>
+          <a href="#" class="nav-link">À PROPOS <span>T1 • B02</span></a>
+          <a href="#" class="nav-link">PROJETS <span>T2 • C03</span></a>
+          <a href="#" class="nav-link active">PROFIL <span>T3 • P05</span></a>
+          <a href="#" class="nav-link">CONTACT <span>T3 • CTL</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- MASTER BLOC 1 : HERO -->
+      <section class="master-bloc hero">
+        <div class="rivet tl"></div>
+        <div class="rivet tr"></div>
+        <p
+          style="
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent-bright);
+          "
+        >
+          [ FMS PRIMARY DISPLAY ]
+        </p>
+        <h1 class="hero-title">TABLEAU DE BORD</h1>
+        <div class="hero-rank">
+          COMMANDANT DE BORD // SENIOR DEV & CHEF DE PROJET
+        </div>
+        <div class="rivet bl"></div>
+        <div class="rivet br"></div>
+      </section>
+
+      <!-- MASTER BLOC 2 : NAVIGATION (3 RADARS) -->
+      <section class="master-bloc">
+        <div class="bloc-header">
+          <h2 class="bloc-title">Instruments de Navigation Display</h2>
+          <span class="bloc-tag">CALIBRATION: OK</span>
+        </div>
+        <div class="radars-grid">
+          <div class="radar-box">
+            <h3>NAV-1: PILOTAGE (SOFT)</h3>
+            <div class="radar-screen">
+              <div class="radar-sweep"></div>
+              <div class="radar-blip" style="top: 20%; left: 70%"></div>
+            </div>
+          </div>
+          <div class="radar-box">
+            <h3>NAV-2: SYSTÈMES (HARD)</h3>
+            <div class="radar-screen">
+              <div class="radar-sweep"></div>
+              <div class="radar-blip" style="top: 50%; left: 30%"></div>
+            </div>
+          </div>
+          <div class="radar-box">
+            <h3>NAV-3: MISSION (MAD)</h3>
+            <div class="radar-screen">
+              <div class="radar-sweep"></div>
+              <div class="radar-blip" style="top: 10%; left: 50%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MASTER BLOC 3 : LOGBOOK -->
+      <section class="master-bloc">
+        <div class="bloc-header">
+          <h2 class="bloc-title">Plan de Vol — Expériences</h2>
+          <span class="bloc-tag">ACTIVE_LOG</span>
+        </div>
+        <div class="flight-log">
+          <div class="log-line"></div>
+          <div class="plane-marker" id="plane">✈</div>
+
+          <article class="waypoint">
+            <div class="waypoint-header">
+              <h3>CHEF DE CABINE DIGITAL — AGENCE XYZ</h3>
+              <span class="waypoint-date">2023 — PRÉSENT</span>
+            </div>
+            <p
+              style="
+                color: var(--accent-bright);
+                font-family: var(--font-mono);
+                font-size: 0.7rem;
+                margin-bottom: 10px;
+              "
+            >
+              ROUTE: LEAD UX/UI
+            </p>
+            <p class="waypoint-desc">
+              Pilotage de design systems complexes. Optimisation de l'expérience
+              passager (UX). Navigation sous GSAP et React.
+            </p>
+          </article>
+
+          <article class="waypoint">
+            <div class="waypoint-header">
+              <h3>OFFICIER PILOTE DE LIGNE — STARTUP TECH</h3>
+              <span class="waypoint-date">2021 — 2023</span>
+            </div>
+            <p
+              style="
+                color: var(--accent-bright);
+                font-family: var(--font-mono);
+                font-size: 0.7rem;
+                margin-bottom: 10px;
+              "
+            >
+              ROUTE: DÉVELOPPEUR FULLSTACK
+            </p>
+            <p class="waypoint-desc">
+              Développement d'infrastructures robustes. Maintenance en plein vol
+              d'APIs critiques.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- MASTER BLOC 4 : CHECKLIST FORMATIONS -->
+      <section class="master-bloc">
+        <div class="bloc-header">
+          <h2 class="bloc-title">Pre-Flight Checklist / Formations</h2>
+          <span class="bloc-tag">DOSSIERS À JOUR</span>
+        </div>
+        <div class="checklist-grid">
+          <div class="check-card">
+            <span>MASTER JAVASCRIPT</span>
+            <div class="check-status">SET</div>
+          </div>
+          <div class="check-card">
+            <span>CERTIF UX DESIGN</span>
+            <div class="check-status">SET</div>
+          </div>
+          <div class="check-card">
+            <span>AGILE METHODOLOGY</span>
+            <div class="check-status">SET</div>
+          </div>
+          <div class="check-card">
+            <span>REACT FRAMEWORK</span>
+            <div class="check-status">SET</div>
+          </div>
+          <div class="check-card">
+            <span>ACCESSIBILITÉ AA</span>
+            <div class="check-status">SET</div>
+          </div>
+          <div class="check-card">
+            <span>ENGLISH (ICAO 5)</span>
+            <div class="check-status">SET</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MASTER BLOC 5 : COMMS (LANGUES & INTÉRÊTS) -->
+      <section class="master-bloc">
+        <div class="bloc-header">
+          <h2 class="bloc-title">Systèmes de Communication & Signaux</h2>
+          <span class="bloc-tag">CHANNELS_OPEN</span>
+        </div>
+        <div class="comms-grid">
+          <div class="comms-box">
+            <h4 style="margin-bottom: 15px; color: var(--accent-bright)">
+              CANAUX LINGUISTIQUES
+            </h4>
+            <p style="font-family: var(--font-mono); font-size: 0.9rem">
+              > FR : NATIF (STABLE)
+            </p>
+            <p
+              style="
+                font-family: var(--font-mono);
+                font-size: 0.9rem;
+                margin-top: 5px;
+              "
+            >
+              > EN : ICAO 5 (OPERATIONAL)
+            </p>
+          </div>
+          <div class="comms-box">
+            <h4 style="margin-bottom: 15px; color: var(--accent-bright)">
+              INTÉRÊTS DE VOL
+            </h4>
+            <p style="font-family: var(--font-mono); font-size: 0.8rem">
+              VEILLE TECH // IA // AÉRONAUTIQUE // PHOTOGRAPHIE
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA SECTION -->
+      <section class="cta-box">
+        <h2 class="bloc-title" style="font-size: 2.2rem; margin-bottom: 15px">
+          PRÊT POUR LE DÉCOLLAGE ?
+        </h2>
+        <p
+          style="
+            color: var(--text-dim);
+            margin-bottom: 35px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+          "
+        >
+          Embarquons ensemble pour votre prochain projet ambitieux. Je suis
+          disponible pour des missions de conseil, de développement ou de
+          formation.
+        </p>
+        <a href="#" class="launch-btn">DEMANDER AUTORISATION DE VOL</a>
+      </section>
+    </main>
+
+    <!-- FOOTER GROUND CONTROL (IMAGE 2 STYLE) -->
+    <footer class="ground-footer">
+      <div class="footer-grid">
+        <div class="footer-links">
+          <h4 class="footer-title">GROUND_CONTROL</h4>
+          <a href="#">EMAIL: contact@christophe.dev</a>
+          <a href="#">BASE: LORIENT (LFRH)</a>
+          <a href="#">HUB: PARIS (LFPG)</a>
+        </div>
+        <div class="footer-links">
+          <h4 class="footer-title">NAV_CHANNELS</h4>
+          <a href="#">GITHUB REPOSITORY</a>
+          <a href="#">LINKEDIN PROFILE</a>
+        </div>
+        <div class="footer-links">
+          <h4 class="footer-title">FLIGHT_DOCS</h4>
+          <a href="#">DOWNLOAD_CV.PDF</a>
+          <a href="#">LEGAL_MENTIONS</a>
+        </div>
+      </div>
+      <div class="runway-end">STOP // END OF RUNWAY // [ 25L ]</div>
+    </footer>
+
+    <script>
+      gsap.registerPlugin(ScrollTrigger);
+
+      window.addEventListener("load", () => {
+        // Animation Radar
+        gsap.to(".radar-sweep", {
+          rotation: 360,
+          duration: 4,
+          repeat: -1,
+          ease: "none",
+          transformOrigin: "50% 50%",
+        });
+
+        // Avion qui suit le scroll
+        gsap.to("#plane", {
+          top: "100%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".flight-log",
+            start: "top 25%",
+            end: "bottom 75%",
+            scrub: 1,
+          },
+        });
+
+        // Apparition des blocs
+        gsap.utils.toArray(".master-bloc").forEach((bloc) => {
+          gsap.from(bloc, {
+            opacity: 0,
+            y: 40,
+            duration: 1,
+            scrollTrigger: { trigger: bloc, start: "top 90%" },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

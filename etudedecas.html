@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Études de Cas — Christophe Hascoët</title>
+
+    <!-- Polices optimisées pour la lisibilité -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0A0E27;
+            --accent: #8B1E3F;
+            --accent-bright: #FF3B3B;
+            --text: #E6EEF8;
+            --text-dim: #B0B8C4;
+            --success: #1acb4b;
+            --container-width: 900px;
+            --border-radius: 8px;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Header (identique à tes autres pages) */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 12px 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--accent);
+        }
+        .header-inner {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: var(--text);
+            text-decoration: none;
+            position: relative;
+            padding-left: 40px;
+        }
+        .logo::before {
+            content: "✈";
+            position: absolute;
+            left: 0;
+            color: var(--accent-bright);
+        }
+        .nav-desktop {
+            display: flex;
+            gap: 14px;
+        }
+        .nav-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 8px 12px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-family: 'Oswald', sans-serif;
+            transition: color 0.3s;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent-bright);
+        }
+
+        /* Conteneur principal */
+        main.container {
+            padding-top: 120px;
+            padding-bottom: 60px;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.2rem;
+            color: var(--text);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            font-size: 1rem;
+        }
+
+        /* Ligne de vol (avec avion) */
+        .flight-path {
+            position: fixed;
+            left: 50px;
+            top: 150px;
+            bottom: 100px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 5;
+        }
+        .flight-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: var(--accent-bright);
+            box-shadow: 0 0 10px var(--accent-bright);
+        }
+        .scrolling-plane {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg); /* Position initiale */
+            font-size: 1.5rem;
+            color: var(--accent-bright);
+            transition: transform 0.2s ease; /* Transition fluide */
+        }
+
+        /* Étude de cas */
+        .case-study {
+            background: rgba(15, 22, 48, 0.6);
+            border: 1px solid rgba(139, 30, 63, 0.5);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(139, 30, 63, 0.3);
+        }
+
+        .case-id {
+            font-family: 'Oswald', sans-serif;
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .case-status {
+            font-family: 'Oswald', sans-serif;
+            color: var(--success);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .study-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            color: var(--text);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-content {
+            color: var(--text-dim);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Listes à puces */
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+
+        .checklist li {
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+        }
+
+        .checklist li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .warning-list li::before {
+            content: "!";
+            color: var(--accent);
+        }
+
+        /* Blocs de données techniques */
+        .tech-data {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-family: 'monospace';
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            border-top: 2px solid var(--accent);
+            padding: 25px 0;
+            text-align: center;
+            color: var(--text-dim);
+            margin-top: 60px;
+        }
+
+        .footer a {
+            color: var(--text);
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .flight-path {
+                left: 20px;
+            }
+            main.container {
+                padding-left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="accueil2.html" class="logo">CH</a>
+            <nav class="nav-desktop">
+                <a href="accueil2.html" class="nav-link">Accueil</a>
+                <a href="about3.html" class="nav-link">À propos</a>
+                <a href="projects1.html" class="nav-link">Projets</a>
+                <a href="case-studies.html" class="nav-link active">Études de cas</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Ligne de vol avec avion -->
+    <div class="flight-path">
+        <div class="flight-progress" id="progress"></div>
+        <div class="scrolling-plane" id="plane">✈</div>
+    </div>
+
+    <main class="container">
+        <h1 class="page-title">Analyse Post-Vol</h1>
+        <p class="page-subtitle">Retour d'expérience technique sur les missions réalisées</p>
+
+        <!-- Étude de cas 1: OhMyFood -->
+        <article class="case-study">
+            <div class="case-header">
+                <span class="case-id">Mission OMF-01</span>
+                <span class="case-status">Statut: Déploiement validé</span>
+            </div>
+
+            <div class="study-section">
+                <h2 class="section-title">Fiche de Pré-Vol</h2>
+                <div class="section-content">
+                    <p>Intégration d'une maquette Figma pour un site mobile-first avec animations CSS avancées. Objectif: performance optimale et respect strict des spécifications.</p>
+                    <div class="tech-data">
+                        <strong>Données initiales:</strong><br>
+                        - Maquette: Figma V3.1<br>
+                        - Contraintes: Performance max | UX prioritaire<br>
+                        - Type: Site statique (HTML/CSS/SASS)
+                    </div>
+                </div>
+            </div>
+
+            <div class="study-section">
+                <h2 class="section-title">Trajectoire Technique</h2>
+                <div class="section-content">
+                    <p>Architecture modulaire SASS (pattern 7-1) pour une maintenance simplifiée et des animations fluides.</p>
+                    <ul class="checklist">
+                        <li>Variables SASS pour l'uniformité visuelle</li>
+                        <li>Animations @keyframes pour le loader</li>
+                        <li>Structure Flexbox pour le responsive</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="study-section">
+                <h2 class="section-title">Anomalies Rencontrées</h2>
+                <div class="section-content">
+                    <p>Deux problèmes majeurs identifiés pendant le développement:</p>
+                    <ul class="checklist warning-list">
+                        <li>Désynchronisation des animations sur Safari iOS</li>
+                        <li>Temps de réponse du loader trop court</li>
+                    </ul>
+                    <div class="tech-data">
+                        <strong>Solutions appliquées:</strong><br>
+                        - Ajout de vendor prefixes (-webkit-)<br>
+                        - Calcul précis des animation-delay en SASS
+                    </div>
+                </div>
+            </div>
+
+            <div class="study-section">
+                <h2 class="section-title">Résultats Finaux</h2>
+                <div class="section-content">
+                    <p>Projet déployé avec succès. Validation complète des critères:</p>
+                    <div class="tech-data">
+                        <strong>Scores:</strong><br>
+                        - Performance: 98/100 (Lighthouse)<br>
+                        - Accessibilité: 100%<br>
+                        - Bonnes pratiques: 100%
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Ajoute d'autres études de cas ici -->
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Christophe Hascoët — Tous droits réservés</p>
+        <div style="margin-top: 10px;">
+            <a href="https://github.com/CHRISTOPHEHASCOET" target="_blank">GitHub</a>
+            <a href="#" target="_blank">LinkedIn</a>
+        </div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Animation de la ligne rouge
+        gsap.to("#progress", {
+            height: "100%",
+            scrollTrigger: {
+                trigger: "main",
+                start: "top 20%",
+                end: "bottom 80%",
+                scrub: 1
+            }
+        });
+
+        // Animation de l'avion (corrigée)
+        let lastScroll = 0;
+        window.addEventListener('scroll', function() {
+            const currentScroll = window.scrollY;
+            const plane = document.getElementById("plane");
+
+            if (currentScroll > lastScroll) {
+                // Scroll vers le bas → avion pointe vers le haut
+                plane.style.transform = "translate(-50%, -50%) rotate(0deg)";
+            } else {
+                // Scroll vers le haut → avion pointe vers le bas
+                plane.style.transform = "translate(-50%, -50%) rotate(180deg)";
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>

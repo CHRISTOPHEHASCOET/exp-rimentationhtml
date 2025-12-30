@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tableau de Missions</title>
+<!-- Police condensée type "Aéroport" -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- GSAP pour l'animation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<style>
+  :root {
+    /* --- TES COULEURS --- */
+    --bg-body: #05060a;          /* Fond de la page (presque noir pour le contraste) */
+    --board-bg: #020308;         /* Fond du cadre */
+    --board-border: #1e293b;     /* Bordure du cadre */
+    
+    /* Couleurs des Tuiles */
+    --tile-bg: #0A0E27;          /* Ton Bleu Nuit */
+    --tile-text: #ffffff;        /* Ton Blanc */
+    --tile-accent: #8B1E3F;      /* Ton Rouge/Rubis pour les status */
+    
+    /* Dimensions */
+    --tile-w: 22px;  /* Largeur un peu réduite pour que ça rentre bien */
+    --tile-h: 36px;
+    --gap-char: 2px; /* Espace entre les lettres d'un même mot */
+    
+    /* ESPACEMENT ENTRE LES COLONNES (La correction clé) */
+    --col-gap: 5px; 
+    
+    /* Nombres de cases */
+    --vol-slots: 6;
+    --dest-slots: 22;
+    --emb-slots: 5;
+    --gate-slots: 3;
+    --obs-slots: 12;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    height: 100vh;
+    background: var(--bg-body);
+    font-family: 'Oswald', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tile-text);
+    overflow-x: hidden;
+  }
+
+  .board-wrapper {
+    width: 100%;
+    max-width: 1250px; /* Un peu plus large pour l'espacement */
+    padding: 10px;
+  }
+
+  .board {
+    background: var(--board-bg);
+    border: 6px solid var(--board-border);
+    border-radius: 10px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+    display: flex;
+    flex-direction: column;
+    padding: 10px; /* Marge intérieure */
+  }
+
+  /* --- GRILLE & ESPACEMENT --- */
+  /* On utilise Flexbox avec un 'gap' pour séparer les colonnes proprement */
+  .row, .header-row {
+    display: flex;
+    align-items: center;
+    gap: var(--col-gap); /* C'est ICI que se fait la séparation entre Vol, Dest, etc. */
+    padding: 8px 5px;
+  }
+  
+  .row {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  /* Largeurs fixes pour garantir l'alignement Titre <-> Contenu */
+  /* On calcule approximativement : (nb_slots * largeur_tuile) */
+  .c-vol  { width: 150px; flex-shrink: 0; }
+  .c-dest { width: 530px; flex-shrink: 0; } /* Large pour les 22 lettres */
+  .c-emb  { width: 130px; flex-shrink: 0; }
+  .c-gate { width: 80px;  flex-shrink: 0; }
+  .c-obs  { flex: 1; text-align: right; }   /* Prend le reste de la place */
+
+  /* Styles des Titres */
+  .header-row {
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+    border-bottom: 2px solid var(--tile-accent); /* Ligne rouge sous les titres */
+  }
+  .col-head {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--tile-accent); /* Titres en rouge */
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  /* Le conteneur des lettres */
+  .split-word {
+    display: flex;
+    gap: var(--gap-char);
+  }
+
+  /* --- DESIGN DE LA TUILE --- */
+  .flap {
+    position: relative;
+    width: var(--tile-w);
+    height: var(--tile-h);
+    background-color: var(--tile-bg);
+    border-radius: 2px;
+    color: var(--tile-text);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: var(--tile-h);
+    text-align: center;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.7); /* Ombre intérieure pour profondeur */
+    perspective: 500px;
+  }
+
+  /* Couleur spécifique pour la colonne Observations */
+  .c-obs .flap { 
+    color: var(--tile-accent);
+    text-shadow: 0 0 5px rgba(139, 30, 63, 0.4); /* Petit effet néon sur le rouge */
+  }
+
+  /* Effet "Coupe" et "Reflet" */
+  .flap::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    /* Dégradé brillant en haut */
+    background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.0) 100%);
+    border-bottom: 1px solid rgba(0,0,0,0.8); /* La ligne noire au milieu */
+    z-index: 2;
+  }
+
+  .char { display: block; }
+
+  /* --- RESPONSIVE --- */
+  /* Sur mobile, on cache les colonnes moins importantes et on empile */
+  @media (max-width: 1100px) {
+    .board-wrapper { overflow-x: auto; } /* Scroll horizontal si trop petit */
+    .board { min-width: 1000px; } /* Force la largeur pour garder le look aéroport */
+  }
+</style>
+</head>
+<body>
+
+<div class="board-wrapper">
+  <div class="board">
+    
+    <!-- En-têtes -->
+    <div class="header-row">
+      <div class="col-head c-vol">VOL</div>
+      <div class="col-head c-dest">DESTINATION</div>
+      <div class="col-head c-emb">HEURE</div>
+      <div class="col-head c-gate">PORTE</div>
+      <div class="col-head c-obs">OBSERVATIONS</div>
+    </div>
+
+    <!-- Contenu généré par JS -->
+    <div id="board-content"></div>
+
+  </div>
+</div>
+
+<script>
+/* DONNÉES (Tes missions) */
+const entries = [
+  {vol:"CKW01", dest:"COOK'N WAY", time:"09:00", gate:"A4", stat:"TERMINE"},
+  {vol:"CAMM02", dest:"CAMI COURSES EXPRESS", time:"10:10", gate:"B2", stat:"LIVRE"},
+  {vol:"FKMM03", dest:"MOBILITE INCLUSIVE", time:"12:20", gate:"C3", stat:"VALIDE"},
+  {vol:"HDRR10", dest:"CHEF DE PROJET AGILE", time:"06:30", gate:"D1", stat:"ACTIF"},
+  {vol:"DEVV21", dest:"DEVELOPPEMENT WEB", time:"16:40", gate:"A1", stat:"OPERATIONNEL"},
+  {vol:"SEOO88", dest:"SEO / ACCESSIBILITE", time:"02:50", gate:"B4", stat:"100%"},
+  {vol:"JSS108", dest:"JAVASCRIPT", time:"12:00", gate:"C2", stat:"EN COURS"},
+  {vol:"APII42", dest:"BACKEND / API", time:"22:10", gate:"D3", stat:"DEPLOYE"},
+  {vol:"404ERR", dest:"DEBUGGING SYSTEM", time:"--:--", gate:"X0", stat:"RESOLU"}
+];
+
+/* Config Nombre de cases */
+const SLOTS = {
+  vol: 6,
+  dest: 22, 
+  time: 5,
+  gate: 3,
+  stat: 12
+};
+
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:/-' ";
+
+function createWord(text, count, cssClass) {
+  let html = `<div class="split-word ${cssClass}">`;
+  const safeText = (text || "").toUpperCase();
+  
+  for (let i = 0; i < count; i++) {
+    const char = safeText[i] || " "; 
+    html += `<div class="flap" data-char="${char}"><span class="char"> </span></div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+const boardEl = document.getElementById('board-content');
+
+entries.forEach(item => {
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.innerHTML = `
+    ${createWord(item.vol, SLOTS.vol, 'c-vol')}
+    ${createWord(item.dest, SLOTS.dest, 'c-dest')}
+    ${createWord(item.time, SLOTS.time, 'c-emb')}
+    ${createWord(item.gate, SLOTS.gate, 'c-gate')}
+    ${createWord(item.stat, SLOTS.stat, 'c-obs')}
+  `;
+  boardEl.appendChild(row);
+});
+
+/* ANIMATION */
+window.onload = () => {
+  const allFlaps = document.querySelectorAll('.flap');
+  
+  allFlaps.forEach((flap) => {
+    const target = flap.getAttribute('data-char');
+    const span = flap.querySelector('.char');
+    
+    // Délai aléatoire pour effet "bruit de volet"
+    const delay = Math.random() * 0.8; 
+    
+    setTimeout(() => {
+      let cycles = 0;
+      const maxCycles = 8 + Math.floor(Math.random() * 10);
+      
+      const interval = setInterval(() => {
+        span.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+        cycles++;
+        
+        if (cycles >= maxCycles) {
+          clearInterval(interval);
+          span.textContent = target;
+          // Petit flash de couleur quand ça se termine
+          flap.style.borderColor = "rgba(255,255,255,0.1)";
+        }
+      }, 60); // Vitesse de défilement
+    }, delay * 1000);
+  });
+};
+</script>
+</body>
+</html>

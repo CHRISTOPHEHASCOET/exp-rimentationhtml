@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Test Nav + Footer – Portfolio Aéroportuaire</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Reset / normalisation -->
+    <link rel="stylesheet" href="css/normalize.css" />
+    <!-- Styles globaux : couleurs, base, nav, footer -->
+    <link rel="stylesheet" href="css/global.css" />
+
+    <style>
+        /* normalize.css temporaire - tu pourras le remplacer par le vrai plus tard */
+        html {
+            line-height: 1.15;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        /* ========= PALETTE & VARIABLES ========= */
+        :root {
+            /* Fond global & surfaces */
+            --background: #0c1235;
+            /* un cran plus clair */
+            /* un peu plus clair que #05091F */
+            --primary: #0A0E27;
+            /* fond principal sections */
+            --secondary: #1A1F3A;
+            /* header cockpit, zones secondaires */
+            --surface: #151C3B;
+            /* panneaux / cartes */
+            --surface-alt: #252B4B;
+            /* blocs importants, portes, bandeaux */
+            --surface-border: #343C6A;
+            /* bordures des panneaux */
+
+            /* Accents & états */
+            --accent: #FF3B3B;
+            /* rouge cockpit : alertes, CTA */
+            --accent-soft: #8B1E3F;
+            /* rouge assourdi */
+            --accent-bright: #00D9FF;
+            /* cyan radar : éléments actifs / focus */
+            --warning: #FACC15;
+            /* états "embarquement / warning" */
+
+            /* Texte */
+            --text: #E0E6ED;
+            /* texte principal */
+            --text-muted: #ADB5BD;
+            /* texte secondaire */
+
+            /* Effets */
+            --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
+
+            /* Dégradés spécifiques nav/footer */
+            --nav-glass: linear-gradient(145deg,
+                    #252b4b 0%,
+                    #1a1f3a 35%,
+                    #101633 100%);
+            --nav-top-glow: linear-gradient(to bottom,
+                    rgba(0, 217, 255, 0.35),
+                    transparent);
+            --footer-glass: linear-gradient(160deg,
+                    #151c3b 0%,
+                    #0b1026 45%,
+                    #070b21 100%);
+
+            /* Surfaces de contenu (panneaux principaux du main) */
+            --content-bg: #1b244a;
+            /* panneaux "tableau", plus clairs */
+            --content-bg-alt: #232e5d;
+            /* variantes pour sections 
+
+            /* Typographies */
+            --font-display: "Oswald", sans-serif;
+            --font-sans: "Inter", sans-serif;
+            --font-mono: "JetBrains Mono", monospace;
+
+            /* Mise en page */
+            --container-width: 1400px;
+        }
+
+        /* ========= BASE GLOBALE ========= */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        /* body {
+            margin: 0;
+            background: radial-gradient(circle at top, #0f1534 0%, var(--background) 55%);
+            color: var(--text);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+        } */
+
+        body {
+            margin: 0;
+            background: radial-gradient(circle at top, #171f4a 0%, var(--background) 55%);
+            color: var(--text);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        /* Partie test pour voir les contrastes */
+        .test-main {
+            min-height: 60vh;
+            padding: 2.5rem 4vw 3.5rem;
+        }
+
+        /* .test-section {
+            max-width: 900px;
+            margin: 2.5rem auto;
+            background: radial-gradient(circle at top left, #1b2347 0%, var(--primary) 55%);
+            border-radius: 14px;
+            padding: 2.25rem 2.5rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(52, 60, 106, 0.9);
+        } */
+        .test-section {
+            max-width: 900px;
+            margin: 2.5rem auto;
+            background: linear-gradient(135deg,
+                    var(--content-bg) 0%,
+                    #151c3b 55%);
+            border-radius: 14px;
+            padding: 2.25rem 2.5rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .test-section h1 {
+            font-family: var(--font-display);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--accent-bright);
+        }
+
+        .test-section p {
+            color: var(--text-muted);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+        }
+
+        /* ========= HEADER ========= */
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Bandeau cockpit (instruments) */
+        .cockpit-bar {
+            background: linear-gradient(90deg,
+                    #151c3b 0%,
+                    #20264a 40%,
+                    #151c3b 100%);
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.55rem 4vw;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cockpit-bar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--nav-top-glow);
+            pointer-events: none;
+        }
+
+        .cockpit-left,
+        .cockpit-center,
+        .cockpit-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .cockpit-center span {
+            position: relative;
+            padding-right: 0.75rem;
+        }
+
+        .cockpit-center span::after {
+            content: "·";
+            position: absolute;
+            right: 0.2rem;
+            color: rgba(173, 181, 189, 0.5);
+        }
+
+        .cockpit-center span:last-child::after {
+            content: "";
+        }
+
+        .pilot-badge {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 20%, #ffe3e3 0%, #ff3b3b 45%, #8b1e3f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            box-shadow:
+                0 0 0 2px rgba(255, 59, 59, 0.6),
+                0 0 18px rgba(255, 59, 59, 0.7);
+        }
+
+        .pilot-role {
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+        }
+
+        .status-label {
+            color: var(--text-muted);
+        }
+
+        .status-value {
+            color: var(--accent-bright);
+            font-weight: 600;
+        }
+
+        /* ========= NAV "TERMINAL" ========= */
+
+        /* ========= NAV "TERMINAL" ========= */
+
+        .terminal-nav {
+            background: var(--nav-glass);
+            border-bottom: 2px solid rgba(255, 59, 59, 0.75);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* petite lueur haut d’écran */
+        .terminal-nav::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(to bottom,
+                    rgba(0, 217, 255, 0.28),
+                    transparent);
+            pointer-events: none;
+        }
+
+        /* label type panneau d’aéroport : TERMINAL 3 · DEPARTURES */
+        .terminal-nav::after {
+            content: "TERMINAL 3 \00B7  DIGITAL DEPARTURES";
+            position: absolute;
+            left: 4vw;
+            top: 4px;
+            font-size: 0.6rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(250, 204, 21, 0.9);
+            /* var(--warning) */
+            font-family: var(--font-mono);
+            opacity: 0.9;
+        }
+
+        .terminal-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 1.75rem;
+            padding: 1.1rem 4vw 0.8rem;
+            /* plus d'espace en haut pour le label */
+            margin: 0;
+        }
+
+        /* Chaque item = petit "panneau de gate" */
+        .terminal-nav li {
+            position: relative;
+        }
+
+        .terminal-nav a {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.18rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.78rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            position: relative;
+            padding: 0.5rem 1rem 0.45rem;
+            border-radius: 7px;
+            background: radial-gradient(circle at top, #343d68 0%, rgba(21, 28, 59, 0.96) 55%, rgba(10, 14, 39, 0.96) 100%);
+            box-shadow:
+                0 10px 22px rgba(0, 0, 0, 0.7),
+                inset 0 0 0 1px rgba(52, 60, 106, 0.95);
+            border-top: 1px solid rgba(230, 238, 248, 0.25);
+            transition:
+                transform 0.18s ease-out,
+                box-shadow 0.18s ease-out,
+                background 0.18s ease-out,
+                color 0.18s ease-out;
+            font-family: var(--font-sans);
+        }
+
+        /* le petit label de gate au-dessus, venant du data-gate */
+        /* .terminal-nav a::before {
+            content: attr(data-gate);
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            color: rgba(250, 204, 21, 0.95);
+            text-transform: uppercase;
+            opacity: 0.95;
+        } */
+        .terminal-nav a::before {
+            content: attr(data-gate);
+            display: inline-block;
+            align-self: flex-start;
+            padding: 0.08rem 0.45rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.95);
+            /* capsule sombre type LCD */
+            color: var(--text-muted);
+            /* gris clair */
+            font-size: 0.55rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            opacity: 0.95;
+            box-shadow:
+                0 0 0 1px rgba(148, 163, 184, 0.5),
+                0 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Effet hover : panneau qui "s'allume" */
+        .terminal-nav a:hover {
+            color: var(--text);
+            background: radial-gradient(circle at top, #3e4b78 0%, #222a52 55%, #101633 100%);
+            box-shadow:
+                0 16px 30px rgba(0, 0, 0, 0.9),
+                0 0 18px rgba(0, 217, 255, 0.55);
+            transform: translateY(-1px);
+        }
+
+        /* barre lumineuse en bas du panneau */
+        .terminal-nav a::after {
+            content: "";
+            position: absolute;
+            left: 12%;
+            right: 12%;
+            bottom: 3px;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    var(--accent-bright),
+                    transparent);
+            opacity: 0;
+            transform: scaleX(0.4);
+            transform-origin: center;
+            transition:
+                opacity 0.18s ease-out,
+                transform 0.18s ease-out;
+        }
+
+        .terminal-nav a:hover::after {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        /* avion (on l’animera plus tard au survol) */
+        /* .nav-airplane {
+            position: absolute;
+            bottom: -9px;
+            left: 4vw;
+            color: var(--accent-bright);
+            font-size: 0.9rem;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(0, 217, 255, 0.7);
+        } */
+        .nav-airplane {
+            position: absolute;
+            bottom: -9px;
+            left: 4vw;
+            color: var(--accent-bright);
+            font-size: 0.9rem;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(0, 217, 255, 0.7);
+            opacity: 0;
+            /* on masque pour l’instant */
+        }
+
+        /* ========== LAYOUT ACCUEIL / TABLEAU DES DÉPARTS ========== */
+
+        .departures-main {
+            padding: 2.2rem 4vw 3.5rem;
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        /* ---------- HERO HAUT ---------- */
+
+        .departures-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-left {
+            max-width: 60%;
+        }
+
+        .hero-breadcrumb {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            margin: 0 0 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-width: 32rem;
+        }
+
+        .hero-right {
+            display: flex;
+            align-items: flex-end;
+            gap: 1.5rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .meta-block {
+            background: rgba(10, 14, 39, 0.9);
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid rgba(52, 60, 106, 0.9);
+        }
+
+        .meta-label {
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--text-muted);
+        }
+
+        .meta-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .hero-plane {
+            width: 60px;
+            height: 60px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #e0f7ff 0%, #00d9ff 40%, #0a0e27 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 0 2px rgba(0, 217, 255, 0.7),
+                0 0 26px rgba(0, 217, 255, 0.85);
+        }
+
+        .hero-plane-icon {
+            font-size: 1.3rem;
+            transform: translateX(2px);
+        }
+
+        /* ---------- TABLEAU DES DÉPARTS ---------- */
+
+        .departures-board {
+            margin-top: 1rem;
+        }
+
+        .board-frame {
+            background: linear-gradient(145deg,
+                    var(--content-bg, #1b244a) 0%,
+                    #151c3b 50%,
+                    #0b1026 100%);
+            border-radius: 16px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(52, 60, 106, 0.9);
+            overflow: hidden;
+        }
+
+        /* Barre supérieure du panneau */
+        .board-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.65rem 1.5rem;
+            background: linear-gradient(90deg,
+                    #151c3b 0%,
+                    #20264a 40%,
+                    #151c3b 100%);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.5);
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .board-top-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .board-label {
+            font-family: var(--font-display);
+        }
+
+        .board-terminal {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .board-top-right {
+            display: flex;
+            gap: 0.35rem;
+            align-items: baseline;
+        }
+
+        .board-status-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .board-status-value {
+            font-size: 0.75rem;
+            color: var(--accent-bright);
+            font-weight: 600;
+        }
+
+        /* Corps du tableau */
+        /* ---------- CORPS DU TABLEAU ---------- */
+
+        .board-inner {
+            padding: 0;
+            /* on colle le tableau aux bords intérieurs */
+        }
+
+        /* TABLE = panneau de départ */
+        .board-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 0.8rem;
+            background: #050a1f;
+            /* écran sombre */
+        }
+
+        /* En-têtes colonnes */
+        .board-table thead {
+            background: #0b132f;
+            border-bottom: 2px solid #111827;
+        }
+
+        .board-table th,
+        .board-table td {
+            padding: 0.45rem 0.35rem;
+            border-right: 1px solid #111827;
+            border-bottom: 1px solid #111827;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-family: var(--font-mono);
+        }
+
+        /* Dernière colonne sans bord droit épais */
+        .board-table th:last-child,
+        .board-table td:last-child {
+            border-right: none;
+        }
+
+        .board-table th {
+            font-size: 0.7rem;
+            color: #9ca3c7;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        /* Lignes : alternance très légère, style tableau dense */
+        .board-table tbody tr {
+            background: #060d26;
+            transition: background 0.15s ease-out, transform 0.15s ease-out;
+            cursor: pointer;
+        }
+
+        .board-table tbody tr:nth-child(even) {
+            background: #081131;
+        }
+
+        .board-table tbody tr:hover {
+            background: rgba(0, 217, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Colonnes : largeur & alignements */
+        .board-table td:nth-child(1) {
+            /* VOL */
+            width: 12%;
+            text-align: left;
+        }
+
+        .board-table td:nth-child(2) {
+            /* DESTINATION */
+            width: 26%;
+            text-align: left;
+        }
+
+        .board-table td:nth-child(3) {
+            /* TYPE */
+            width: 13%;
+            text-align: left;
+        }
+
+        .board-table td:nth-child(4) {
+            /* STATUT */
+            width: 15%;
+            text-align: center;
+        }
+
+        .board-table td:nth-child(5) {
+            /* PORTE */
+            width: 10%;
+            text-align: center;
+        }
+
+        .board-table td:nth-child(6) {
+            /* OBSERVATIONS */
+            width: 24%;
+            text-align: center;
+        }
+
+        /* STATUT texte simple (pas de pastille) */
+        .status-text {
+            font-size: 0.75rem;
+        }
+
+        /* Couleurs sobres comme un vrai tableau */
+        .status-en-vol {
+            color: #4ade80;
+            /* vert doux */
+        }
+
+        .status-en-reprise {
+            color: #e5e7eb;
+            /* gris clair neutre */
+        }
+
+        .status-en-preparation {
+            color: #fbbf24;
+            /* ambre, mais moins violent qu’un jaune fluo */
+        }
+
+        /* PORTE : petite étiquette mais intégrée au look tableau */
+        .gate-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.3rem;
+            padding: 0.12rem 0.4rem;
+            border-radius: 3px;
+            background: rgba(10, 14, 39, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+
+        /* OBSERVATIONS : texte simple mais encadré façon tag */
+        .obs-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.12rem 0.6rem;
+            border-radius: 999px;
+            background: rgba(10, 14, 39, 0.95);
+            border: 1px solid rgba(96, 165, 250, 0.7);
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Pied du panneau */
+
+        .board-footer {
+            padding: 0.5rem 1.5rem 0.7rem;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(52, 60, 106, 0.8);
+        }
+
+        /* Accessibilité visuelle pour lecteurs d’écran */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ========= FOOTER ========= */
+
+        .site-footer {
+            margin-top: 4rem;
+            padding-top: 1.5rem;
+            background: transparent;
+            font-size: 0.83rem;
+        }
+
+        /* panneau "ground control" */
+        .footer-inner {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 1.5rem 4vw 1.6rem;
+            background: linear-gradient(145deg,
+                    #151c3b 0%,
+                    #101633 40%,
+                    #050b23 100%);
+            border-radius: 14px 14px 0 0;
+            border-top: 2px solid rgba(0, 217, 255, 0.55);
+            /* cyan comme la nav */
+            border-left: 1px solid rgba(52, 60, 106, 0.9);
+            border-right: 1px solid rgba(52, 60, 106, 0.9);
+            box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.85);
+            display: flex;
+            gap: 3rem;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* fine ligne lumineuse type "scan" */
+        .footer-inner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 6%;
+            right: 6%;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 217, 255, 0.65),
+                    transparent);
+            opacity: 0.9;
+        }
+
+        /* petit repère rouge vertical façon balise sol */
+        .footer-inner::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 24%;
+            bottom: 18%;
+            width: 2px;
+            background: linear-gradient(to bottom,
+                    rgba(255, 59, 59, 0.85),
+                    rgba(255, 59, 59, 0.1));
+            opacity: 0.7;
+        }
+
+        .footer-col {
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-col h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+            color: var(--accent-bright);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-mono);
+        }
+
+        .footer-col p {
+            color: var(--text-muted);
+            margin: 0.2rem 0;
+            font-family: var(--font-sans);
+        }
+
+        .footer-col a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(224, 230, 237, 0.2);
+        }
+
+        .footer-col a:hover {
+            color: var(--accent-bright);
+            border-bottom-color: rgba(0, 217, 255, 0.7);
+        }
+
+        /* Bandeau "fin de piste" – rouge atténué, plus réaliste */
+        .runway-strip {
+            text-align: center;
+            padding: 0.55rem 1rem 0.65rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: #f9fafb;
+            background: linear-gradient(90deg,
+                    #2b0d17 0%,
+                    #511426 35%,
+                    #2b0d17 100%);
+            border-top: 1px solid rgba(248, 202, 69, 0.45);
+            /* rappel jaune piste */
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ligne centrale en pointillés façon marquage de piste */
+        .runway-strip::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            border-top: 1px dashed rgba(248, 202, 69, 0.9);
+            /* jaune piste */
+            transform: translateY(-50%);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER GLOBAL -->
+    <header class="site-header">
+        <!-- Bandeau cockpit -->
+        <div class="cockpit-bar">
+            <div class="cockpit-left">
+                <div class="pilot-badge">CH</div>
+                <span class="pilot-role">CMD · Web & Mobile</span>
+            </div>
+            <div class="cockpit-center">
+                <span>VOL CH-2025</span>
+                <span>SECTEUR FR–EU</span>
+                <span>ALT FL350</span>
+                <span>SPD 480KT</span>
+                <span>AP ENGAGED</span>
+            </div>
+            <div class="cockpit-right">
+                <span class="status-label">STATUT :</span>
+                <span class="status-value">OPÉRATIONNEL</span>
+            </div>
+        </div>
+
+        <!-- Bandeau navigation terminal -->
+        <!-- Bandeau navigation terminal -->
+        <nav class="terminal-nav" aria-label="Navigation principale">
+            <ul>
+                <li><a href="index.html" data-gate="T1 · GATE D01">HALL DES DÉPARTS</a></li>
+                <li><a href="passeport.html" data-gate="T1 · GATE P02">PASSEPORT DU PILOTE</a></li>
+                <li><a href="embarquement.html" data-gate="T2 · GATE E12">ZONE D’EMBARQUEMENT</a></li>
+                <li><a href="plandevol.html" data-gate="T2 · GATE V03">PLAN DE VOL</a></li>
+                <li><a href="profile.html" data-gate="T3 · GATE C05">PROFIL / COCKPIT</a></li>
+                <li><a href="contact.html" data-gate="T3 · GATE CTL">TOUR DE CONTRÔLE</a></li>
+            </ul>
+            <div class="nav-airplane" aria-hidden="true">✈</div>
+        </nav>
+    </header>
+
+    <main class="departures-main">
+        <!-- Bandeau haut : titre + avion + info heure -->
+        <section class="departures-hero">
+            <div class="hero-left">
+                <p class="hero-breadcrumb">T1 · HALL DES DÉPARTS</p>
+                <h1 class="hero-title">Tableau des départs</h1>
+                <p class="hero-subtitle">
+                    Sélection de vols : langages, projets et plans de vol du pilote.
+                </p>
+            </div>
+            <div class="hero-right">
+                <div class="hero-meta">
+                    <div class="meta-block">
+                        <span class="meta-label">Heure locale</span>
+                        <span id="hero-time" class="meta-value">--:--</span>
+                    </div>
+                    <div class="meta-block">
+                        <span class="meta-label">Vol pilote</span>
+                        <span class="meta-value">CH‑2025</span>
+                    </div>
+                </div>
+                <div class="hero-plane" aria-hidden="true">
+                    <span class="hero-plane-icon">✈</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tableau des départs -->
+        <section class="departures-board" aria-labelledby="departures-title">
+            <h2 id="departures-title" class="sr-only">
+                Tableau des départs – compétences, projets et études de cas
+            </h2>
+
+            <div class="board-frame">
+                <header class="board-top-bar">
+                    <div class="board-top-left">
+                        <span class="board-label">DEPARTURES</span>
+                        <span class="board-terminal">Terminal 3 · Secteur numérique</span>
+                    </div>
+                    <div class="board-top-right">
+                        <span class="board-status-label">Statut système :</span>
+                        <span class="board-status-value">OPÉRATIONNEL</span>
+                    </div>
+                </header>
+
+                <div class="board-inner" role="region" aria-label="Tableau des départs">
+                    <table class="board-table">
+                        <caption class="sr-only">
+                            Tableau des départs listant les langages, projets et études de cas avec leur type, statut
+                            d’embarquement, porte et correspondance avec les sections du site.
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">VOL</th>
+                                <th scope="col">DESTINATION</th>
+                                <th scope="col">TYPE</th>
+                                <th scope="col">STATUT</th>
+                                <th scope="col">PORTE</th>
+                                <th scope="col">OBSERVATIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="board-body">
+                            <!-- Lignes générées plus tard en JS (split-flap), pour l’instant on peut en mettre une en dur si besoin -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <footer class="board-footer">
+                    <span>Les lignes sont cliquables · Sélectionnez un vol pour embarquer.</span>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER GLOBAL -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h3>GROUND_CONTROL</h3>
+                <p>Email : flight-control@ch-2025.dev</p>
+                <p>Base : Lorient, France</p>
+            </div>
+            <div class="footer-col">
+                <h3>NAV_CHANNELS</h3>
+                <p><a href="#">GitHub</a></p>
+                <p><a href="#">LinkedIn</a></p>
+            </div>
+            <div class="footer-col">
+                <h3>FLIGHT_DOCS</h3>
+                <p><a href="#">CV · PDF</a></p>
+                <p>Portfolio v2025 · Thème aéroportuaire</p>
+            </div>
+        </div>
+        <div class="runway-strip">
+            STOP // END OF RUNWAY // T3 · ZONE COCKPIT
+        </div>
+    </footer>
+    <script>
+        const flights = [
+            {
+                vol: "CH-HTML",
+                destination: "HTML5",
+                type: "Langage",
+                embarquement: "EN REPRISE",
+                porte: "A01",
+                observation: "Profil / Cockpit",
+                target: "profile.html#skills-langages"
+            },
+            {
+                vol: "CH-CSS",
+                destination: "CSS moderne",
+                type: "Langage",
+                embarquement: "EN REPRISE",
+                porte: "A02",
+                observation: "Profil / Cockpit",
+                target: "profile.html#skills-langages"
+            },
+            {
+                vol: "CH-BK01",
+                destination: "Booki",
+                type: "Projet",
+                embarquement: "EN VOL",
+                porte: "E12",
+                observation: "Zone d’embarquement",
+                target: "embarquement.html#booki"
+            },
+            {
+                vol: "CH-CASE1",
+                destination: "Refonte site X",
+                type: "Étude de cas",
+                embarquement: "EN PRÉPARATION",
+                porte: "V03",
+                observation: "Plan de vol",
+                target: "plandevol.html#case1"
+            }
+            // etc.
+        ];
+        document.addEventListener("DOMContentLoaded", () => {
+            const tbody = document.getElementById("board-body");
+            const heroTime = document.getElementById("hero-time");
+
+            // 1. Données des vols (à adapter avec tes vrais projets)
+            const flights = [
+                // LANGAGES / TECH (plutôt EN REPRISE ou EN PRÉPARATION)
+                {
+                    vol: "CH-001",
+                    destination: "HTML5",
+                    type: "Langage",
+                    statut: "EN REPRISE",
+                    porte: "A01",
+                    observation: "Profil / cockpit",
+                    target: "profile.html#skills-langages"
+                },
+                {
+                    vol: "CH-002",
+                    destination: "CSS / SCSS",
+                    type: "Langage",
+                    statut: "EN REPRISE",
+                    porte: "A02",
+                    observation: "Profil / cockpit",
+                    target: "profile.html#skills-langages"
+                },
+                {
+                    vol: "CH-003",
+                    destination: "JavaScript ES6",
+                    type: "Langage",
+                    statut: "EN REPRISE",
+                    porte: "A03",
+                    observation: "Profil / cockpit",
+                    target: "profile.html#skills-langages"
+                },
+                {
+                    vol: "CH-004",
+                    destination: "PHP / Laravel",
+                    type: "Langage",
+                    statut: "EN PRÉPARATION",
+                    porte: "A04",
+                    observation: "Profil / cockpit",
+                    target: "profile.html#skills-back"
+                },
+
+                // PROJETS (EN VOL – pratico-pratique, cliquable)
+                {
+                    vol: "CH-BK01",
+                    destination: "Booki",
+                    type: "Projet",
+                    statut: "EN VOL",
+                    porte: "E12",
+                    observation: "Zone d’embarquement",
+                    target: "embarquement.html#booki"
+                },
+                {
+                    vol: "CH-PF25",
+                    destination: "Portfolio 2025",
+                    type: "Projet",
+                    statut: "EN VOL",
+                    porte: "E15",
+                    observation: "Zone d’embarquement",
+                    target: "embarquement.html#portfolio-2025"
+                },
+
+                // ÉTUDES DE CAS (cahiers des charges)
+                {
+                    vol: "CH-CAS1",
+                    destination: "Refonte site vitrine",
+                    type: "Étude de cas",
+                    statut: "EN PRÉPARATION",
+                    porte: "V03",
+                    observation: "Plan de vol",
+                    target: "plandevol.html#cas-1"
+                },
+                {
+                    vol: "CH-CAS2",
+                    destination: "App mobile de réservation",
+                    type: "Étude de cas",
+                    statut: "EN PRÉPARATION",
+                    porte: "V05",
+                    observation: "Plan de vol",
+                    target: "plandevol.html#cas-2"
+                }
+            ];
+
+            // 2. Génération des lignes
+            // STATUT
+            const tdStatut = document.createElement("td");
+            const spanStatus = document.createElement("span");
+            spanStatus.classList.add("status-text");
+
+            switch (flight.statut) {
+                case "EN VOL":
+                    spanStatus.classList.add("status-en-vol");
+                    break;
+                case "EN REPRISE":
+                    spanStatus.classList.add("status-en-reprise");
+                    break;
+                case "EN PRÉPARATION":
+                    spanStatus.classList.add("status-en-preparation");
+                    break;
+            }
+
+            spanStatus.textContent = flight.statut;
+            tdStatut.appendChild(spanStatus);
+            tr.appendChild(tdStatut);
+
+            function createRow(flight) {
+                const tr = document.createElement("tr");
+
+                // Pour le clic redirection
+                if (flight.target) {
+                    tr.dataset.target = flight.target;
+                    tr.setAttribute("role", "button");
+                    tr.setAttribute("tabindex", "0");
+                    tr.setAttribute("aria-label", `${flight.destination} – ouvrir la page associée`);
+                }
+
+                // VOL
+                const tdVol = document.createElement("td");
+                tdVol.textContent = flight.vol;
+                tr.appendChild(tdVol);
+
+                // DESTINATION
+                const tdDest = document.createElement("td");
+                tdDest.textContent = flight.destination;
+                tr.appendChild(tdDest);
+
+                // TYPE
+                const tdType = document.createElement("td");
+                tdType.textContent = flight.type;
+                tr.appendChild(tdType);
+
+                // STATUT
+                const tdStatut = document.createElement("td");
+                tdStatut.appendChild(createStatusChip(flight.statut));
+                tr.appendChild(tdStatut);
+
+                // PORTE
+                const tdPorte = document.createElement("td");
+                const gateSpan = document.createElement("span");
+                gateSpan.classList.add("gate-tag");
+                gateSpan.textContent = flight.porte;
+                tdPorte.appendChild(gateSpan);
+                tr.appendChild(tdPorte);
+
+                // OBSERVATIONS (lien vers la nav)
+                const tdObs = document.createElement("td");
+                const obsSpan = document.createElement("span");
+                obsSpan.classList.add("obs-tag");
+                obsSpan.textContent = flight.observation;
+                tdObs.appendChild(obsSpan);
+                tr.appendChild(tdObs);
+
+                return tr;
+            }
+
+            flights.forEach(flight => {
+                tbody.appendChild(createRow(flight));
+            });
+
+            // 3. Clic sur une ligne = redirection
+            tbody.addEventListener("click", (e) => {
+                const tr = e.target.closest("tr");
+                if (!tr || !tr.dataset.target) return;
+                window.location.href = tr.dataset.target;
+            });
+
+            // gestion clavier (Entrée / Espace)
+            tbody.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    const tr = e.target.closest("tr");
+                    if (!tr || !tr.dataset.target) return;
+                    e.preventDefault();
+                    window.location.href = tr.dataset.target;
+                }
+            });
+
+            // 4. Heure locale dans le hero
+            function updateTime() {
+                const now = new Date();
+                const options = { hour: "2-digit", minute: "2-digit" };
+                heroTime.textContent = now.toLocaleTimeString("fr-FR", options);
+            }
+
+            updateTime();
+            setInterval(updateTime, 30_000); // toutes les 30s, suffisant pour un tableau
+        });
+        const heroPlane = document.querySelector(".hero-plane");
+        if (heroPlane) {
+            heroPlane.addEventListener("click", () => {
+                document.querySelector(".departures-board")?.scrollIntoView({ behavior: "smooth" });
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

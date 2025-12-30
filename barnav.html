@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Christophe Hascoët — Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0A0E27;
+            --primary-2: #0f1630;
+            --accent: #8B1E3F;
+            --accent-bright: #FF3B3B;
+            --text: #E6EEF8;
+            --text-dim: #9FA8B3;
+            --container-width: 1200px;
+            
+            --tile-w: 22px;
+            --tile-h: 36px;
+            --gap-char: 2px;
+            --col-gap: 5px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1001;
+            padding: 15px 20px;
+        }
+
+        .header-inner {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 39, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 59, 59, 0.3);
+            border-bottom: 3px solid var(--accent);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-inner::after {
+            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-bright), transparent);
+            animation: scan-line 6s linear infinite; opacity: 0.2;
+        }
+
+        @keyframes scan-line { 0% { left: -100%; } 100% { left: 100%; } }
+
+        /* LOGO : Photo à gauche */
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .logo img {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-bright);
+            object-fit: cover;
+        }
+
+        .logo-text-group { display: flex; flex-direction: column; }
+        .logo-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--text); line-height: 1; }
+        .flight-id { font-family: monospace; font-size: 0.6rem; color: var(--accent-bright); letter-spacing: 2px; margin-top: 4px; }
+
+        /* L'AVION QUI VA BOUGER */
+        .plane-animated {
+            position: absolute;
+            top: 0;
+            right: -25px;
+            color: var(--accent-bright);
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 0px var(--accent-bright));
+            pointer-events: none; /* L'avion ne bloque pas la souris */
+            display: inline-block;
+        }
+
+        /* NAVIGATION */
+        .nav-desktop { display: flex; gap: 15px; }
+        .nav-link {
+            color: var(--text-dim); text-decoration: none; padding: 10px 15px;
+            text-transform: uppercase; font-size: 0.9rem; font-family: 'Oswald', sans-serif;
+            letter-spacing: 1px; position: relative; transition: 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: "GATE " attr(data-gate);
+            position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+            font-family: monospace; font-size: 0.55rem; color: var(--accent-bright);
+            opacity: 0; transition: 0.3s ease;
+        }
+
+        .nav-link:hover::before, .nav-link.active::before { opacity: 1; top: -2px; }
+        .nav-link:hover, .nav-link.active { color: #fff; }
+
+        .nav-link::after {
+            content: ''; position: absolute; bottom: 0; left: 50%;
+            width: 0; height: 2px; background: var(--accent-bright);
+            transform: translateX(-50%); transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-bright);
+        }
+        .nav-link:hover::after, .nav-link.active::after { width: 80%; }
+
+        /* --- PORTES --- */
+        .doors-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            display: flex; pointer-events: none;
+        }
+        .door {
+            flex: 1; height: 100%;
+            background: linear-gradient(135deg, #080a10 0%, #121624 100%);
+            display: flex; align-items: center; position: relative;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+        .door.left { justify-content: flex-end; border-right: 1px solid #1e293b; }
+        .door.right { justify-content: flex-start; border-left: 1px solid #000; }
+        .handle {
+            width: 20px; height: 140px;
+            background: linear-gradient(to bottom, #ff3b3b, var(--accent));
+            border-radius: 10px; margin: 0 2px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 15px 0; align-items: center;
+        }
+        .dot { width: 8px; height: 8px; background-color: white; border-radius: 50%; }
+
+        /* --- TABLEAU --- */
+        main.container { flex: 1; display: flex; align-items: center; justify-content: center; padding-top: 120px; }
+        .board-wrapper { width: 100%; max-width: var(--container-width); padding: 10px; }
+        .board { background: #020308; border: 6px solid #1e293b; border-radius: 10px; padding: 20px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9); }
+        .header-row { display: flex; gap: var(--col-gap); padding-bottom: 15px; border-bottom: 2px solid var(--accent); margin-bottom: 15px; }
+        .col-head { font-family: 'Oswald'; font-size: 14px; letter-spacing: 2px; color: var(--accent); font-weight: 600; text-transform: uppercase; }
+        .row { display: flex; gap: var(--col-gap); padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+
+        .c-vol { width: 140px; } .c-dest { width: 500px; } .c-emb { width: 120px; } .c-gate { width: 80px; } .c-obs { flex: 1; text-align: right; }
+        .split-word { display: flex; gap: var(--gap-char); }
+        .flap { width: var(--tile-w); height: var(--tile-h); background-color: var(--primary); border-radius: 2px; color: #fff; font-family: 'Oswald'; font-size: 20px; text-align: center; line-height: var(--tile-h); position: relative; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7); }
+        .flap::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%); border-bottom: 1px solid rgba(0, 0, 0, 0.5); }
+        .c-obs .flap { color: var(--accent-bright); }
+
+        /* --- FOOTER --- */
+        .footer { background: var(--primary); border-top: 2px solid var(--accent); padding: 25px 0; color: var(--text-dim); text-align: center; }
+        .footer-inner { max-width: var(--container-width); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
+        .footer a { color: var(--text); text-decoration: none; margin: 0 10px; transition: 0.3s; }
+        .footer a:hover { color: var(--accent-bright); }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="doors-overlay">
+            <div class="door left"><div class="handle"><div class="dot"></div><div class="dot"></div></div></div>
+            <div class="door right"><div class="handle"><div class="dot"></div><div class="dot"></div></div></div>
+        </div>
+
+        <div class="header-inner">
+            <a href="accueil2.html" class="logo">
+                <img src="pilote christophehascoet3.png" alt="Christophe Hascoët">
+                <div class="logo-text-group">
+                    <span class="logo-title">FLIGHT</span>
+                    <span class="flight-id">ID: CH-2025</span>
+                </div>
+                <!-- L'avion est ici -->
+                <span class="plane-animated">✈</span>
+            </a>
+
+            <nav class="nav-desktop">
+                <a href="accueil2.html" class="nav-link" data-gate="01">Départs</a>
+                <a href="about3.html" class="nav-link" data-gate="02">Passeport</a>
+                <a href="projects1.html" class="nav-link active" data-gate="03">Embarquement</a>
+                <a href="case-studies.html" class="nav-link" data-gate="04">Plan de vol</a>
+                <a href="profile.html" class="nav-link" data-gate="05">Cockpit</a>
+                <a href="contact.html" class="nav-link" data-gate="06">Tour de Contrôle</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="board-wrapper">
+            <div class="board">
+                <div class="header-row">
+                    <div class="col-head c-vol">VOL</div>
+                    <div class="col-head c-dest">DESTINATION</div>
+                    <div class="col-head c-emb">HEURE</div>
+                    <div class="col-head c-gate">PORTE</div>
+                    <div class="col-head c-obs">OBSERVATIONS</div>
+                </div>
+                <div id="board-content"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>© 2025 Christophe Hascoët — Tous droits réservés</p>
+            <div>
+                <a href="https://github.com/CHRISTOPHEHASCOET" target="_blank">GitHub</a>
+                <a href="#" target="_blank">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const entries = [
+            { vol: "CH2025", dest: "PORTFOLIO DEVELOPPEUR", time: "09:00", gate: "A4", stat: "BOARDING" },
+            { vol: "APP42", dest: "APPLICATION BANCAIRE", time: "10:10", gate: "B2", stat: "EN COURS" },
+            { vol: "ECO03", dest: "SITE E-COMMERCE", time: "12:20", gate: "C3", stat: "A VENIR" },
+            { vol: "CKW01", dest: "COOK'N WAY", time: "14:40", gate: "D1", stat: "TERMINE" }
+        ];
+
+        const SLOTS = { vol: 6, dest: 22, time: 5, gate: 2, stat: 12 };
+        const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789: ";
+
+        function createWord(text, count, cssClass) {
+            let html = `<div class="split-word ${cssClass}">`;
+            const safeText = (text || "").toUpperCase().padEnd(count, " ");
+            for (let i = 0; i < count; i++) {
+                html += `<div class="flap" data-char="${safeText[i]}"> </div>`;
+            }
+            html += `</div>`;
+            return html;
+        }
+
+        const boardEl = document.getElementById('board-content');
+        entries.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'row';
+            row.innerHTML = `
+                ${createWord(item.vol, SLOTS.vol, 'c-vol')}
+                ${createWord(item.dest, SLOTS.dest, 'c-dest')}
+                ${createWord(item.time, SLOTS.time, 'c-emb')}
+                ${createWord(item.gate, SLOTS.gate, 'c-gate')}
+                ${createWord(item.stat, SLOTS.stat, 'c-obs')}
+            `;
+            boardEl.appendChild(row);
+        });
+
+        window.onload = () => {
+            const tl = gsap.timeline();
+            tl.to(".door.left", { x: "-100%", duration: 1.5, ease: "power3.inOut", delay: 0.5 })
+              .to(".door.right", { x: "100%", duration: 1.5, ease: "power3.inOut" }, "<")
+              .call(startBoardAnimation, null, "-=1.0");
+
+            // --- ANIMATION DE L'AVION SUR LES LIENS ---
+            const navLinks = document.querySelectorAll('.nav-link');
+            const plane = document.querySelector('.plane-animated');
+
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    // L'avion fait un petit "boost" (monte et s'avance)
+                    gsap.to(plane, {
+                        x: 25, // S'avance
+                        y: -10, // Monte
+                        rotation: 15, // S'incline
+                        scale: 1.3, // Grossit un peu
+                        duration: 0.4,
+                        ease: "power2.out",
+                        filter: "drop-shadow(0 0 8px #FF3B3B)"
+                    });
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    // L'avion revient à sa place
+                    gsap.to(plane, {
+                        x: 0,
+                        y: 0,
+                        rotation: 0,
+                        scale: 1,
+                        duration: 0.6,
+                        ease: "power2.inOut",
+                        filter: "drop-shadow(0 0 0px #FF3B3B)"
+                    });
+                });
+            });
+        };
+
+        function startBoardAnimation() {
+            const allFlaps = document.querySelectorAll('.flap');
+            allFlaps.forEach((flap) => {
+                const target = flap.getAttribute('data-char');
+                let cycles = 0;
+                const maxCycles = 5 + Math.floor(Math.random() * 10);
+                const interval = setInterval(() => {
+                    flap.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+                    cycles++;
+                    if (cycles >= maxCycles) {
+                        clearInterval(interval);
+                        flap.textContent = target;
+                    }
+                }, 50);
+            });
+        }
+    </script>
+</body>
+</html>
