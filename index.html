@@ -49,6 +49,21 @@
             --warning: #FACC15;
             /* états "embarquement / warning" */
 
+            --board-bg-frame: #111a3c;
+            /* cadre autour du tableau */
+            --board-bg-inner: #050b24;
+            /* fond général du tableau */
+            --board-head-bg: #151f46;
+            /* fond de l'en-tête */
+            --board-row-bg: #050b24;
+            /* lignes impaires */
+            --board-row-alt-bg: #081133;
+            /* lignes paires */
+            --board-border: #1f2937;
+            /* lignes internes */
+            --board-accent-red: #ff3b3b;
+            /* rouge du liseré */
+
             /* Texte */
             --text: #E0E6ED;
             /* texte principal */
@@ -517,7 +532,7 @@
             margin-top: 1rem;
         }
 
-        .board-frame {
+        /* .board-frame {
             background: linear-gradient(145deg,
                     var(--content-bg, #1b244a) 0%,
                     #151c3b 50%,
@@ -526,91 +541,85 @@
             box-shadow: var(--shadow-soft);
             border: 1px solid rgba(52, 60, 106, 0.9);
             overflow: hidden;
+        } */
+        /* ====== CADRE DU TABLEAU ====== */
+
+        .board-frame {
+            background: var(--board-bg-frame);
+            border-radius: 14px;
+            box-shadow:
+                0 22px 55px rgba(0, 0, 0, 0.85),
+                0 0 0 1px rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(15, 23, 42, 0.95);
+            overflow: hidden;
+            position: relative;
         }
 
-        /* Barre supérieure du panneau */
+        /* Liseré rouge en haut, comme sur ton exemplePageHtml */
+        .board-frame::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--board-accent-red);
+            pointer-events: none;
+        }
+
+        /* ====== BARRE SUPÉRIEURE "DEPARTURES" ====== */
+
         .board-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.65rem 1.5rem;
+            padding: 0.55rem 1.5rem;
             background: linear-gradient(90deg,
-                    #151c3b 0%,
-                    #20264a 40%,
-                    #151c3b 100%);
-            border-bottom: 1px solid rgba(0, 217, 255, 0.5);
-            font-size: 0.8rem;
+                    var(--board-head-bg) 0%,
+                    #1b2552 40%,
+                    var(--board-head-bg) 100%);
+            border-bottom: 2px solid rgba(15, 23, 42, 0.95);
+            font-size: 0.78rem;
             letter-spacing: 0.15em;
             text-transform: uppercase;
         }
 
-        .board-top-left {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .board-label {
-            font-family: var(--font-display);
-        }
-
-        .board-terminal {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .board-top-right {
-            display: flex;
-            gap: 0.35rem;
-            align-items: baseline;
-        }
-
-        .board-status-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .board-status-value {
-            font-size: 0.75rem;
-            color: var(--accent-bright);
-            font-weight: 600;
-        }
-
-        /* Corps du tableau */
-        /* ---------- CORPS DU TABLEAU ---------- */
+        /* ====== INTÉRIEUR DU TABLEAU ====== */
 
         .board-inner {
             padding: 0;
-            /* on colle le tableau aux bords intérieurs */
+            /* on colle le tableau au cadre */
         }
 
-        /* TABLE = panneau de départ */
+        /* TABLEAU TYPE FIDS */
+
         .board-table {
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            font-size: 0.8rem;
-            background: #050a1f;
-            /* écran sombre */
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text);
+            background: var(--board-bg-inner);
         }
 
-        /* En-têtes colonnes */
+        /* En-têtes */
+
         .board-table thead {
-            background: #0b132f;
-            border-bottom: 2px solid #111827;
+            background: var(--board-head-bg);
+            border-bottom: 2px solid var(--board-accent-red);
         }
 
         .board-table th,
         .board-table td {
             padding: 0.45rem 0.35rem;
-            border-right: 1px solid #111827;
-            border-bottom: 1px solid #111827;
-            text-transform: uppercase;
-            letter-spacing: 0.16em;
-            font-family: var(--font-mono);
+            border-right: 1px solid var(--board-border);
+            border-bottom: 1px solid var(--board-border);
+            text-align: left;
         }
 
-        /* Dernière colonne sans bord droit épais */
         .board-table th:last-child,
         .board-table td:last-child {
             border-right: none;
@@ -618,44 +627,75 @@
 
         .board-table th {
             font-size: 0.7rem;
-            color: #9ca3c7;
+            color: #c2c9f0;
             font-weight: 500;
-            text-align: left;
         }
 
-        /* Lignes : alternance très légère, style tableau dense */
+        /* Lignes */
+
         .board-table tbody tr {
-            background: #060d26;
+            background: var(--board-row-bg);
             transition: background 0.15s ease-out, transform 0.15s ease-out;
             cursor: pointer;
         }
 
         .board-table tbody tr:nth-child(even) {
-            background: #081131;
+            background: var(--board-row-alt-bg);
         }
 
         .board-table tbody tr:hover {
-            background: rgba(0, 217, 255, 0.15);
+            background: rgba(0, 217, 255, 0.16);
             transform: translateY(-1px);
         }
 
-        /* Colonnes : largeur & alignements */
+        /* Effet "cases" derrière les lettres (grille) */
+
+        .board-table td {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* On dessine une grille de petites cases dans le fond de chaque cellule */
+        .board-table td::before {
+            content: "";
+            position: absolute;
+            inset: 2px 2px 2px 2px;
+            background-image:
+                linear-gradient(to right,
+                    rgba(15, 23, 42, 0.9) 1px,
+                    transparent 1px),
+                linear-gradient(to bottom,
+                    rgba(15, 23, 42, 0.9) 1px,
+                    transparent 1px);
+            background-size: 16px 100%, 100% 22px;
+            /* largeur colonne / hauteur ligne des cases */
+            opacity: 0.7;
+            pointer-events: none;
+            border-radius: 3px;
+        }
+
+        /* Le texte doit rester au-dessus de la grille */
+        .board-table td span,
+        .board-table td {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Largeurs par colonne (à ajuster si besoin) */
+
         .board-table td:nth-child(1) {
             /* VOL */
             width: 12%;
-            text-align: left;
         }
 
         .board-table td:nth-child(2) {
             /* DESTINATION */
             width: 26%;
-            text-align: left;
         }
 
         .board-table td:nth-child(3) {
             /* TYPE */
             width: 13%;
-            text-align: left;
         }
 
         .board-table td:nth-child(4) {
@@ -676,28 +716,29 @@
             text-align: center;
         }
 
-        /* STATUT texte simple (pas de pastille) */
+        /* ====== STATUT (texte seul, couleurs sobres) ====== */
+
         .status-text {
             font-size: 0.75rem;
         }
 
-        /* Couleurs sobres comme un vrai tableau */
         .status-en-vol {
             color: #4ade80;
-            /* vert doux */
+            /* vert lisible */
         }
 
         .status-en-reprise {
             color: #e5e7eb;
-            /* gris clair neutre */
+            /* gris clair */
         }
 
         .status-en-preparation {
             color: #fbbf24;
-            /* ambre, mais moins violent qu’un jaune fluo */
+            /* ambre, moins agressif que du jaune pur */
         }
 
-        /* PORTE : petite étiquette mais intégrée au look tableau */
+        /* ====== PORTE & OBSERVATIONS (étiquettes) ====== */
+
         .gate-tag {
             display: inline-flex;
             align-items: center;
@@ -711,7 +752,6 @@
             font-size: 0.78rem;
         }
 
-        /* OBSERVATIONS : texte simple mais encadré façon tag */
         .obs-tag {
             display: inline-flex;
             align-items: center;
@@ -874,6 +914,164 @@
             /* jaune piste */
             transform: translateY(-50%);
             opacity: 0.9;
+
+        }
+
+        :root {
+            /* Dimensions spécifiques au board */
+            --flap-tile-w: 22px;
+            --flap-tile-h: 36px;
+            --flap-gap-char: 2px;
+            --flap-col-gap: 5px;
+
+            --flap-vol-slots: 6;
+            --flap-dest-slots: 22;
+            --flap-type-slots: 10;
+            --flap-stat-slots: 12;
+            --flap-gate-slots: 3;
+            --flap-obs-slots: 14;
+        }
+
+        /* Wrapper global du board */
+        .flap-board-wrapper {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Cadre principal du panneau (board) */
+        .flap-board {
+            /* width: 100%; */
+            max-width: 1900px;
+            padding: 10px;
+            background: #020308;
+            /* fond du cadre */
+            border: 6px solid #1e293b;
+            border-radius: 10px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Ligne d’en-tête et lignes de contenu */
+        .flap-header-row,
+        .flap-row {
+            display: flex;
+            align-items: center;
+            gap: var(--flap-col-gap);
+            padding: 8px 5px;
+        }
+
+        .flap-row {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Largeurs de colonnes (alignement titres <-> contenu) */
+        .flap-col-vol {
+            width: 150px;
+            flex-shrink: 0;
+        }
+
+        .flap-col-dest {
+            width: 430px;
+            flex-shrink: 0;
+        }
+
+        .flap-col-type {
+            width: 140px;
+            flex-shrink: 0;
+        }
+
+        .flap-col-stat {
+            width: 160px;
+            flex-shrink: 0;
+        }
+
+        .flap-col-gate {
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .flap-col-obs {
+            flex: 1;
+            text-align: right;
+        }
+
+        /* Titres colonnes */
+        .flap-header-row {
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #8b1e3f;
+            /* ligne rouge */
+        }
+
+        .flap-col-head {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #ff3b3b;
+            /* rouge plus vif pour les titres */
+            font-weight: 600;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        /* Conteneur de lettres pour chaque "mot" */
+        .flap-split-word {
+            display: flex;
+            gap: var(--flap-gap-char);
+        }
+
+        /* Case (tuiles) */
+        .flap {
+            position: relative;
+            width: var(--flap-tile-w);
+            height: var(--flap-tile-h);
+            background-color: #0a0e27;
+            /* bleu nuit */
+            border-radius: 2px;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: var(--flap-tile-h);
+            text-align: center;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7);
+            perspective: 500px;
+        }
+
+        /* Colonne OBSERVATIONS en rouge néon */
+        .flap-col-obs .flap {
+            color: #ff3b6b;
+            text-shadow: 0 0 5px rgba(139, 30, 63, 0.4);
+        }
+
+        /* Effet “charnière” et reflet */
+        .flap::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0) 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+
+        .flap-char {
+            display: block;
+        }
+
+        /* Responsive : on autorise un scroll horizontal si l’écran est petit */
+        @media (max-width: 1100px) {
+            .flap-board-wrapper {
+                overflow-x: auto;
+            }
+
+            .flap-board {
+                min-width: 1000px;
+            }
         }
     </style>
 </head>
@@ -946,46 +1144,24 @@
         <!-- Tableau des départs -->
         <section class="departures-board" aria-labelledby="departures-title">
             <h2 id="departures-title" class="sr-only">
-                Tableau des départs – compétences, projets et études de cas
+                Tableau des départs – langages, projets et plans de vol
             </h2>
 
-            <div class="board-frame">
-                <header class="board-top-bar">
-                    <div class="board-top-left">
-                        <span class="board-label">DEPARTURES</span>
-                        <span class="board-terminal">Terminal 3 · Secteur numérique</span>
+            <div class="flap-board-wrapper">
+                <div class="flap-board">
+                    <!-- En-têtes -->
+                    <div class="flap-header-row">
+                        <div class="flap-col-head flap-col-vol">VOL</div>
+                        <div class="flap-col-head flap-col-dest">DESTINATION</div>
+                        <div class="flap-col-head flap-col-type">TYPE</div>
+                        <div class="flap-col-head flap-col-stat">STATUT</div>
+                        <div class="flap-col-head flap-col-gate">PORTE</div>
+                        <div class="flap-col-head flap-col-obs">OBSERVATIONS</div>
                     </div>
-                    <div class="board-top-right">
-                        <span class="board-status-label">Statut système :</span>
-                        <span class="board-status-value">OPÉRATIONNEL</span>
-                    </div>
-                </header>
 
-                <div class="board-inner" role="region" aria-label="Tableau des départs">
-                    <table class="board-table">
-                        <caption class="sr-only">
-                            Tableau des départs listant les langages, projets et études de cas avec leur type, statut
-                            d’embarquement, porte et correspondance avec les sections du site.
-                        </caption>
-                        <thead>
-                            <tr>
-                                <th scope="col">VOL</th>
-                                <th scope="col">DESTINATION</th>
-                                <th scope="col">TYPE</th>
-                                <th scope="col">STATUT</th>
-                                <th scope="col">PORTE</th>
-                                <th scope="col">OBSERVATIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="board-body">
-                            <!-- Lignes générées plus tard en JS (split-flap), pour l’instant on peut en mettre une en dur si besoin -->
-                        </tbody>
-                    </table>
+                    <!-- Contenu généré par JS -->
+                    <div id="flap-board-content"></div>
                 </div>
-
-                <footer class="board-footer">
-                    <span>Les lignes sont cliquables · Sélectionnez un vol pour embarquer.</span>
-                </footer>
             </div>
         </section>
     </main>
@@ -1014,239 +1190,158 @@
         </div>
     </footer>
     <script>
-        const flights = [
-            {
-                vol: "CH-HTML",
-                destination: "HTML5",
-                type: "Langage",
-                embarquement: "EN REPRISE",
-                porte: "A01",
-                observation: "Profil / Cockpit",
-                target: "profile.html#skills-langages"
-            },
-            {
-                vol: "CH-CSS",
-                destination: "CSS moderne",
-                type: "Langage",
-                embarquement: "EN REPRISE",
-                porte: "A02",
-                observation: "Profil / Cockpit",
-                target: "profile.html#skills-langages"
-            },
-            {
-                vol: "CH-BK01",
-                destination: "Booki",
-                type: "Projet",
-                embarquement: "EN VOL",
-                porte: "E12",
-                observation: "Zone d’embarquement",
-                target: "embarquement.html#booki"
-            },
-            {
-                vol: "CH-CASE1",
-                destination: "Refonte site X",
-                type: "Étude de cas",
-                embarquement: "EN PRÉPARATION",
-                porte: "V03",
-                observation: "Plan de vol",
-                target: "plandevol.html#case1"
-            }
-            // etc.
-        ];
+       
         document.addEventListener("DOMContentLoaded", () => {
-            const tbody = document.getElementById("board-body");
-            const heroTime = document.getElementById("hero-time");
+            const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:/-' ";
 
-            // 1. Données des vols (à adapter avec tes vrais projets)
-            const flights = [
-                // LANGAGES / TECH (plutôt EN REPRISE ou EN PRÉPARATION)
-                {
-                    vol: "CH-001",
-                    destination: "HTML5",
-                    type: "Langage",
-                    statut: "EN REPRISE",
-                    porte: "A01",
-                    observation: "Profil / cockpit",
-                    target: "profile.html#skills-langages"
-                },
-                {
-                    vol: "CH-002",
-                    destination: "CSS / SCSS",
-                    type: "Langage",
-                    statut: "EN REPRISE",
-                    porte: "A02",
-                    observation: "Profil / cockpit",
-                    target: "profile.html#skills-langages"
-                },
-                {
-                    vol: "CH-003",
-                    destination: "JavaScript ES6",
-                    type: "Langage",
-                    statut: "EN REPRISE",
-                    porte: "A03",
-                    observation: "Profil / cockpit",
-                    target: "profile.html#skills-langages"
-                },
-                {
-                    vol: "CH-004",
-                    destination: "PHP / Laravel",
-                    type: "Langage",
-                    statut: "EN PRÉPARATION",
-                    porte: "A04",
-                    observation: "Profil / cockpit",
-                    target: "profile.html#skills-back"
-                },
+            const SLOTS = {
+                vol: parseInt(getComputedStyle(document.documentElement).getPropertyValue("--flap-vol-slots")) || 6,
+                dest: parseInt(getComputedStyle(document.documentElement).getPropertyValue("--flap-dest-slots")) || 22,
+                type: parseInt(getComputedStyle(document.documentElement).getPropertyValue("--flap-type-slots")) || 10,
+                stat: parseInt(getComputedStyle(document.documentElement).getPropertyValue("--flap-stat-slots")) || 12,
+                gate: parseInt(getComputedStyle(document.documentElement).getPropertyValue("--flap-gate-slots")) || 3,
+                obs: parseInt(getComputedStyle(document.documentElement).getPropertyValue("--flap-obs-slots")) || 14
+            };
 
-                // PROJETS (EN VOL – pratico-pratique, cliquable)
+            const entries = [
                 {
-                    vol: "CH-BK01",
-                    destination: "Booki",
-                    type: "Projet",
-                    statut: "EN VOL",
-                    porte: "E12",
-                    observation: "Zone d’embarquement",
-                    target: "embarquement.html#booki"
+                    vol: "CH001",
+                    dest: "HTML5",
+                    type: "LANGAGE",
+                    stat: "EN REPRISE",
+                    gate: "A01",
+                    obs: "PROFIL / COCKPIT"
                 },
                 {
-                    vol: "CH-PF25",
-                    destination: "Portfolio 2025",
-                    type: "Projet",
-                    statut: "EN VOL",
-                    porte: "E15",
-                    observation: "Zone d’embarquement",
-                    target: "embarquement.html#portfolio-2025"
-                },
-
-                // ÉTUDES DE CAS (cahiers des charges)
-                {
-                    vol: "CH-CAS1",
-                    destination: "Refonte site vitrine",
-                    type: "Étude de cas",
-                    statut: "EN PRÉPARATION",
-                    porte: "V03",
-                    observation: "Plan de vol",
-                    target: "plandevol.html#cas-1"
+                    vol: "CH002",
+                    dest: "CSS / SCSS",
+                    type: "LANGAGE",
+                    stat: "EN REPRISE",
+                    gate: "A02",
+                    obs: "PROFIL / COCKPIT"
                 },
                 {
-                    vol: "CH-CAS2",
-                    destination: "App mobile de réservation",
-                    type: "Étude de cas",
-                    statut: "EN PRÉPARATION",
-                    porte: "V05",
-                    observation: "Plan de vol",
-                    target: "plandevol.html#cas-2"
+                    vol: "CH003",
+                    dest: "JAVASCRIPT ES6",
+                    type: "LANGAGE",
+                    stat: "EN REPRISE",
+                    gate: "A03",
+                    obs: "PROFIL / COCKPIT"
+                },
+                {
+                    vol: "CH004",
+                    dest: "PHP / LARAVEL",
+                    type: "LANGAGE",
+                    stat: "EN PRÉPARATION",
+                    gate: "A04",
+                    obs: "PROFIL / COCKPIT"
+                },
+                {
+                    vol: "CHBK01",
+                    dest: "BOOKI",
+                    type: "PROJET",
+                    stat: "EN VOL",
+                    gate: "E12",
+                    obs: "ZONE D’EMBARQUEMENT"
+                },
+                {
+                    vol: "CHPF25",
+                    dest: "PORTFOLIO 2025",
+                    type: "PROJET",
+                    stat: "EN VOL",
+                    gate: "E15",
+                    obs: "ZONE D’EMBARQUEMENT"
+                },
+                {
+                    vol: "CHCAS1",
+                    dest: "REFONTE SITE VITRINE",
+                    type: "ÉTUDE DE CAS",
+                    stat: "EN PRÉPARATION",
+                    gate: "V03",
+                    obs: "PLAN DE VOL"
+                },
+                {
+                    vol: "CHCAS2",
+                    dest: "APP MOBILE RÉSERVATION",
+                    type: "ÉTUDE DE CAS",
+                    stat: "EN PRÉPARATION",
+                    gate: "V05",
+                    obs: "PLAN DE VOL"
                 }
             ];
 
-            // 2. Génération des lignes
-            // STATUT
-            const tdStatut = document.createElement("td");
-            const spanStatus = document.createElement("span");
-            spanStatus.classList.add("status-text");
-
-            switch (flight.statut) {
-                case "EN VOL":
-                    spanStatus.classList.add("status-en-vol");
-                    break;
-                case "EN REPRISE":
-                    spanStatus.classList.add("status-en-reprise");
-                    break;
-                case "EN PRÉPARATION":
-                    spanStatus.classList.add("status-en-preparation");
-                    break;
-            }
-
-            spanStatus.textContent = flight.statut;
-            tdStatut.appendChild(spanStatus);
-            tr.appendChild(tdStatut);
-
-            function createRow(flight) {
-                const tr = document.createElement("tr");
-
-                // Pour le clic redirection
-                if (flight.target) {
-                    tr.dataset.target = flight.target;
-                    tr.setAttribute("role", "button");
-                    tr.setAttribute("tabindex", "0");
-                    tr.setAttribute("aria-label", `${flight.destination} – ouvrir la page associée`);
+            function createWord(text, count, extraClass) {
+                const safeText = (text || "").toUpperCase();
+                let html = `<div class="flap-split-word ${extraClass || ""}">`;
+                for (let i = 0; i < count; i++) {
+                    const char = safeText[i] || " ";
+                    html += `
+        <div class="flap" data-char="${char}">
+          <span class="flap-char"> </span>
+        </div>`;
                 }
-
-                // VOL
-                const tdVol = document.createElement("td");
-                tdVol.textContent = flight.vol;
-                tr.appendChild(tdVol);
-
-                // DESTINATION
-                const tdDest = document.createElement("td");
-                tdDest.textContent = flight.destination;
-                tr.appendChild(tdDest);
-
-                // TYPE
-                const tdType = document.createElement("td");
-                tdType.textContent = flight.type;
-                tr.appendChild(tdType);
-
-                // STATUT
-                const tdStatut = document.createElement("td");
-                tdStatut.appendChild(createStatusChip(flight.statut));
-                tr.appendChild(tdStatut);
-
-                // PORTE
-                const tdPorte = document.createElement("td");
-                const gateSpan = document.createElement("span");
-                gateSpan.classList.add("gate-tag");
-                gateSpan.textContent = flight.porte;
-                tdPorte.appendChild(gateSpan);
-                tr.appendChild(tdPorte);
-
-                // OBSERVATIONS (lien vers la nav)
-                const tdObs = document.createElement("td");
-                const obsSpan = document.createElement("span");
-                obsSpan.classList.add("obs-tag");
-                obsSpan.textContent = flight.observation;
-                tdObs.appendChild(obsSpan);
-                tr.appendChild(tdObs);
-
-                return tr;
+                html += `</div>`;
+                return html;
             }
 
-            flights.forEach(flight => {
-                tbody.appendChild(createRow(flight));
+            const boardEl = document.getElementById("flap-board-content");
+            if (!boardEl) return;
+
+            // Création des lignes
+            entries.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "flap-row";
+                row.innerHTML = `
+      ${createWord(item.vol, SLOTS.vol, "flap-col-vol")}
+      ${createWord(item.dest, SLOTS.dest, "flap-col-dest")}
+      ${createWord(item.type, SLOTS.type, "flap-col-type")}
+      ${createWord(item.stat, SLOTS.stat, "flap-col-stat")}
+      ${createWord(item.gate, SLOTS.gate, "flap-col-gate")}
+      ${createWord(item.obs, SLOTS.obs, "flap-col-obs")}
+    `;
+                boardEl.appendChild(row);
             });
 
-            // 3. Clic sur une ligne = redirection
-            tbody.addEventListener("click", (e) => {
-                const tr = e.target.closest("tr");
-                if (!tr || !tr.dataset.target) return;
-                window.location.href = tr.dataset.target;
+            // Animation split-flap
+            const allFlaps = document.querySelectorAll(".flap");
+            allFlaps.forEach((flap) => {
+                const target = flap.getAttribute("data-char");
+                const span = flap.querySelector(".flap-char");
+                const delay = Math.random() * 0.8;
+
+                setTimeout(() => {
+                    let cycles = 0;
+                    const maxCycles = 8 + Math.floor(Math.random() * 10);
+
+                    const interval = setInterval(() => {
+                        span.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+                        cycles++;
+                        if (cycles >= maxCycles) {
+                            clearInterval(interval);
+                            span.textContent = target;
+                            flap.style.borderColor = "rgba(255,255,255,0.1)";
+                        }
+                    }, 60);
+                }, delay * 1000);
             });
 
-            // gestion clavier (Entrée / Espace)
-            tbody.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                    const tr = e.target.closest("tr");
-                    if (!tr || !tr.dataset.target) return;
-                    e.preventDefault();
-                    window.location.href = tr.dataset.target;
+            // Heure locale dans le hero
+            const heroTime = document.getElementById("hero-time");
+            if (heroTime) {
+                function updateTime() {
+                    const now = new Date();
+                    heroTime.textContent = now.toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    });
                 }
-            });
-
-            // 4. Heure locale dans le hero
-            function updateTime() {
-                const now = new Date();
-                const options = { hour: "2-digit", minute: "2-digit" };
-                heroTime.textContent = now.toLocaleTimeString("fr-FR", options);
+                updateTime();
+                setInterval(updateTime, 30000);
             }
-
-            updateTime();
-            setInterval(updateTime, 30_000); // toutes les 30s, suffisant pour un tableau
         });
-        const heroPlane = document.querySelector(".hero-plane");
-        if (heroPlane) {
-            heroPlane.addEventListener("click", () => {
-                document.querySelector(".departures-board")?.scrollIntoView({ behavior: "smooth" });
-            });
-        }
+    </script>
+
+
 
     </script>
 

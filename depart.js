@@ -1,89 +1,37 @@
-// ============================================
-// ACCUEIL.JS - ANIMATIONS TABLEAU DES DÉPARTS
-// ============================================
+const fidsData = [
+    { vol: "CH-001", dest: "HTML5 / CSS3", type: "Langage", stat: "EN REPRISE", gate: "A01", obs: "PROFIL / COCKPIT" },
+    { vol: "CH-BK01", dest: "BOOKI", type: "Projet", stat: "EN VOL", gate: "E12", obs: "ZONE D’EMBARQUEMENT" },
+    { vol: "CH-CAS1", dest: "REFONTE SITE VITRINE", type: "Étude de cas", stat: "EN PRÉPARATION", gate: "V03", obs: "PLAN DE VOL" }
+];
 
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // ============================================
-    // ANIMATION HORLOGE
-    // ============================================
-    function updateClock() {
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById('fids-body');
+    if (!container) return;
+
+    fidsData.forEach((data, rowIndex) => {
+        const row = document.createElement('div');
+        row.className = 'fids-row';
+
+        // Colonne VOL
+        row.innerHTML += `<div class="cell mono">${data.vol}</div>`;
+        // Colonne DESTINATION
+        row.innerHTML += `<div class="cell bold">${data.dest}</div>`;
+        // Colonne TYPE
+        row.innerHTML += `<div class="cell">${data.type}</div>`;
+        // Colonne STATUT (Pill style)
+        const statClass = data.stat === "EN VOL" ? "stat-vol" : (data.stat === "EN REPRISE" ? "stat-rep" : "stat-pre");
+        row.innerHTML += `<div class="cell"><span class="status-pill ${statClass}">${data.stat}</span></div>`;
+        // Colonne PORTE
+        row.innerHTML += `<div class="cell mono">${data.gate}</div>`;
+        // Colonne OBSERVATION
+        row.innerHTML += `<div class="cell"><span class="obs-pill">${data.obs}</span></div>`;
+
+        container.appendChild(row);
+    });
+
+    // Heure locale dynamique
+    setInterval(() => {
         const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
-    }
-    
-    // Mettre à jour l'heure toutes les secondes
-    updateClock();
-    setInterval(updateClock, 1000);
-    
-    // ============================================
-    // ANIMATION SPLIT-FLAP
-    // ============================================
-    const boardRows = document.querySelectorAll('.board-row');
-    
-    if (boardRows.length > 0) {
-        boardRows.forEach((row, index) => {
-            // Initialiser la position de départ
-            gsap.set(row, { opacity: 0, y: 50 });
-            
-            // Animer l'apparition
-            gsap.to(row, {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                delay: index * 0.1,
-                ease: "power2.out"
-            });
-        });
-    }
-    
-    // ============================================
-    // ANIMATION DES LETTRES
-    // ============================================
-    const departureTitle = document.querySelector('.departure-title');
-    if (departureTitle) {
-        const text = departureTitle.textContent;
-        const spannedText = text.split('').map((char, i) => {
-            return `<span style="display:inline-block; animation-delay:${i * 0.05}s">${char}</span>`;
-        }).join('');
-        
-        departureTitle.innerHTML = spannedText;
-    }
-    
-    // ============================================
-    // ANIMATION DES LIGNES DE SÉPARATION
-    // ============================================
-    const boardHeaders = document.querySelector('.board-headers');
-    if (boardHeaders) {
-        const headerCells = boardHeaders.querySelectorAll('.board-header-item');
-        headerCells.forEach((cell, index) => {
-            gsap.from(cell, {
-                y: -20,
-                opacity: 0,
-                duration: 0.6,
-                delay: index * 0.1,
-                ease: "power2.out"
-            });
-        });
-    }
-    
-    // ============================================
-    // ANIMATION DES CELLULES
-    // ============================================
-    const boardCells = document.querySelectorAll('.board-cell');
-    if (boardCells.length > 0) {
-        boardCells.forEach((cell, index) => {
-            gsap.from(cell, {
-                scale: 0.8,
-                opacity: 0,
-                duration: 0.5,
-                delay: index * 0.02,
-                ease: "back.out(1.7)"
-            });
-        });
-    }
-    
+        document.getElementById('local-time').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+    }, 1000);
 });

@@ -1,163 +1,82 @@
-/* ============================================
-   5. CONTENU PRINCIPAL - TABLEAU DES DÉPARTS
-   ============================================ */
-.main-content {
-    min-height: calc(100vh - 80px - 300px); /* Header - Footer */
-    position: relative;
-    z-index: 2;
-    padding-top: var(--space-xl);
+:root {
+    --glass-bg: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(0, 217, 255, 0.2);
+    --cyan-glow: #00D9FF;
+    --bordeaux: #8B1E3F;
 }
 
-.departure-board-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-xl);
+.departure-hall { padding: 40px 20px; max-width: 1300px; margin: 0 auto; }
+
+/* Rond Avion Lumineux */
+.flight-indicator-glow {
+    width: 70px; height: 70px;
+    background: radial-gradient(circle, #00D9FF, #005577);
+    border-radius: 50%; border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
 }
 
-.departure-board-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-2xl);
-}
-
-.departure-title {
-    font-family: var(--font-display);
-    font-size: 2.5rem;
-    color: var(--text);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    position: relative;
-}
-
-.departure-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: var(--accent-bright);
-    border-radius: 3px;
-}
-
-.departure-clock {
-    font-family: var(--font-mono);
-    font-size: 1.25rem;
-    color: var(--text-dim);
-}
-
-.departure-clock .clock-label {
-    opacity: 0.7;
-    margin-right: var(--space-xs);
-}
-
-.departure-clock .clock-value {
-    color: var(--accent-bright);
-    font-weight: 600;
-}
-
-/* Tableau des départs */
-.departure-board {
-    background: var(--panel-bg);
-    border: 1px solid var(--panel-border);
-    border-radius: 8px;
+/* Le Tableau Vitré */
+.glass-board {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
     overflow: hidden;
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
 }
 
-.board-headers {
+.board-header-bar {
+    background: rgba(0, 217, 255, 0.05);
+    padding: 15px 25px;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-oswald); font-size: 0.9rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.status-ok { color: var(--cyan-glow); font-weight: bold; }
+
+/* Table Content */
+.table-head {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    padding: var(--space-lg);
-    background: var(--primary);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--panel-border);
+    grid-template-columns: 0.7fr 2fr 1fr 1.2fr 0.6fr 1.5fr;
+    padding: 15px 25px;
+    color: var(--text-secondary);
+    font-size: 0.7rem; font-weight: bold;
+    border-bottom: 1px solid var(--glass-border);
 }
 
-.board-header-item {
-    text-align: center;
-    padding: var(--space-sm);
-}
-
-.board-rows {
+.fids-row {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    padding: 0;
-}
-
-.board-row {
-    display: flex;
+    grid-template-columns: 0.7fr 2fr 1fr 1.2fr 0.6fr 1.5fr;
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     align-items: center;
-    padding: var(--space-lg);
-    border-bottom: 1px solid var(--panel-border);
-    transition: var(--transition-fast);
-    cursor: pointer;
+    transition: 0.3s;
 }
 
-.board-row:hover {
-    background: rgba(139, 30, 63, 0.1);
-    transform: translateX(4px);
-}
+.fids-row:hover { background: rgba(255,255,255,0.03); }
 
-.board-cell {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    color: var(--text);
+/* Statut Style Pill (Comme image 1) */
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: bold;
     text-align: center;
-    flex: 1;
+    border: 1px solid transparent;
 }
 
-.board-cell:nth-child(2) {
-    color: var(--accent-bright);
-    font-weight: 600;
-}
+.stat-vol { background: rgba(0, 255, 65, 0.1); color: #00FF41; border-color: rgba(0, 255, 65, 0.3); }
+.stat-rep { background: rgba(255, 176, 0, 0.1); color: #FFB000; border-color: rgba(255, 176, 0, 0.3); }
+.stat-pre { background: rgba(255, 59, 59, 0.1); color: #FF3B3B; border-color: rgba(255, 59, 59, 0.3); }
 
-.board-cell:nth-child(3) {
-    color: var(--warning);
-}
-
-.board-cell:nth-child(4) {
-    color: var(--terminal-green);
-}
-
-.board-cell:nth-child(5) {
-    color: var(--accent-bright);
-    font-weight: 600;
-}
-
-/* Statut */
-.board-cell:nth-child(4) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Statut EN VOL */
-.board-cell:nth-child(4).en-vol {
-    color: var(--terminal-green);
-}
-
-/* Statut EMBARQUEMENT */
-.board-cell:nth-child(4).embarquement {
-    color: var(--warning);
-}
-
-/* Statut EN PRÉPARATION */
-.board-cell:nth-child(4).en-preparation {
-    color: var(--text-dim);
-}
-
-/* Statut EN ATTENTE */
-.board-cell:nth-child(4).en-attente {
-    color: var(--text-dim);
-}
-
-/* Statut ARRIVÉE */
-.board-cell:nth-child(4).arrivee {
-    color: var(--danger-red);
+/* Bouton Observation (Comme image 1) */
+.obs-pill {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 4px 15px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-align: center;
 }
