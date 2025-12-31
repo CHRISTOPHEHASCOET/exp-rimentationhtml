@@ -924,12 +924,22 @@
             --flap-gap-char: 2px;
             --flap-col-gap: 5px;
 
-            --flap-vol-slots: 6;
+            /* --flap-vol-slots: 6;
             --flap-dest-slots: 22;
             --flap-type-slots: 10;
             --flap-stat-slots: 12;
             --flap-gate-slots: 3;
-            --flap-obs-slots: 14;
+            --flap-obs-slots: 14; */
+            --flap-vol-slots: 6;
+            --flap-dest-slots: 18;
+            /* ⬅️ au lieu de 22 */
+            --flap-type-slots: 9;
+            /* ⬅️ plus compact */
+            --flap-stat-slots: 11;
+            --flap-gate-slots: 3;
+            --flap-obs-slots: 12;
+            /* ⬅️ essentiel */
+
         }
 
         /* Wrapper global du board */
@@ -937,6 +947,8 @@
             margin-top: 1.5rem;
             display: flex;
             justify-content: center;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         /* Cadre principal du panneau (board) */
@@ -951,6 +963,7 @@
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         /* Ligne d’en-tête et lignes de contenu */
@@ -968,32 +981,33 @@
 
         /* Largeurs de colonnes (alignement titres <-> contenu) */
         .flap-col-vol {
-            width: 150px;
+            width: calc(var(--flap-vol-slots) * var(--flap-tile-w) + (var(--flap-vol-slots) - 1) * var(--flap-gap-char));
             flex-shrink: 0;
         }
 
         .flap-col-dest {
-            width: 430px;
+            width: calc(var(--flap-dest-slots) * var(--flap-tile-w) + (var(--flap-dest-slots) - 1) * var(--flap-gap-char));
             flex-shrink: 0;
         }
 
         .flap-col-type {
-            width: 140px;
+            width: calc(var(--flap-type-slots) * var(--flap-tile-w) + (var(--flap-type-slots) - 1) * var(--flap-gap-char));
             flex-shrink: 0;
         }
 
         .flap-col-stat {
-            width: 160px;
+            width: calc(var(--flap-stat-slots) * var(--flap-tile-w) + (var(--flap-stat-slots) - 1) * var(--flap-gap-char));
             flex-shrink: 0;
         }
 
         .flap-col-gate {
-            width: 80px;
+            width: calc(var(--flap-gate-slots) * var(--flap-tile-w) + (var(--flap-gate-slots) - 1) * var(--flap-gap-char));
             flex-shrink: 0;
         }
 
         .flap-col-obs {
-            flex: 1;
+            width: calc(var(--flap-obs-slots) * var(--flap-tile-w) + (var(--flap-obs-slots) - 1) * var(--flap-gap-char));
+            flex-shrink: 0;
             text-align: right;
         }
 
@@ -1024,8 +1038,13 @@
         /* Case (tuiles) */
         .flap {
             position: relative;
-            width: var(--flap-tile-w);
-            height: var(--flap-tile-h);
+            /* width: var(--flap-tile-w);
+            height: var(--flap-tile-h); */
+            width: 20px;
+            /* au lieu de 22 */
+            height: 32px;
+            /* au lieu de 36 */
+            font-size: 18px;
             background-color: #0a0e27;
             /* bleu nuit */
             border-radius: 2px;
@@ -1190,7 +1209,7 @@
         </div>
     </footer>
     <script>
-       
+
         document.addEventListener("DOMContentLoaded", () => {
             const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:/-' ";
 
@@ -1269,6 +1288,10 @@
                     obs: "PLAN DE VOL"
                 }
             ];
+            function truncate(text, max) {
+                const t = text.toUpperCase();
+                return t.length > max ? t.slice(0, max - 1) + "…" : t;
+            }
 
             function createWord(text, count, extraClass) {
                 const safeText = (text || "").toUpperCase();
@@ -1293,11 +1316,11 @@
                 row.className = "flap-row";
                 row.innerHTML = `
       ${createWord(item.vol, SLOTS.vol, "flap-col-vol")}
-      ${createWord(item.dest, SLOTS.dest, "flap-col-dest")}
+      ${createWord(truncate(item.dest, SLOTS.dest), SLOTS.dest, "flap-col-dest")}
       ${createWord(item.type, SLOTS.type, "flap-col-type")}
-      ${createWord(item.stat, SLOTS.stat, "flap-col-stat")}
+      ${createWord(truncate(item.stat, SLOTS.stat), SLOTS.stat, "flap-col-stat")}
       ${createWord(item.gate, SLOTS.gate, "flap-col-gate")}
-      ${createWord(item.obs, SLOTS.obs, "flap-col-obs")}
+      ${createWord(truncate(item.obs, SLOTS.obs), SLOTS.obs, "flap-col-obs")}
     `;
                 boardEl.appendChild(row);
             });
