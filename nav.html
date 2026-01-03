@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Terminal CH-2025 – Hall des départs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Oswald:wght@500;700&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+
+    <style>
+        :root {
+            --bg-deep: #05060a;
+            --bg-body: #0c1235;
+            --bg-board: #020308;
+            --border-tech: #1e293b;
+            --accent-bordeaux: #8B1E3F;
+            --accent-red: #FF3B3B;
+            --accent-cyan: #00D9FF;
+            --text-main: #E0E6ED;
+            --text-muted: #ADB5BD;
+
+            /* taille des flaps */
+            --flap-w: 20px;
+            --flap-h: 26px;
+            --flap-gap: 2px;
+
+            --font-display: 'Oswald', sans-serif;
+            --font-data: 'JetBrains Mono', monospace; /* ← manquait */
+
+            --container-width: 1250px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            /* fond légèrement éclairci par rapport à ta version initiale */
+            background: radial-gradient(circle at top, #283675 0%, var(--bg-body) 65%, #050713 100%);
+            color: var(--text-main);
+            font-family: var(--font-data);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ----------------- Header cockpit + nav terminal ----------------- */
+        header.site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .cockpit-bar {
+            background: #151c3b;
+            padding: 8px 4vw;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.35);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+        }
+
+        .cockpit-left strong {
+            font-family: var(--font-display);
+            color: #ffffff;
+            margin-right: 0.5rem;
+        }
+
+        .cockpit-center span + span::before {
+            content: "·";
+            margin: 0 0.35rem;
+            color: rgba(173, 181, 189, 0.5);
+        }
+
+        .cockpit-right b {
+            color: var(--accent-cyan);
+        }
+
+        nav.terminal-nav {
+            background: linear-gradient(145deg, #252b4b 0%, #1a1f3a 35%, #101633 100%);
+            border-bottom: 2px solid var(--accent-red);
+            padding: 12px 4vw 14px;
+        }
+
+        .terminal-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+
+        .terminal-nav a {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0.45rem 0.9rem 0.4rem;
+            border-radius: 8px;
+            background: radial-gradient(circle at top, #343d68 0%, rgba(21, 28, 59, 0.96) 55%, rgba(10, 14, 39, 0.96) 100%);
+            box-shadow:
+                0 8px 18px rgba(0, 0, 0, 0.7),
+                inset 0 0 0 1px rgba(52, 60, 106, 0.95);
+            border-top: 1px solid rgba(230, 238, 248, 0.25);
+            position: relative;
+            transition:
+                transform 0.18s ease-out,
+                box-shadow 0.18s ease-out,
+                background 0.18s ease-out,
+                color 0.18s ease-out;
+        }
+
+        .terminal-nav a::before {
+            content: attr(data-gate);
+            font-size: 0.55rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(173, 181, 189, 0.9);
+        }
+
+        .terminal-nav a:hover {
+            color: #fff;
+            background: radial-gradient(circle at top, #3e4b78 0%, #222a52 55%, #101633 100%);
+            box-shadow:
+                0 14px 28px rgba(0, 0, 0, 0.9),
+                0 0 16px rgba(0, 217, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .terminal-nav a::after {
+            content: "";
+            position: absolute;
+            left: 12%;
+            right: 12%;
+            bottom: 3px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            opacity: 0;
+            transform: scaleX(0.4);
+            transform-origin: center;
+            transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+        }
+
+        .terminal-nav a:hover::after {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        /* ----------------- Main / hero ----------------- */
+        main.fids-main {
+            max-width: var(--container-width);
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .fids-header-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .fids-breadcrumb {
+            font-size: 0.7rem;
+            color: var(--accent-bordeaux);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .fids-header-hero h1 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ffffff; /* titre un peu plus lumineux */
+        }
+
+        .fids-subtitle {
+            font-family: var(--font-data);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+        }
+
+        .widgets {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .widget-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-align: right;
+            border-bottom: 2px solid var(--accent-bordeaux);
+        }
+
+        .widget-box small {
+            display: block;
+            font-size: 0.6rem;
+            color: var(--accent-bordeaux);
+            font-weight: bold;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .hero-plane {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-cyan), #004466);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            box-shadow: 0 0 15px var(--accent-cyan);
+            font-size: 1.2rem;
+        }
+
+        /* ----------------- Tableau des départs ----------------- */
+        .board-container {
+            background: var(--bg-board);
+            border: 5px solid var(--border-tech);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+        }
+
+        table.fids-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .fids-table th {
+            background: #0f1426;
+            color: var(--accent-red);
+            padding: 15px 10px;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+        }
+
+        /* largeurs colonnes */
+        .col-vol  { width: 120px; }
+        .col-dest { width: 380px; }
+        .col-type { width: 200px; }
+        .col-stat { width: 260px; } /* un peu plus large pour "EN PRÉPARATION" */
+        .col-gate { width: 80px;  text-align:center; }
+        .col-obs  { width: 250px; }
+
+        .fids-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: middle;
+        }
+
+        .fids-table td:nth-child(5) .flap-group { /* Gate centrée */
+            justify-content: center;
+        }
+
+        .flap-group {
+            display: flex;
+            gap: var(--flap-gap);
+            justify-content: flex-start; /* ← par défaut : alignement gauche (comme sur la capture) */
+        }
+
+        .flap {
+            width: var(--flap-w);
+            height: var(--flap-h);
+            background: #0a0e27;
+            border-radius: 2px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow:
+                inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            border: 1px solid #000; /* ← 1px au lieu de 5px, plus propre */
+            font-size: 0.95rem;
+            font-family: var(--font-display);
+            font-weight: 600;
+        }
+
+        .cyan-text .flap {
+            color: var(--accent-cyan);
+        }
+
+        .bordeaux-text .flap {
+            color: var(--accent-bordeaux);
+        }
+
+        .fids-footer {
+            padding: 8px 20px;
+            background: #05070a;
+            text-align: right;
+            font-size: 0.65rem;
+            color: #555;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        /* ----------------- Footer portfolio ----------------- */
+        footer.site-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            font-family: var(--font-data);
+            font-size: 0.75rem;
+        }
+
+        .footer-inner {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(145deg, #151c3b 0%, #101633 40%, #050b23 100%);
+            border-radius: 12px 12px 0 0;
+            border-top: 2px solid var(--accent-cyan);
+            border-left: 1px solid #343c6a;
+            border-right: 1px solid #343c6a;
+            box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: space-between;
+            gap: 3rem;
+        }
+
+        .footer-col h3 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col p,
+        .footer-col a {
+            color: #cbd5f5;
+            font-size: 0.75rem;
+            text-decoration: none;
+        }
+
+        .runway-strip {
+            margin-top: 10px;
+            padding: 0.55rem 1rem 0.65rem;
+            text-align: center;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: #f9fafb;
+            background: linear-gradient(90deg, #2b0d17 0%, #511426 35%, #2b0d17 100%);
+            border-top: 1px solid rgba(248, 202, 69, 0.45);
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="cockpit-bar">
+            <div class="cockpit-left">
+                <strong>CMD · WEB & MOBILE</strong>
+                <span>VOL CH‑2025</span>
+            </div>
+            <div class="cockpit-center">
+                <span>SECTEUR FR–EU</span>
+                <span>ALT FL350</span>
+                <span>SPD 480KT</span>
+                <span>AP ENGAGED</span>
+            </div>
+            <div class="cockpit-right">
+                <span>STATUT : <b>OPÉRATIONNEL</b></span>
+            </div>
+        </div>
+
+        <nav class="terminal-nav" aria-label="Navigation principale">
+            <ul>
+                <li><a href="index.html"        data-gate="T1 · GATE D01">Hall des départs</a></li>
+                <li><a href="passeport.html"    data-gate="T1 · GATE P02">Passeport du pilote</a></li>
+                <li><a href="embarquement.html" data-gate="T2 · GATE E12">Zone d’embarquement</a></li>
+                <li><a href="plandevol.html"    data-gate="T2 · GATE V03">Plan de vol</a></li>
+                <li><a href="profile.html"      data-gate="T3 · GATE C05">Profil / cockpit</a></li>
+                <li><a href="contact.html"      data-gate="T3 · GATE CTL">Tour de contrôle</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="fids-main">
+        <header class="fids-header-hero">
+            <section>
+                <p class="fids-breadcrumb">T1 · HALL DES DÉPARTS</p>
+                <h1>Tableau des départs</h1>
+                <p class="fids-subtitle">
+                    Sélection de vols : langages, projets et plans de vol du pilote.
+                </p>
+            </section>
+            <section class="widgets">
+                <div class="widget-box">
+                    <small>HEURE LOCALE</small>
+                    <time id="utc-clock">00:00:00</time>
+                </div>
+                <div class="hero-plane" aria-hidden="true">✈</div>
+            </section>
+        </header>
+
+        <article class="board-container" aria-label="Tableau des départs">
+            <table class="fids-table">
+                <thead>
+                    <tr>
+                        <th scope="col" class="col-vol">VOL</th>
+                        <th scope="col" class="col-dest">DESTINATION</th>
+                        <th scope="col" class="col-type">TYPE</th>
+                        <th scope="col" class="col-stat">STATUT</th>
+                        <th scope="col" class="col-gate">PORTE</th>
+                        <th scope="col" class="col-obs">OBSERVATIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="fids-tbody"></tbody>
+            </table>
+            <footer class="fids-footer">
+                ● LORIENT GROUND CONTROL · LES LIGNES SONT CLIQUABLES – SÉLECTIONNEZ UN VOL POUR EMBARQUER
+            </footer>
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h3>GROUND_CONTROL</h3>
+                <p>Email : flight-control@ch-2025.dev</p>
+                <p>Base : Lorient, France</p>
+            </div>
+            <div class="footer-col">
+                <h3>NAV_CHANNELS</h3>
+                <p><a href="#">GitHub</a></p>
+                <p><a href="#">LinkedIn</a></p>
+            </div>
+            <div class="footer-col">
+                <h3>FLIGHT_DOCS</h3>
+                <p><a href="#">CV · PDF</a></p>
+                <p>Portfolio 2025 · Thème aéroportuaire</p>
+            </div>
+        </div>
+        <div class="runway-strip">
+            STOP // END OF RUNWAY // T3 · ZONE COCKPIT
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        const CONFIG = {
+            chars: " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/",
+            slots: { vol: 6, dest: 18, type: 8, stat: 14, gate: 3, obs: 13 }
+        };
+
+        const DATA = [
+            { vol: "CH001", dest: "HTML5 / CSS3",      type: "LANGAGE", stat: "EN REPRISE",   gate: "A01", obs: "PROFIL" },
+            { vol: "CHBK1", dest: "BOOKI PROJECT",    type: "PROJET",  stat: "EN VOL",       gate: "E12", obs: "EMBARQUEMENT" },
+            { vol: "CHJS6", dest: "JAVASCRIPT ES6",   type: "LANGAGE", stat: "EN VOL",       gate: "C03", obs: "PROFIL" },
+            { vol: "CHCAS", dest: "REFONTE SITE",     type: "CAS",     stat: "EN PRÉPARATION", gate: "D04", obs: "PLAN VOL" },
+            { vol: "CHGS1", dest: "ANIMATIONS GSAP",  type: "SKILL",   stat: "EN VOL",       gate: "B01", obs: "EMBARQUEMENT" },
+            { vol: "CHRKT", dest: "REACT / FRONTEND", type: "STACK",   stat: "EN PRÉPARATION", gate: "B02", obs: "PROFIL" }
+        ];
+
+        const createFlaps = (text, size) => {
+            const target = (text || "").toUpperCase().padEnd(size, " ").slice(0, size);
+            let html = `<div class="flap-group" aria-label="${text}">`;
+            for (const char of target) {
+                html += `<div class="flap" data-char="${char}" aria-hidden="true"> </div>`;
+            }
+            html += `</div>`;
+            return html;
+        };
+
+        const renderTable = () => {
+            const tbody = document.getElementById("fids-tbody");
+            DATA.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${createFlaps(row.vol,  CONFIG.slots.vol)}</td>
+          <td>${createFlaps(row.dest, CONFIG.slots.dest)}</td>
+          <td>${createFlaps(row.type, CONFIG.slots.type)}</td>
+          <td class="cyan-text">${createFlaps(row.stat, CONFIG.slots.stat)}</td>
+          <td>${createFlaps(row.gate, CONFIG.slots.gate)}</td>
+          <td class="bordeaux-text">${createFlaps(row.obs, CONFIG.slots.obs)}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+            animateFlaps();
+        };
+
+        const animateFlaps = () => {
+            document.querySelectorAll(".flap").forEach((flap, i) => {
+                const target = flap.dataset.char;
+                const delay = Math.random() * 800;
+                let cycles = 0;
+                const maxCycles = 8 + (i % 5);
+
+                setTimeout(() => {
+                    const interval = setInterval(() => {
+                        flap.textContent = CONFIG.chars[Math.floor(Math.random() * CONFIG.chars.length)];
+                        if (++cycles > maxCycles) {
+                            clearInterval(interval);
+                            flap.textContent = target;
+                        }
+                    }, 50);
+                }, delay);
+            });
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTable();
+
+            // HEURE → locale, pas UTC (évite le décalage d'une heure)
+            const clockEl = document.getElementById("utc-clock");
+            if (clockEl) {
+                const updateTime = () => {
+                    const now = new Date();
+                    clockEl.textContent = now.toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                    });
+                };
+                updateTime();
+                setInterval(updateTime, 1000);
+            }
+        });
+    </script>
+
+</body>
+</html>

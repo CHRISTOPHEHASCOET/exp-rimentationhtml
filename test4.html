@@ -1,315 +1,260 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Tableau Missions - Animation Portes</title>
-<!-- Police condensée type "Aéroport" -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-
-<!-- GSAP pour l'animation fluide -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-<style>
-  :root {
-    /* --- TES COULEURS --- */
-    --bg-body: #05060a;
-    --board-bg: #020308;
-    --board-border: #1e293b;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal CH-2025 · Flight Control Center</title>
     
-    /* Couleurs des Tuiles */
-    --tile-bg: #0A0E27;          /* Bleu Nuit */
-    --tile-text: #ffffff;        /* Blanc */
-    --tile-accent: #8B1E3F;      /* Rouge Rubis */
-    
-    /* Dimensions Tableau */
-    --tile-w: 22px;
-    --tile-h: 36px;
-    --gap-char: 2px;
-    
-    /* Ta correction : espace réduit entre colonnes */
-    --col-gap: 5px; 
-  }
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  body {
-    height: 100vh;
-    background: var(--bg-body);
-    font-family: 'Oswald', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Important pour que les portes ne créent pas de scroll */
-    color: var(--tile-text);
-  }
+    <style>
+        /* ==========================================================================
+           1. VARIABLES INITIALES VALIDÉES
+           ========================================================================== */
+        :root {
+            --primary: #0A0E27;
+            --secondary: #1A1F3A;
+            --accent: #8B1E3F;
+            --accent-bright: #00D9FF;
+            --text: #E0E6ED;
+            --text-secondary: #ADB5BD;
+            --screen-bg: #05091F;
+            --panel-bg: #151C3B;
+            --panel-border: #343C6A;
+            
+            --font-display: 'Oswald', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
 
-  /* --- 1. LE TABLEAU (Caché derrière les portes au début) --- */
-  .board-wrapper {
-    width: 100%;
-    max-width: 1250px;
-    padding: 10px;
-    z-index: 1; /* Derrière les portes */
-  }
+        /* ==========================================================================
+           2. BASE & LAYOUT
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .board {
-    background: var(--board-bg);
-    border: 6px solid var(--board-border);
-    border-radius: 10px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.9);
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-  }
+        body { 
+            background: radial-gradient(circle at top, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--text);
+            font-family: var(--font-display);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-  .row, .header-row {
-    display: flex;
-    align-items: center;
-    gap: var(--col-gap);
-    padding: 8px 5px;
-  }
-  
-  .row { border-bottom: 1px solid rgba(255,255,255,0.05); }
-  
-  /* Largeurs colonnes */
-  .c-vol  { width: 150px; flex-shrink: 0; }
-  .c-dest { width: 530px; flex-shrink: 0; }
-  .c-emb  { width: 130px; flex-shrink: 0; }
-  .c-gate { width: 80px;  flex-shrink: 0; }
-  .c-obs  { flex: 1; text-align: right; }
+        /* Portes d'Aéroport (Design Fidèle) */
+        .airport-doors { position: fixed; inset: 0; display: flex; z-index: 5000; pointer-events: none; }
+        .door { 
+            width: 50%; height: 100%; background: #252B4B; 
+            border: 2px solid var(--panel-border); position: relative;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+        .door-left { border-right: 2px solid #000; }
+        .door-right { border-left: 2px solid #000; }
 
-  /* En-têtes */
-  .header-row {
-    padding-bottom: 10px;
-    margin-bottom: 5px;
-    border-bottom: 2px solid var(--tile-accent);
-  }
-  .col-head {
-    font-size: 14px;
-    letter-spacing: 2px;
-    color: var(--tile-accent);
-    font-weight: 600;
-    text-transform: uppercase;
-    opacity: 0.9;
-  }
+        /* ==========================================================================
+           3. HEADER : COCKPIT & NAV (PHOTO INCLUSE)
+           ========================================================================== */
+        .site-header { position: sticky; top: 0; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .cockpit-bar { 
+            background: var(--screen-bg); padding: 10px 4vw; border-bottom: 1px solid var(--accent-bright);
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary);
+        }
+        
+        .pilot-badge { display: flex; align-items: center; gap: 15px; }
+        .pilot-photo { 
+            width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--accent-bright);
+            background: url('https://raw.githubusercontent.com/CHRISTOPHEHASCOET/portfolio-2025/main/img/pilot.jpg') center/cover;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
 
-  .split-word { display: flex; gap: var(--gap-char); }
+        .terminal-nav { 
+            background: linear-gradient(180deg, var(--secondary), var(--primary));
+            padding: 12px 4vw; border-bottom: 2px solid var(--accent);
+        }
+        .terminal-nav ul { display: flex; justify-content: center; gap: 15px; list-style: none; }
+        .gate-btn { 
+            text-decoration: none; border: 1px solid var(--panel-border); padding: 8px 15px; border-radius: 4px; 
+            display: flex; flex-direction: column; transition: 0.3s; background: rgba(0,0,0,0.2);
+        }
+        .gate-btn span:first-child { font-size: 0.5rem; color: var(--accent-bright); font-family: var(--font-mono); }
+        .gate-btn span:last-child { font-size: 0.8rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .gate-btn:hover { border-color: var(--accent-bright); background: var(--secondary); }
 
-  /* Tuiles */
-  .flap {
-    position: relative;
-    width: var(--tile-w);
-    height: var(--tile-h);
-    background-color: var(--tile-bg);
-    border-radius: 2px;
-    color: var(--tile-text);
-    font-size: 20px;
-    font-weight: 600;
-    line-height: var(--tile-h);
-    text-align: center;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.7);
-  }
+        /* ==========================================================================
+           4. MAIN CONTENT : TITRE & TABLEAU
+           ========================================================================== */
+        main { max-width: 1250px; margin: 40px auto; padding: 0 20px; }
 
-  .c-obs .flap { 
-    color: var(--tile-accent);
-    text-shadow: 0 0 5px rgba(139, 30, 63, 0.4);
-  }
+        .title-area { text-align: center; margin-bottom: 40px; }
+        .title-area h1 { 
+            font-size: 3rem; letter-spacing: 3px; text-transform: uppercase;
+            background: linear-gradient(180deg, #ff4d6d 0%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+        .title-area p { color: var(--text-secondary); font-size: 0.95rem; margin-top: 10px; }
 
-  .flap::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.0) 100%);
-    border-bottom: 1px solid rgba(0,0,0,0.8);
-    z-index: 2;
-  }
-  .char { display: block; }
+        .controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
+        .ctrl-btn { 
+            background: var(--panel-bg); border: 1px solid var(--accent); color: #fff;
+            padding: 8px 30px; cursor: pointer; font-family: var(--font-display); transition: 0.3s;
+        }
+        .ctrl-btn.active { background: var(--accent); font-weight: bold; }
 
-  /* --- 2. LES PORTES (Overlay) --- */
-  .doors-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 999; /* Devant tout */
-    display: flex;
-    pointer-events: none; /* Une fois ouvertes, on peut cliquer au travers */
-  }
+        /* TABLEAU FIDS (STYLE SÉMANTIQUE SANS CARRÉS) */
+        .board-frame { 
+            background: #020308; border: 4px solid var(--panel-border); 
+            border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-soft);
+        }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th { 
+            background: var(--secondary); color: var(--accent-bright); padding: 15px 10px; 
+            text-align: left; font-size: 0.8rem; border-bottom: 2px solid var(--accent); 
+        }
 
-  .door {
-    flex: 1;
-    height: 100%;
-    background: linear-gradient(135deg, #080a10 0%, #121624 100%); /* Couleur sombre métallique */
-    position: relative;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    border-right: 1px solid #1e293b; /* Ligne de séparation centrale */
-  }
-  
-  .door.right {
-    border-left: 1px solid #000;
-    border-right: none;
-    justify-content: flex-start; /* Poignée à gauche */
-  }
-  .door.left {
-    justify-content: flex-end; /* Poignée à droite */
-  }
+        /* Largeurs fixes pour éviter le débordement */
+        .col-vol { width: 100px; } .col-dest { width: 350px; } .col-time { width: 90px; }
+        .col-type { width: 150px; } .col-stat { width: 220px; } .col-gate { width: 70px; } .col-obs { width: 220px; }
 
-  /* Texture subtile sur les portes (optionnel) */
-  .door::after {
-    content: ''; position: absolute; inset: 0;
-    background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px, transparent 1px, transparent 10px);
-    opacity: 0.3;
-  }
+        td { padding: 10px 5px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+        tr:hover { background: rgba(255, 255, 255, 0.03); }
 
-  /* --- 3. LES POIGNÉES ROUGES --- */
-  .handle {
-    width: 20px;
-    height: 140px;
-    background: linear-gradient(to bottom, #ff3b3b, var(--tile-accent)); /* Dégradé Rouge vif -> Rubis */
-    border-radius: 10px;
-    margin: 0 2px; /* Collées au centre */
-    position: relative;
-    box-shadow: 0 0 15px rgba(255, 59, 59, 0.4), inset 2px 2px 5px rgba(255,255,255,0.2);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 15px 0;
-    align-items: center;
-    z-index: 10;
-  }
+        /* Style des lignes de texte Mono (Look Aéroport) */
+        .fids-text { 
+            font-family: var(--font-mono); font-size: 0.95rem; letter-spacing: 2px;
+            color: #fff; text-transform: uppercase; background: #0a0e27; 
+            padding: 4px 8px; border-radius: 2px; display: inline-block;
+        }
+        .cyan-txt .fids-text { color: var(--accent-bright); }
+        .bordeaux-txt .fids-text { color: var(--accent); }
 
-  /* Les deux petits points (boulons) */
-  .dot {
-    width: 8px;
-    height: 8px;
-    background-color: white;
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  }
-  
-  /* Pour le responsive mobile */
-  @media (max-width: 1100px) {
-    .board-wrapper { overflow-x: auto; }
-    .board { min-width: 1000px; }
-  }
-</style>
+        /* ==========================================================================
+           5. FOOTER GROUND CONTROL
+           ========================================================================== */
+        .site-footer { 
+            margin-top: 60px; background: linear-gradient(145deg, var(--secondary), var(--primary)); 
+            border-top: 2px solid var(--accent-bright); padding: 30px 4vw; 
+            display: flex; justify-content: space-between; border-radius: 12px 12px 0 0;
+        }
+        .footer-col h3 { font-size: 0.75rem; color: var(--accent-bright); margin-bottom: 10px; }
+        .footer-col p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; }
+    </style>
 </head>
 <body>
 
-<!-- LES PORTES -->
-<div class="doors-overlay">
-  <div class="door left">
-    <div class="handle">
-      <div class="dot"></div>
-      <div class="dot"></div>
+    <!-- PORTES -->
+    <div class="airport-doors" id="doors">
+        <div class="door door-left" id="door-l"></div>
+        <div class="door door-right" id="door-r"></div>
     </div>
-  </div>
-  <div class="door right">
-    <div class="handle">
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
-  </div>
-</div>
 
-<!-- LE TABLEAU -->
-<div class="board-wrapper">
-  <div class="board">
-    <div class="header-row">
-      <div class="col-head c-vol">VOL</div>
-      <div class="col-head c-dest">DESTINATION</div>
-      <div class="col-head c-emb">HEURE</div>
-      <div class="col-head c-gate">PORTE</div>
-      <div class="col-head c-obs">OBSERVATIONS</div>
-    </div>
-    <div id="board-content"></div>
-  </div>
-</div>
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="cockpit-bar">
+            <div class="pilot-badge">
+                <div class="pilot-photo"></div>
+                <strong>C. HASCOËT · CMD</strong>
+            </div>
+            <div>STATUS: <b style="color:var(--accent-bright)">OPÉRATIONNEL</b> | HEURE: <time id="clock">00:00:00</time></div>
+        </div>
+        <nav class="terminal-nav">
+            <ul>
+                <li><a href="index.html" class="gate-btn"><span>T1 · GATE D01</span><span>Hall Départs</span></a></li>
+                <li><a href="passeport.html" class="gate-btn"><span>T1 · GATE P02</span><span>Passeport</span></a></li>
+                <li><a href="embarquement.html" class="gate-btn"><span>T2 · GATE E12</span><span>Projets</span></a></li>
+                <li><a href="plandevol.html" class="gate-btn"><span>T2 · GATE V03</span><span>Plan de Vol</span></a></li>
+                <li><a href="profile.html" class="gate-btn"><span>T3 · GATE C05</span><span>Cockpit</span></a></li>
+            </ul>
+        </nav>
+    </header>
 
-<script>
-/* DONNÉES */
-const entries = [
-  {vol:"CKW01", dest:"COOK'N WAY", time:"09:00", gate:"A4", stat:"TERMINE"},
-  {vol:"CAMM02", dest:"CAMI COURSES EXPRESS", time:"10:10", gate:"B2", stat:"LIVRE"},
-  {vol:"FKMM03", dest:"MOBILITE INCLUSIVE", time:"12:20", gate:"C3", stat:"VALIDE"},
-  {vol:"HDRR10", dest:"CHEF DE PROJET AGILE", time:"06:30", gate:"D1", stat:"ACTIF"},
-  {vol:"DEVV21", dest:"DEVELOPPEMENT WEB", time:"16:40", gate:"A1", stat:"OPERATIONNEL"},
-  {vol:"SEOO88", dest:"SEO / ACCESSIBILITE", time:"02:50", gate:"B4", stat:"100%"},
-  {vol:"JSS108", dest:"JAVASCRIPT", time:"12:00", gate:"C2", stat:"EN COURS"},
-  {vol:"APII42", dest:"BACKEND / API", time:"22:10", gate:"D3", stat:"DEPLOYE"},
-  {vol:"404ERR", dest:"DEBUGGING SYSTEM", time:"--:--", gate:"X0", stat:"RESOLU"}
-];
+    <main>
+        <div class="title-area">
+            <h1>Écran de contrôle des vols</h1>
+            <p>Situation opérationnelle — missions, compétences et formations du pilote.</p>
+        </div>
 
-/* Config */
-const SLOTS = { vol: 6, dest: 22, time: 5, gate: 3, stat: 12 };
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:/-' ";
+        <div class="controls">
+            <button id="btn-dep" class="ctrl-btn active">DÉPARTS (EN COURS)</button>
+            <button id="btn-arr" class="ctrl-btn">ARRIVÉES (ACQUIS)</button>
+        </div>
 
-/* Génération HTML */
-function createWord(text, count, cssClass) {
-  let html = `<div class="split-word ${cssClass}">`;
-  const safeText = (text || "").toUpperCase();
-  for (let i = 0; i < count; i++) {
-    const char = safeText[i] || " "; 
-    html += `<div class="flap" data-char="${char}"><span class="char"> </span></div>`;
-  }
-  html += `</div>`;
-  return html;
-}
+        <article class="board-frame">
+            <table role="table">
+                <thead>
+                    <tr>
+                        <th class="col-vol">VOL</th><th class="col-dest">DESTINATION</th><th class="col-time">HEURE</th>
+                        <th class="col-type">TYPE</th><th class="col-stat">STATUT</th><th class="col-gate">PORTE</th>
+                        <th class="col-obs">OBSERVATIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+            <footer style="padding: 10px 20px; background: #05070a; text-align: right; font-size: 0.65rem; color: var(--text-secondary);">
+                ● ALL SYSTEMS GO // LORIENT GROUND CONTROL
+            </footer>
+        </article>
+    </main>
 
-const boardEl = document.getElementById('board-content');
-entries.forEach(item => {
-  const row = document.createElement('div');
-  row.className = 'row';
-  row.innerHTML = `
-    ${createWord(item.vol, SLOTS.vol, 'c-vol')}
-    ${createWord(item.dest, SLOTS.dest, 'c-dest')}
-    ${createWord(item.time, SLOTS.time, 'c-emb')}
-    ${createWord(item.gate, SLOTS.gate, 'c-gate')}
-    ${createWord(item.stat, SLOTS.stat, 'c-obs')}
-  `;
-  boardEl.appendChild(row);
-});
+    <footer class="site-footer">
+        <div class="footer-col"><h3>GROUND_CONTROL</h3><p>Base : Lorient, France<br>flight-control@ch-2025.dev</p></div>
+        <div class="footer-col"><h3>NAV_CHANNELS</h3><p>GitHub // LinkedIn</p></div>
+        <div class="footer-col"><h3>FLIGHT_PATH</h3><p>© 2025 COMMANDANT HASCOËT</p></div>
+    </footer>
 
-/* --- ANIMATION SÉQUENTIELLE --- */
-window.onload = () => {
-  
-  const tl = gsap.timeline();
+    <script>
+        const DATA = {
+            departs: [
+                {vol:"CHBK1", dest:"BOOKI INTEGRATION", time:"09:30", type:"PROJET", stat:"EN VOL", gate:"E12", obs:"PROJETS", link:"embarquement.html"},
+                {vol:"CHJS6", dest:"JAVASCRIPT ES6", time:"11:45", type:"LANGAGE", stat:"REPRISE", gate:"C03", obs:"PROFIL", link:"profile.html"},
+                {vol:"CHRT1", dest:"REACT JS TS", time:"13:15", type:"LANGAGE", stat:"PREPARA", gate:"C05", obs:"PROFIL", link:"profile.html"}
+            ],
+            arrivees: [
+                {vol:"CHHT1", dest:"HTML5 CSS3", time:"08:00", type:"LANGAGE", stat:"ACQUIS", gate:"---", obs:"PASSEPORT", link:"passeport.html"},
+                {vol:"CHSEO", dest:"AUDIT SEO", time:"10:15", type:"WEBAPP", stat:"VALIDE", gate:"---", obs:"MISSIONS", link:"plandevol.html"}
+            ]
+        };
 
-  // 1. Animation des portes
-  tl.to(".handle", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 }) // Petit effet "clic" sur les poignées
-    .to(".door.left", { x: "-100%", duration: 1.5, ease: "power3.inOut" }, "+=0.1")
-    .to(".door.right", { x: "100%", duration: 1.5, ease: "power3.inOut" }, "<") // "<" signifie "en même temps que le précédent"
-    
-    // 2. Lancement du tableau (pendant que les portes finissent de s'ouvrir)
-    .call(startBoardAnimation, null, "-=1.0"); 
-};
-
-function startBoardAnimation() {
-  const allFlaps = document.querySelectorAll('.flap');
-  
-  allFlaps.forEach((flap) => {
-    const target = flap.getAttribute('data-char');
-    const span = flap.querySelector('.char');
-    const delay = Math.random() * 0.5; // Délai aléatoire
-    
-    setTimeout(() => {
-      let cycles = 0;
-      const maxCycles = 6 + Math.floor(Math.random() * 12);
-      
-      const interval = setInterval(() => {
-        span.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
-        cycles++;
-        if (cycles >= maxCycles) {
-          clearInterval(interval);
-          span.textContent = target;
-          // Petit flash blanc sur la bordure pour l'effet mécanique
-          flap.style.borderColor = "rgba(255,255,255,0.3)";
-          setTimeout(() => flap.style.borderColor = "transparent", 200);
+        function render(type) {
+            const tb = document.getElementById('tbody');
+            tb.innerHTML = "";
+            DATA[type].forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="fids-text">${row.vol}</span></td>
+                    <td><span class="fids-text">${row.dest}</span></td>
+                    <td><span class="fids-text">${row.time}</span></td>
+                    <td><span class="fids-text">${row.type}</span></td>
+                    <td class="cyan-txt"><span class="fids-text">${row.stat}</span></td>
+                    <td><span class="fids-text">${row.gate}</span></td>
+                    <td class="bordeaux-txt"><span class="fids-text">${row.obs}</span></td>
+                `;
+                tr.onclick = () => window.location.href = row.link;
+                tb.appendChild(tr);
+            });
+            // Animation d'entrée des lignes
+            gsap.from("#tbody tr", { opacity: 0, x: -20, stagger: 0.1, duration: 0.4 });
         }
-      }, 50); // Vitesse
-    }, delay * 1000);
-  });
-}
-</script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.to("#door-l", { xPercent: -101, duration: 1.5, ease: "power4.inOut", delay: 0.5 });
+            gsap.to("#door-r", { xPercent: 101, duration: 1.5, ease: "power4.inOut", delay: 0.5 });
+            render('departs');
+            
+            setInterval(() => {
+                const n = new Date();
+                document.getElementById('clock').innerText = n.toLocaleTimeString();
+            }, 1000);
+        });
+
+        document.getElementById("btn-dep").onclick = () => { render('departs'); toggle(true); };
+        document.getElementById("btn-arr").onclick = () => { render('arrivees'); toggle(false); };
+        function toggle(isDep) {
+            document.getElementById("btn-dep").classList.toggle("active", isDep);
+            document.getElementById("btn-arr").classList.toggle("active", !isDep);
+        }
+    </script>
 </body>
 </html>

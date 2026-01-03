@@ -1,733 +1,616 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Boîte Noire — Christophe Hascoët</title>
+    <meta charset="UTF-8">
+    <title>Tableau de contrôle aérien </title>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;600&family=Roboto+Mono:wght@400;700&display=swap"
-        rel="stylesheet">
+    <meta name="description"
+        content="Portfolio de développeur frontend présenté comme un tableau de contrôle aérien interactif : compétences, projets et parcours professionnel." />
 
+    <title>Terminal CH-2025 · Écran de contrôle des vols</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
         :root {
-            --primary: #0A0E27;
-            --primary-2: #0f1630;
-            --accent: #8B1E3F;
-            --accent-bright: #FF3B3B;
-            --text: #E6EEF8;
-            --text-dim: #9FA8B3;
-            --tech-green: #1acb4b;
-            --container-width: 900px;
+            --bg: #0b1028;
+            --panel: #020308;
+            --cyan: #00d9ff;
+            --red: #ff3b3b;
+            --font: 'Oswald', sans-serif;
+            --flap-w: 14px;
+            /* au lieu de 19px */
+            --flap-h: 22px;
+            /* un peu plus haut pour garder une bonne lisibilité */
+            --gap: 2px;
+            /* espace un peu réduit */
+
         }
 
-        /* Réinitialisation de base */
         * {
             box-sizing: border-box;
             margin: 0;
-            padding: 0;
+            padding: 0
         }
 
         body {
-            background-color: var(--primary);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            line-height: 1.6;
-            position: relative;
+            background: radial-gradient(circle at top, #1a2356, var(--bg));
+            color: #e0e6ed;
+            font-family: var(--font);
         }
 
-        /* --- ACCESSIBILITÉ : PRÉFÉRENCE DE RÉDUCTION DE MOUVEMENT --- */
-        @media (prefers-reduced-motion: reduce) {
-
-            /* Désactive toutes les animations et transitions */
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.001ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.001ms !important;
-                scroll-behavior: auto !important;
-            }
-
-            .technical-section,
-            .case-study-box,
-            .checklist li,
-            .black-box-data {
-                opacity: 1 !important;
-                /* Force l'affichage si réduit */
-                transform: none !important;
-                /* Retire les transformations */
-            }
-
-            .flight-path,
-            .scrolling-plane {
-                display: none !important;
-            }
-
-            /* Cache la ligne de progression */
-            main.container {
-                padding-left: 20px;
-            }
-
-            /* Ajuste le padding si la ligne est cachée */
+        header {
+            padding: 12px 4vw;
+            background: #151c3b;
+            display: flex;
+            justify-content: space-between;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            font-size: .7rem;
         }
 
-
-        /* --- GRID BACKGROUND --- */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05) 76%, transparent 77%, transparent);
-            background-size: 50px 50px;
-            z-index: -2;
-            pointer-events: none;
-            opacity: 0.1;
+        header b {
+            color: var(--cyan)
         }
 
-
-        /* --- HEADER (Repris) --- */
-        .site-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            padding: 12px 0;
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--accent);
-        }
-
-        .header-inner {
+        main {
             max-width: 1250px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin: 40px auto;
+            padding: 0 20px
         }
 
-        .logo {
-            font-family: 'Oswald', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: var(--text);
-            text-decoration: none;
-            position: relative;
-            padding-left: 40px;
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            letter-spacing: 3px;
         }
 
-        .logo::before {
-            content: "✈";
-            position: absolute;
-            left: 0;
-            color: var(--accent-bright);
-            animation: float-logo 3s ease-in-out infinite;
-        }
+      
 
-        @keyframes float-logo {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-4px);
-            }
-        }
-
-        .nav-desktop {
-            display: flex;
-            gap: 14px;
-        }
-
-        .nav-link {
-            color: var(--text-dim);
-            text-decoration: none;
-            padding: 8px 12px;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            font-family: 'Oswald', sans-serif;
-            transition: 0.3s;
-        }
-
-        .nav-link.active,
-        .nav-link:hover {
-            color: var(--accent-bright);
-            font-weight: 600;
-        }
-
-        /* --- LIGNE DE PROGRESSION --- */
-        .flight-path {
-            position: fixed;
-            left: 50px;
-            top: 150px;
-            bottom: 100px;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            z-index: 5;
-        }
-
-        .flight-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 0;
-            background: var(--accent-bright);
-            box-shadow: 0 0 10px var(--accent-bright);
-        }
-
-        .scrolling-plane {
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(90deg);
-            /* Initialement pointé vers le bas */
-            font-size: 1.5rem;
-            color: var(--accent-bright);
-            /* La transition est gérée par GSAP maintenant, mais on la garde pour d'autres effets si besoin */
-            /* transition: transform 0.4s ease-out; */
-        }
-
-
-        /* --- CONTENU --- */
-        main.container {
-            padding-top: 150px;
-            padding-bottom: 100px;
-            max-width: var(--container-width);
-            margin: 0 auto;
-            position: relative;
-            padding-left: 120px;
-        }
-
-        .page-title {
-            font-family: 'Oswald', sans-serif;
-            font-size: 3rem;
-            text-transform: uppercase;
-            text-align: center;
+        .subtitle {
+            font-size: .85rem;
+            color: #adb5bd;
             margin-bottom: 20px;
-            background: linear-gradient(90deg, #E6EEF8 0%, #FF3B3B 50%, #8B1E3F 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
         }
 
-        .page-title span {
-            margin-right: 15px;
-            color: var(--accent-bright);
-        }
-
-        /* Pour l'avion dans le titre */
-        .page-subtitle {
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.95rem;
-            margin-bottom: 80px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* --- FICHE DE MISSION --- */
-        .case-study-box {
-            background: rgba(15, 22, 48, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            margin-bottom: 120px;
-            position: relative;
-            border-radius: 4px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            /* Initial state for GSAP */
-            opacity: 0;
-            transform: translateY(50px);
-        }
-
-        /* GSAP gère l'animation, pas de classe .active en CSS ici */
-
-        .mission-header {
+        .controls {
             display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--accent);
-            padding-bottom: 10px;
-            margin-bottom: 30px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
-        .mission-id {
-            font-family: 'Oswald', sans-serif;
-            color: var(--accent-bright);
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-
-        .mission-status {
-            font-family: 'Oswald', sans-serif;
-            color: var(--tech-green);
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            position: relative;
-            padding-left: 20px;
-        }
-
-        .mission-status::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 8px;
-            background: var(--tech-green);
-            border-radius: 50%;
-            box-shadow: 0 0 5px var(--tech-green);
-            animation: pulse-status 1.5s infinite alternate;
-        }
-
-        @keyframes pulse-status {
-            0% {
-                transform: translateY(-50%) scale(1);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-50%) scale(1.2);
-                opacity: 0.7;
-            }
-        }
-
-        .mission-title {
-            font-family: 'Oswald', sans-serif;
-            font-size: 2.2rem;
-            text-transform: uppercase;
-            color: var(--text);
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        /* --- SECTIONS TECHNIQUES AVEC ANIMATIONS AU SCROLL --- */
-        .technical-section {
-            margin-bottom: 40px;
-            /* Initial state for GSAP */
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        /* GSAP gère l'animation, pas de classe .active en CSS ici */
-
-        .section-label {
-            font-family: 'Oswald', sans-serif;
-            font-size: 0.7rem;
-            color: var(--accent-bright);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .section-title {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.5rem;
-            text-transform: uppercase;
+        .controls button {
+            background: #151c3b;
+            border: 1px solid var(--cyan);
             color: #fff;
-            margin-bottom: 15px;
-            letter-spacing: 0.5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
-        .project-desc {
-            color: var(--text);
-            margin-bottom: 15px;
+        .controls button.active {
+            background: var(--cyan);
+            color: #000;
         }
 
-        /* --- CHECKLIST STYLE --- */
-        .checklist {
-            list-style: none;
-            padding-left: 0;
-            margin-top: 15px;
+        .board {
+            background: var(--panel);
+            border: 4px solid #1e293b;
+            border-radius: 10px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, .9);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .checklist li {
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: flex-start;
-            color: var(--text-dim);
-            /* Initial state for GSAP staggered animation */
-            opacity: 0;
-            transform: translateX(-20px);
+
+
+        table {
+            border-collapse: collapse;
+            min-width: 1100px;
+            width: max-content;
         }
 
-        .checklist li::before {
-            content: '[OK]';
-            font-family: 'Roboto Mono', monospace;
-            color: var(--tech-green);
-            margin-right: 15px;
-            font-weight: bold;
-            flex-shrink: 0;
+        th {
+            background: #0f1426;
+            color: var(--red);
+            padding: 12px 8px;
+            text-align: left;
+            letter-spacing: .15em;
+            font-size: 0.75rem;
         }
 
-        .checklist.turbulences li::before {
-            content: '[!]';
-            color: var(--accent-bright);
+        /* LARGEURS PAR COLONNE (TOTAL ≈ 100%) */
+        .col-vol {
+            width: 100px;
         }
 
-        /* --- BLACK BOX DATA (Effet de données) --- */
-        .black-box-data {
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 10px;
-            border: 1px dashed rgba(255, 255, 255, 0.1);
+        .col-dest {
+            width: 350px;
+        }
+
+        /* ← clé */
+        .col-time {
+            width: 80px;
+        }
+
+        .col-type {
+            width: 180px;
+        }
+
+        .col-stat {
+            width: 200px;
+        }
+
+        .col-gate {
+            width: 60px;
+        }
+
+        .col-obs {
+            width: 200px;
+        }
+
+        td {
+            padding: 10px 4px;
+            cursor: pointer;
             overflow: hidden;
-            white-space: pre-wrap;
-            /* Initial state for GSAP */
-            opacity: 0;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
-        .black-box-data pre {
-            white-space: pre-wrap;
-            margin: 0;
-            /* Le texte est visible directement, on ne fait plus d'animation de 'frappe' complexe */
-            opacity: 1;
+        tr:hover {
+            background: rgba(255, 255, 255, .03)
+        }
+
+        .flap-group {
+            display: flex;
+            gap: var(--gap);
+            justify-content: flex-start;
+        }
+
+        .flap {
+            width: var(--flap-w);
+            height: var(--flap-h);
+            background: #0a0e27;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* border: 1px solid #000; */
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .6),
+                inset 0 1px 0 rgba(255, 255, 255, .05);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .col-time .flap-group,
+        .col-gate .flap-group {
+            justify-content: center;
+        }
+
+        .col-type .flap-group,
+        .col-stat .flap-group {
+            justify-content: flex-start;
         }
 
 
-        /* --- FOOTER (Repris) --- */
-        .footer {
-            background: var(--primary);
-            border-top: 2px solid var(--accent);
-            padding: 25px 0;
-            text-align: center;
-            color: var(--text-dim);
+        .cyan .flap {
+            color: var(--cyan)
         }
 
-        .footer a {
-            color: var(--text);
-            margin: 0 10px;
-            text-decoration: none;
+        .red .flap {
+            color: #8b1e3f
         }
 
-        /* --- RESPONSIVE DESIGN --- */
+        footer {
+            padding: 10px;
+            text-align: right;
+            font-size: .65rem;
+            letter-spacing: .12em;
+            background: #05070a;
+        }
+
+        /* portes */
+        .doors {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            z-index: 3000;
+            pointer-events: none;
+            background: radial-gradient(circle, #020617, #000);
+        }
+
+        .door {
+            width: 50%;
+            background: linear-gradient(90deg,
+                    #020617,
+                    #0b1028,
+                    #020617);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            color: var(--cyan);
+            text-transform: uppercase;
+            box-shadow: inset 0 0 80px rgba(0, 217, 255, 0.15);
+        }
+
+        .door.left {
+            border-right: 2px solid var(--cyan);
+        }
+
+        .door.right {
+            border-left: 2px solid var(--cyan);
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
         @media (max-width: 768px) {
-            .flight-path {
+
+            table,
+            thead,
+            tbody,
+            th,
+            tr {
+                display: block;
+            }
+
+            thead {
                 display: none;
             }
 
-            main.container {
-                padding-left: 20px;
+            tr {
+                margin-bottom: 1.2rem;
+                padding: 0.8rem;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 8px;
+                background: rgba(2, 3, 8, 0.6);
             }
 
-            .case-study-box {
-                padding: 20px;
-                margin-bottom: 80px;
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.4rem 0;
+                font-size: 0.75rem;
             }
 
-            .page-title {
-                font-size: 2.2rem;
+            td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                color: var(--cyan);
+                margin-right: 10px;
             }
 
-            .mission-title {
-                font-size: 1.8rem;
-            }
         }
     </style>
 </head>
 
 <body>
 
-    <header class="site-header">
-        <div class="header-inner">
-            <a href="accueil2.html" class="logo">CH</a>
-            <nav class="nav-desktop">
-                <a href="accueil2.html" class="nav-link">Accueil</a>
-                <a href="about3.html" class="nav-link">À propos</a>
-                <a href="projects1.html" class="nav-link">Projets</a>
-                <a href="case-studies.html" class="nav-link active">Études de cas</a>
-                <a href="contact.html" class="nav-link">Contact</a>
-            </nav>
+    <div class="doors">
+        <div class="door left">
+            <span>TERMINAL CH-2025</span>
         </div>
-    </header>
-
-    <!-- LA LIGNE DE VOL VERTICALE AVEC L'AVION -->
-    <div class="flight-path">
-        <div class="flight-progress" id="progress"></div>
-        <div class="scrolling-plane" id="plane">✈</div>
+        <div class="door right">
+            <span>GROUND CONTROL</span>
+        </div>
     </div>
 
-    <main class="container">
-        <h1 class="page-title"><span>✈</span> Boîte Noire Technique</h1>
-        <p class="page-subtitle">Analyses détaillées des trajectoires de mission et rapports de vol.</p>
+    <header>
+        <span>CMD · WEB & MOBILE — VOL CH-2025</span>
+        <span>STATUT : <b>OPÉRATIONNEL</b></span>
+    </header>
 
-        <!-- PREMIÈRE ÉTUDE DE CAS : OHMYFOOD -->
-        <article class="case-study-box">
-            <header class="mission-header">
-                <span class="mission-id">FICHIER MISSION : OMF-02</span>
-                <span class="mission-status">STATUT : DÉPLOYÉ AVEC SUCCÈS</span>
-            </header>
+    <main>
+        <h1>Écran de contrôle des vols</h1>
+        <p class="subtitle">
+            Situation opérationnelle — missions, compétences et formations du pilote.
+        </p>
 
-            <h2 class="mission-title">Optimisation d'interface gastronomique (OHMYFOOD)</h2>
+        <div class="controls" aria-label="Filtre des vols">
+            <button id="btn-dep" type="button" class="active">DÉPARTS</button>
+            <button id="btn-arr" type="button">ARRIVÉES</button>
+        </div>
 
-            <!-- SECTION 1 : Briefing (Problème initial) -->
-            <section class="technical-section">
-                <span class="section-label">Briefing initial</span>
-                <h3 class="section-title">Analyse des conditions de vol (Problème)</h3>
-                <p class="project-desc">Le client exigeait une plateforme "Mobile First" pour des restaurants
-                    gastronomiques, avec une navigation fluide et des animations élégantes. La contrainte majeure était
-                    d'assurer une expérience utilisateur riche sans compromettre le temps de chargement.</p>
-                <div class="black-box-data">
-                    <pre>
-                    INPUT_FICHIER: MAQUETTE_FIGMA_V3.1
-                    OBJECTIF_PRINCIPAL: UX_MOBILE & ANIMATIONS_CSS
-                    CONTRAINTE_MAJEURE: PERF_OPTIMALE (< 2s)
-                    ENVIRONNEMENT: HTML5, CSS3 (SASS)
-                    </pre>
-                </div>
-            </section>
-
-            <!-- SECTION 2 : Plan de Mission (Solution) -->
-            <section class="technical-section">
-                <span class="section-label">Plan de Mission</span>
-                <h3 class="section-title">Stratégie et exécution (Solution technique)</h3>
-                <p class="project-desc">Le choix s'est porté sur SASS pour sa capacité à gérer des structures CSS
-                    modulaires (approche 7-1 pattern) et des variables, essentielles pour la cohérence des styles et la
-                    facilité de maintenance. Les animations ont été entièrement réalisées en CSS3 pour minimiser la
-                    dépendance au JavaScript et optimiser les performances.</p>
-                <ul class="checklist">
-                    <li>Architecture SASS (7-1 Pattern) pour la gestion du CSS.</li>
-                    <li>Animations pures CSS3 pour le loader et les effets sur les cœurs.</li>
-                    <li>Approche "Mobile First" pour une adaptabilité parfaite.</li>
-                    <li>Optimisation des images et des assets pour un chargement rapide.</li>
-                </ul>
-            </section>
-
-            <!-- SECTION 3 : Incidents de Parcours (Défis rencontrés) -->
-            <section class="technical-section">
-                <span class="section-label">Incidents de Parcours</span>
-                <h3 class="section-title">Anomalies et corrections (Turbulences)</h3>
-                <p class="project-desc">La mise en œuvre des animations s'est heurtée à des défis de compatibilité entre
-                    navigateurs et à la nécessité d'optimiser le timing pour une fluidité perçue, sans l'aide de
-                    bibliothèques JS.</p>
-                <ul class="checklist turbulences">
-                    <li>Désynchronisation inattendue des keyframes sur Safari iOS (résolu via préfixes CSS et
-                        ajustements de timing).</li>
-                    <li>Problème de superposition des éléments au chargement sur certains dispositifs (gestion du
-                        z-index dynamique).</li>
-                    <li>Calcul précis des délais d'animation (`animation-delay`) pour des séquences complexes.</li>
-                </ul>
-                <div class="black-box-data">
-                    <pre>
-                    ANOMALIE_01: SAFARI_KEYFRAME_DRIFT
-                    CORRECTION_01: CSS_PREFIXES + ANIMATION_TIMING_ADJUST
-                    ANOMALIE_02: ZINDEX_OVERLAP_ISSUE
-                    CORRECTION_02: ZINDEX_OPTIMIZATION_GRID
-                    </pre>
-                </div>
-            </section>
-
-            <!-- SECTION 4 : Débriefing (Résultats) -->
-            <section class="technical-section">
-                <span class="section-label">Débriefing</span>
-                <h3 class="section-title">Validation de la Mission (Résultats)</h3>
-                <p class="project-desc">Mission déployée sans encombre. L'interface est stable et validée sur tous les
-                    types d'appareils mobiles et desktop. Les objectifs de performance ont été dépassés.</p>
-                <ul class="checklist">
-                    <li>Validation W3C 100% (HTML & CSS).</li>
-                    <li>Score Lighthouse mobile : 98/100 (Performance, Accessibilité, Best Practices).</li>
-                    <li>Expérience utilisateur fluide et animations performantes.</li>
-                </ul>
-            </section>
-        </article>
-
-        <!-- DEUXIÈME ÉTUDE DE CAS : LA PANTHÈRE -->
-        <article class="case-study-box">
-            <header class="mission-header">
-                <span class="mission-id">FICHIER MISSION : LP-03</span>
-                <span class="mission-status">STATUT : DÉPLOYÉ AVEC SUCCÈS</span>
-            </header>
-
-            <h2 class="mission-title">Audit et Optimisation SEO (LA PANTHÈRE)</h2>
-
-            <section class="technical-section">
-                <span class="section-label">Briefing initial</span>
-                <h3 class="section-title">Analyse des conditions de vol (Problème)</h3>
-                <p class="project-desc">Mission d'audit et de refonte d'un site web d'agence de design pour améliorer
-                    son référencement naturel (SEO) et son accessibilité. Le site existant présentait des lacunes
-                    importantes en termes de performance et de visibilité.</p>
-                <div class="black-box-data">
-                    <pre>
-                    INPUT_SITE: LA_PANTHERE_V1.0
-                    OBJECTIF_PRINCIPAL: SEO_BOOST & WCAG_COMPLIANCE
-                    CONTRAINTE_MAJEURE: RETRO_COMPATIBILITE (DESIGN EXISTANT)
-                    OUTILS_ANALYSE: LIGHTHOUSE, WAVE_TOOL, GOOGLE_ANALYTICS
-                    </pre>
-                </div>
-            </section>
-
-            <section class="technical-section">
-                <span class="section-label">Plan de Mission</span>
-                <h3 class="section-title">Stratégie et exécution (Solution technique)</h3>
-                <p class="project-desc">Une approche méthodologique en plusieurs étapes a été adoptée, incluant une
-                    analyse sémantique, une optimisation des images, et une refonte des balises meta, ainsi que
-                    l'implémentation de la conformité WCAG pour l'accessibilité.</p>
-                <ul class="checklist">
-                    <li>Audit SEO complet : mots-clés, balises meta, structure Hn.</li>
-                    <li>Optimisation des performances : compression d'images, minification CSS/JS.</li>
-                    <li>Implémentation des attributs ARIA et amélioration du contraste.</li>
-                    <li>Refonte de la sémantique HTML pour une meilleure interprétation par les moteurs de recherche.
-                    </li>
-                </ul>
-            </section>
-
-            <section class="technical-section">
-                <span class="section-label">Incidents de Parcours</span>
-                <h3 class="section-title">Anomalies et corrections (Turbulences)</h3>
-                <p class="project-desc">La principale difficulté résidait dans l'intégration des optimisations sans
-                    dénaturer le design existant et en maintenant la cohérence visuelle.</p>
-                <ul class="checklist turbulences">
-                    <li>Conflits de styles CSS hérités nécessitant des règles `!important` ponctuelles.</li>
-                    <li>Images non optimisées en masse, requérant un traitement par lot et un recadrage manuel pour
-                        certaines.</li>
-                    <li>Difficulté à implémenter certaines recommandations WCAG sans altérer l'UX originale.</li>
-                </ul>
-                <div class="black-box-data">
-                    <pre>
-                    ANOMALIE_01: CSS_OVERLOAD_LEGACY
-                    CORRECTION_01: SASS_REFACTORING + SPECIFICITY_RULES
-                    ANOMALIE_02: IMAGE_SIZE_OPTIMIZATION
-                    CORRECTION_02: WEBP_CONVERSION + LAZY_LOADING
-                    </pre>
-                </div>
-            </section>
-
-            <section class="technical-section">
-                <span class="section-label">Débriefing</span>
-                <h3 class="section-title">Validation de la Mission (Résultats)</h3>
-                <p class="project-desc">Le site a été significativement amélioré en termes de performance et de
-                    référencement. L'accessibilité a atteint un niveau élevé de conformité, offrant une meilleure
-                    expérience à tous les utilisateurs.</p>
-                <ul class="checklist">
-                    <li>Score Lighthouse : +30 points en Performance et SEO.</li>
-                    <li>Conformité WCAG A/AA validée.</li>
-                    <li>Amélioration du positionnement sur les mots-clés stratégiques.</li>
-                </ul>
-            </section>
-        </article>
-
+        <div class="board" aria-label="Tableau des départs et arrivées">
+            <table role="table" aria-describedby="table-desc">
+                <caption class="visually-hidden">
+                    Tableau des vols – départs et arrivées du pilote CH-2025
+                </caption>
+                <p id="table-desc" class="visually-hidden">
+                    Tableau de type panneau aéroportuaire listant les vols, destinations, horaires, statuts et portes.
+                </p>
+                <thead>
+                    <tr>
+                        <th scope="col" class="col-vol">VOL</th>
+                        <th scope="col" class="col-dest">DESTINATION</th>
+                        <th scope="col" class="col-time">HEURE</th>
+                        <th scope="col" class="col-type">TYPE</th>
+                        <th scope="col" class="col-stat">STATUT</th>
+                        <th scope="col" class="col-gate">PORTE</th>
+                        <th scope="col" class="col-obs">OBSERVATIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+            <footer>● GROUND CONTROL — SÉLECTIONNEZ UN VOL POUR CONSULTER LA ZONE</footer>
+        </div>
     </main>
 
-    <footer class="footer">
-        <p>© 2025 Christophe Hascoët — Tous droits réservés</p>
-    </footer>
-
     <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // --- ANIMATIONS GLOBALES DES ÉTUDES DE CAS ---
-
-        // Animation de la ligne de progression et de l'avion
-        gsap.to("#progress", {
-            height: "100%",
-            scrollTrigger: {
-                trigger: "main",
-                start: "top 150px", // Démarre sous le header
-                end: "bottom bottom", // Se termine en bas du main
-                scrub: 1 // L'animation suit le scroll de manière fluide
+        /* ================== CONFIG ================== */
+        const CONFIG = {
+            chars: " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/",
+            slots: {
+                vol: 6,
+                dest: 20,
+                time: 5,
+                type: 13,
+                stat: 14,
+                gate: 3,
+                obs: 12
             }
-        });
+        };
 
-        // Rotation de l'avion en fonction du scroll
-        let lastScrollDirection = 1; // 1 pour descendre, -1 pour monter
+        /* ================== DONNÉES ==================
+           DÉPARTS = en cours / en montée en compétence
+           ARRIVÉES = acquis / validé
+           Les liens pointent vers les pages correspondantes :
+           - Profil → profile.html
+           - Zone projets → embarquement.html
+           - Plan de vol → plandevol.html
+           - Passeport → passeport.html
+        ================================================ */
 
-        gsap.to("#plane", {
-            top: "100%", // L'avion descend le long de la ligne
-            scrollTrigger: {
-                trigger: "main",
-                start: "top 150px",
-                end: "bottom bottom",
-                scrub: 1,
-                onUpdate: self => {
-                    if (self.direction !== lastScrollDirection) {
-                        lastScrollDirection = self.direction;
-                        const newRotation = (lastScrollDirection === 1) ? 90 : -90; // 90deg pour bas, -90deg pour haut
-                        gsap.to("#plane", {
-                            rotation: newRotation, // GSAP gère la rotation
-                            duration: 0.4,
-                            ease: "power2.out"
-                        });
-                    }
-                }
+        const DEPARTS = [
+            {
+                time: "09:30",
+                vol: "CHBK01",
+                dest: "Booki intégration",
+                type: "Projet",
+                stat: "En vol",
+                gate: "E12",
+                obs: "Zone projets",
+                link: "embarquement.html#booki"
+            },
+            {
+                time: "10:45",
+                vol: "CHPF25",
+                dest: "Portfolio 2025",
+                type: "Projet",
+                stat: "En vol",
+                gate: "E15",
+                obs: "Zone projets",
+                link: "embarquement.html#portfolio-2025"
+            },
+            {
+                time: "11:30",
+                vol: "CHJS06",
+                dest: "JavaScript ES6+",
+                type: "Langage",
+                stat: "En reprise",
+                gate: "C03",
+                obs: "Profil",
+                link: "profile.html#skills-js"
+            },
+            {
+                time: "13:00",
+                vol: "CHRT01",
+                dest: "React & TypeScript",
+                type: "Langage",
+                stat: "En préparation",
+                gate: "C05",
+                obs: "Profil",
+                link: "profile.html#skills-front"
+            },
+            {
+                time: "14:15",
+                vol: "CHGS01",
+                dest: "Animations GSAP",
+                type: "Compétence",
+                stat: "En préparation",
+                gate: "C07",
+                obs: "Profil",
+                link: "profile.html#skills-anim"
+            },
+            {
+                time: "15:45",
+                vol: "CHPL01",
+                dest: "Études de cas clients",
+                type: "Étude de cas",
+                stat: "En préparation",
+                gate: "V03",
+                obs: "Plan de vol",
+                link: "plandevol.html"
             }
+        ];
+
+        const ARRIVEES = [
+            {
+                time: "08:00",
+                vol: "CHHT01",
+                dest: "HTML5 / CSS3",
+                type: "Langage",
+                stat: "Acquis",
+                gate: "---",
+                obs: "Profil",
+                link: "profile.html#skills-front"
+            },
+            {
+                time: "08:30",
+                vol: "CHOC01",
+                dest: "Projets OpenClassrooms",
+                type: "Projets",
+                stat: "Validé",
+                gate: "---",
+                obs: "Zone projets",
+                link: "embarquement.html"
+            },
+            {
+                time: "09:15",
+                vol: "CHLV01",
+                dest: "Laravel & PHP",
+                type: "Backend",
+                stat: "En pratique",
+                gate: "---",
+                obs: "Plan de vol",
+                link: "plandevol.html"
+            },
+            {
+                time: "10:00",
+                vol: "CHCC01",
+                dest: "Cahiers des charges",
+                type: "Documentation",
+                stat: "Expérimenté",
+                gate: "---",
+                obs: "Plan de vol",
+                link: "plandevol.html#cahiers"
+            }
+        ];
+
+        /* ============= GÉNÉRATION DES FLAPS ============= */
+
+        function flaps(txt, n) {
+            txt = (txt || "").toUpperCase().padEnd(n, " ").slice(0, n);
+            return `<div class="flap-group">${[...txt]
+                .map(c => `<div class="flap" data-char="${c}"></div>`)
+                .join("")}</div>`;
+        }
+
+
+        function render(data) {
+            const tb = document.getElementById("tbody");
+            tb.innerHTML = "";
+
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+      <td data-label="VOL">
+        ${flaps(row.vol, CONFIG.slots.vol)}
+      </td>
+
+      <td data-label="DESTINATION">
+        ${flaps(row.dest, CONFIG.slots.dest)}
+      </td>
+
+      <td data-label="HEURE">
+        ${flaps(row.time, CONFIG.slots.time)}
+      </td>
+
+      <td data-label="TYPE">
+        ${flaps(row.type, CONFIG.slots.type)}
+      </td>
+
+      <td data-label="STATUT" class="cyan">
+        ${flaps(row.stat, CONFIG.slots.stat)}
+      </td>
+
+      <td data-label="PORTE">
+        ${flaps(row.gate, CONFIG.slots.gate)}
+      </td>
+
+      <td data-label="OBSERVATIONS" class="red">
+        ${flaps(row.obs, CONFIG.slots.obs)}
+      </td>
+    `;
+
+                tr.onclick = () => {
+                    if (row.link) window.location.href = row.link;
+                };
+
+                tb.appendChild(tr);
+            });
+
+            animate();
+        }
+
+
+        /* ============= ANIMATION SPLIT-FLAP ============= */
+
+        function animate() {
+            document.querySelectorAll(".flap").forEach((f, i) => {
+                let cycles = 0;
+                const target = f.dataset.char;
+                const delay = i * 20; // léger décalage pour effet cascade
+                setTimeout(() => {
+                    const it = setInterval(() => {
+                        f.textContent = CONFIG.chars[Math.random() * CONFIG.chars.length | 0];
+                        if (++cycles > 6) {
+                            clearInterval(it);
+                            f.textContent = target;
+                        }
+                    }, 45);
+                }, delay);
+            });
+        }
+
+        /* ============= INTERACTIONS & PORTES ============= */
+
+        document.getElementById("btn-dep").onclick = () => {
+            render(DEPARTS);
+            document.getElementById("btn-dep").classList.add("active");
+            document.getElementById("btn-arr").classList.remove("active");
+        };
+
+        document.getElementById("btn-arr").onclick = () => {
+            render(ARRIVEES);
+            document.getElementById("btn-arr").classList.add("active");
+            document.getElementById("btn-dep").classList.remove("active");
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+          
+            render(DEPARTS);
         });
-
-        // Animation d'entrée pour chaque "case-study-box"
-        gsap.utils.toArray(".case-study-box").forEach((box) => {
-            gsap.fromTo(box,
-                { opacity: 0, translateY: 50 },
-                {
-                    opacity: 1, translateY: 0, duration: 0.8, ease: "power2.out",
-                    scrollTrigger: {
-                        trigger: box,
-                        start: "top 80%", // Commence l'animation quand le haut de la boîte est à 80% du viewport
-                        end: "bottom 20%",
-                        toggleActions: "play reverse play reverse", // Anime en entrée et en sortie
-                    }
+        gsap.timeline()
+            .to(".door span", {
+                opacity: 0,
+                duration: 0.6,
+                ease: "power2.out"
+            })
+            .to(".left", {
+                xPercent: -110,
+                duration: 1.8,
+                ease: "power4.inOut"
+            }, "<")
+            .to(".right", {
+                xPercent: 110,
+                duration: 1.8,
+                ease: "power4.inOut"
+            }, "<")
+            .to(".doors", {
+                opacity: 0,
+                duration: 0.5,
+                onComplete: () => {
+                    document.querySelector(".doors").remove();
                 }
-            );
-        });
+            });
 
-        // --- ANIMATIONS DES SECTIONS INTERNES ---
-        gsap.utils.toArray(".technical-section").forEach((section) => {
-            // Animation de chaque section interne (slide-up)
-            gsap.fromTo(section,
-                { opacity: 0, translateY: 30 },
-                {
-                    opacity: 1, translateY: 0, duration: 0.6, ease: "power1.out",
-                    scrollTrigger: {
-                        trigger: section,
-                        start: "top 75%", // Anime quand la section arrive aux 75% du viewport
-                        end: "bottom 30%",
-                        toggleActions: "play reverse play reverse",
-                    }
-                }
-            );
+        const rows = document.querySelectorAll("tbody tr");
 
-            // Animation staggered des éléments de la checklist
-            gsap.fromTo(section.querySelectorAll('.checklist li'),
-                { opacity: 0, x: -20 },
-                {
-                    opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: "power1.out",
-                    scrollTrigger: {
-                        trigger: section, // Déclenchée par la section parente
-                        start: "top 60%", // Une fois la section bien visible
-                        toggleActions: "play none none reverse" // Ne se désanime pas à la sortie
-                    }
-                }
-            );
+      
 
-            // Animation du black-box-data (simple fondu)
-            gsap.fromTo(section.querySelector('.black-box-data'),
-                { opacity: 0, translateY: 10 },
-                {
-                    opacity: 1, translateY: 0, duration: 0.5, ease: "power1.out",
-                    scrollTrigger: {
-                        trigger: section.querySelector('.black-box-data'),
-                        start: "top 80%",
-                        toggleActions: "play none none reverse"
-                    }
-                }
-            );
-        });
+
     </script>
+
 </body>
 
 </html>

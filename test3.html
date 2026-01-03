@@ -1,352 +1,598 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FMS Pilot Profile — Christophe Hascœët</title>
+  <meta charset="UTF-8" />
+  <title>Terminal CH-2025 · Écran de contrôle des vols</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet" />
+
+  <!-- Reset éventuel -->
+  <link rel="stylesheet" href="css/normalize.css" />
 
   <style>
     :root {
-      /* Palette Cockpit de Nuit */
-      --primary: #050A15;        /* Fond cabine noir profond */
-      --panel-bg: #121926;       /* Gris métal cockpit */
-      --screen-bg: #070B14;      /* Fond écran radar */
-      --accent-cyan: #00D9FF;    /* Systèmes OK */
-      --accent-green: #27E08A;   /* Navigation / Landing */
-      --accent-red: #FF3B3B;     /* Alertes / Master Warning */
-      --accent-amber: #FACC15;   /* Warnings mineurs */
-      --text: #E6EEF8;
-      --text-dim: #7B8BA3;
-      
-      --font-display: 'Oswald', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      
-      --glass: rgba(255, 255, 255, 0.03);
-      --neon-glow: 0 0 15px rgba(0, 217, 255, 0.3);
+      /* Fond / surfaces */
+      --background: #0c1235;
+      --primary: #0a0e27;
+      --secondary: #1a1f3a;
+      --board-bg: #020308;
+
+      /* Accents */
+      --accent: #ff3b3b;
+      --bordeaux: #8b1e3f;
+      --cyan-soft: #00d9ff;
+
+      /* Texte */
+      --text-main: #f5f7ff;
+      --text-muted: #b0b8ff;
+
+      /* Typo */
+      --font: 'Oswald', sans-serif;
+
+      /* Tuiles FIDS */
+      --flap-w: 14px;
+      --flap-h: 22px;
+      --flap-gap: 2px;
+
+      --container-width: 1250px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background-color: var(--primary);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      overflow-x: hidden;
-      /* Scanlines effet écran radar */
-      background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      background-size: 100% 3px, 3px 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #3443a3 0%, #12173f 40%, #050819 100%);
+      color: var(--text-main);
+      font-family: var(--font);
     }
 
-    /* --- BACKGROUND HUD --- */
-    .hud-overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-      opacity: 0.15;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    /* --- HEADER : BANDEAU DE VOL --- */
-    .flight-status-bar {
-      position: fixed;
-      top: 0; width: 100%; height: 60px;
-      background: #000;
-      border-bottom: 2px solid var(--text-dim);
-      display: flex; align-items: center; justify-content: space-around;
-      font-family: var(--font-mono); font-size: 0.75rem;
-      z-index: 1000;
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
-    .status-item span { color: var(--accent-green); }
 
-    /* --- LAYOUT COCKPIT --- */
+    /* ========= HEADER COCKPIT + NAV ========= */
+
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .cockpit-bar {
+      background: #151c3b;
+      padding: 8px 4vw;
+      border-bottom: 1px solid rgba(0, 217, 255, 0.35);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .cockpit-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .pilot-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--cyan-soft);
+    }
+
+    .cockpit-left strong {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .cockpit-center span + span::before {
+      content: "·";
+      margin: 0 0.35rem;
+      color: rgba(199, 204, 232, 0.7);
+    }
+
+    .cockpit-right b {
+      color: var(--cyan-soft);
+    }
+
+    nav.terminal-nav {
+      background: linear-gradient(145deg, #252b4b 0%, #1a1f3a 35%, #101633 100%);
+      border-bottom: 2px solid var(--accent);
+      padding: 10px 4vw 12px;
+    }
+
+    .terminal-nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+    }
+
+    .terminal-nav a {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.16rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #c7cce8;
+      padding: 0.45rem 0.9rem 0.4rem;
+      border-radius: 7px;
+      background: radial-gradient(circle at top, #343d68 0%, rgba(21, 28, 59, 0.96) 55%, rgba(10, 14, 39, 0.96) 100%);
+      box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.7),
+        inset 0 0 0 1px rgba(52, 60, 106, 0.95);
+      border-top: 1px solid rgba(230, 238, 248, 0.25);
+      position: relative;
+      transition:
+        transform 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        background 0.18s ease-out,
+        color 0.18s ease-out;
+    }
+
+    .terminal-nav a::before {
+      content: attr(data-gate);
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(199, 204, 232, 0.9);
+    }
+
+    .terminal-nav a::after {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      bottom: 3px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan-soft), transparent);
+      opacity: 0;
+      transform: scaleX(0.4);
+      transform-origin: center;
+      transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+    }
+
+    .terminal-nav a:hover {
+      color: #fff;
+      background: radial-gradient(circle at top, #3e4b78 0%, #222a52 55%, #101633 100%);
+      box-shadow:
+        0 14px 28px rgba(0, 0, 0, 0.9),
+        0 0 16px rgba(0, 217, 255, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .terminal-nav a:hover::after {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+    /* ========= MAIN / HERO ========= */
+
     main {
-      max-width: 1200px;
-      margin: 80px auto 40px;
+      max-width: var(--container-width);
+      margin: 40px auto;
       padding: 0 20px;
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 20px;
     }
 
-    .cockpit-panel {
-      background: var(--panel-bg);
-      border: 2px solid #2D364D;
-      border-radius: 8px;
-      position: relative;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.5);
+    .hero-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 10px;
     }
 
-    /* --- SECTION IDENTITÉ : PFD (Primary Flight Display) --- */
-    .pfd-header {
-      grid-column: span 12;
-      height: 250px;
-      background: var(--screen-bg);
-      border: 4px solid #333;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-    /* Horizon Artificiel */
-    .horizon {
-      position: absolute; width: 100%; height: 100%;
-      background: linear-gradient(to bottom, #1E3A5F 50%, #5D3A1A 50%);
-      opacity: 0.2;
-      transform: rotate(2deg);
-    }
-    .pilot-info {
-      position: relative; z-index: 2; text-align: center;
-    }
-    .pilot-info h1 {
-      font-family: var(--font-display); font-size: 3.5rem; letter-spacing: 10px;
-      text-shadow: var(--neon-glow);
-    }
-    .pilot-rank {
-      font-family: var(--font-mono); color: var(--accent-cyan);
-      background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 4px;
+    .hero-title {
+      font-size: 2.1rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, #f97373 0%, #faccb0 50%, #f97373 100%);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
     }
 
-    /* --- EXPÉRIENCES : LE JOURNAL DE BORD (Logbook) --- */
-    .logbook {
-      grid-column: span 8;
-      padding: 20px;
-    }
-    .panel-label {
-      position: absolute; top: -10px; left: 20px;
-      background: var(--panel-bg); padding: 0 10px;
-      font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);
-    }
-    .entry {
-      border-left: 2px solid var(--accent-cyan);
-      margin: 20px 0; padding-left: 20px;
-      position: relative;
-    }
-    .entry::before {
-      content: '●'; position: absolute; left: -7px; color: var(--accent-cyan);
-    }
-    .entry-date { color: var(--accent-amber); font-family: var(--font-mono); font-size: 0.8rem; }
-    .entry-title { font-family: var(--font-display); font-size: 1.4rem; color: #FFF; }
-
-    /* --- COMPÉTENCES : LES RADARS DE NAVIGATION --- */
-    .nav-display {
-      grid-column: span 4;
-      background: var(--screen-bg);
-      padding: 20px;
-      border: 2px solid #222;
-    }
-    .radar-circle {
-      width: 100%; aspect-ratio: 1;
-      border: 1px solid rgba(0, 217, 255, 0.2);
-      border-radius: 50%;
-      position: relative;
-      background: repeating-radial-gradient(circle, transparent, transparent 20px, rgba(0, 217, 255, 0.05) 21px);
-    }
-    .radar-sweep {
-      position: absolute; inset: 0;
-      background: conic-gradient(from 0deg, rgba(0, 217, 255, 0.2), transparent 40%);
-      border-radius: 50%;
-    }
-    .skill-blip {
-      position: absolute; width: 6px; height: 6px; background: var(--accent-green);
-      border-radius: 50%; box-shadow: 0 0 10px var(--accent-green);
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    /* --- FORMATIONS : CHECKLIST D'APPROCHE --- */
-    .checklist {
-      grid-column: span 12;
-      padding: 20px;
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-    }
-    .check-item {
-      background: rgba(0,0,0,0.3); padding: 15px; border-radius: 4px;
-      border: 1px solid #333; display: flex; align-items: center; justify-content: space-between;
-    }
-    .check-item span { font-family: var(--font-mono); font-size: 0.9rem; }
-    .status-box { 
-      width: 50px; height: 20px; border: 1px solid var(--accent-green); 
-      color: var(--accent-green); font-size: 0.6rem; text-align: center; line-height: 18px;
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
-    /* --- BOUTON MASTER WARNING (CTA) --- */
-    .master-warning-container {
-      grid-column: span 12;
-      padding: 40px; text-align: center;
+    .controls button {
+      background: #151c3b;
+      border: 1px solid var(--bordeaux);
+      color: #fff;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
-    .btn-warning {
-      background: var(--accent-red);
+
+    .controls button.active {
+      background: var(--bordeaux);
       color: #000;
-      font-family: var(--font-display); font-weight: 700;
-      padding: 20px 60px; border: none; border-radius: 4px;
-      font-size: 1.5rem; cursor: pointer;
-      box-shadow: 0 0 20px rgba(255, 59, 59, 0.4);
-      transition: 0.2s;
-    }
-    .btn-warning:hover { transform: scale(1.05); background: #FF5D5D; }
-
-    /* Footer */
-    footer {
-      text-align: center; padding: 40px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim);
     }
 
-    @media (max-width: 900px) {
-      .logbook, .nav-display { grid-column: span 12; }
-      .checklist { grid-template-columns: 1fr; }
+    /* ========= TABLEAU ========= */
+
+    .board {
+      background: #020308;
+      border: 4px solid #1e293b;
+      border-radius: 10px;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, .9);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .board-table {
+      border-collapse: collapse;
+      min-width: 1100px;
+      width: max-content;
+    }
+
+    .board-table th,
+    .board-table td {
+      padding: 10px 4px;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .board-table th {
+      background: #0f1426;
+      color: var(--red);
+      letter-spacing: .15em;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .col-vol  { width: 100px; }
+    .col-dest { width: 350px; }
+    .col-time { width: 80px;  }
+    .col-type { width: 190px; }
+    .col-stat { width: 220px; }
+    .col-gate { width: 60px;  }
+    .col-obs  { width: 210px; }
+
+    .board-table tbody tr:nth-child(even) {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .board-table tbody tr:hover {
+      background: rgba(255, 255, 255, .05);
+      cursor: pointer;
+    }
+
+    .flap-group {
+      display: flex;
+      gap: var(--gap);
+      justify-content: flex-start;
+    }
+
+    .flap {
+      width: var(--flap-w);
+      height: var(--flap-h);
+      background: #0a0e27;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 -1px 0 rgba(0,0,0,.6),
+        inset 0  1px 0 rgba(255,255,255,.05);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #e5e7f8;
+    }
+
+    .col-time .flap-group,
+    .col-gate .flap-group {
+      justify-content: center;
+    }
+
+    .cyan .flap { color: var(--cyan-soft); }
+    .red  .flap { color: var(--bordeaux); }
+
+    .board footer {
+      padding: 10px;
+      text-align: right;
+      font-size: .65rem;
+      letter-spacing: .12em;
+      background: #05070a;
+      text-transform: uppercase;
+      color: #cbd5f5;
+    }
+
+    /* ========= FOOTER ========= */
+
+    footer.site-footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      font-size: 0.75rem;
+    }
+
+    .footer-inner {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 20px;
+      background: linear-gradient(145deg, #151c3b 0%, #101633 40%, #050b23 100%);
+      border-radius: 12px 12px 0 0;
+      border-top: 2px solid var(--bordeaux);
+      border-left: 1px solid #343c6a;
+      border-right: 1px solid #343c6a;
+      box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+
+    .footer-col h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--cyan-soft);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-col p,
+    .footer-col a {
+      color: #cbd5f5;
+      font-size: 0.75rem;
+      text-decoration: none;
+    }
+
+    .runway-strip {
+      margin-top: 10px;
+      padding: 0.55rem 1rem 0.65rem;
+      text-align: center;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #f9fafb;
+      background: linear-gradient(90deg, #2b0d17 0%, #511426 35%, #2b0d17 100%);
+      border-top: 1px solid rgba(248, 202, 69, 0.45);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85);
     }
   </style>
 </head>
 
 <body>
 
-  <div class="hud-overlay"></div>
+  <header class="site-header">
+    <div class="cockpit-bar">
+      <div class="cockpit-left">
+        <img src="pilote christophehascoet3.png" alt="Portrait du commandant de bord" class="pilot-avatar">
+        <strong>CMD · WEB & MOBILE</strong>
+        <span>Vol CH‑2025</span>
+      </div>
+      <div class="cockpit-center">
+        <span>Secteur FR–EU</span>
+        <span>Alt FL350</span>
+        <span>Spd 480KT</span>
+        <span>AP engaged</span>
+      </div>
+      <div class="cockpit-right">
+        <span>Statut : <b>Opérationnel</b></span>
+      </div>
+    </div>
 
-  <!-- BARRE DE STATUT SUPÉRIEURE -->
-  <header class="flight-status-bar">
-    <div class="status-item">FLT: <span>CH2025</span></div>
-    <div class="status-item">ALT: <span>35000 FT</span></div>
-    <div class="status-item">SPD: <span>MACH 0.82</span></div>
-    <div class="status-item">AP: <span>ENGAGED</span></div>
-    <div class="status-item">FUEL: <span>94%</span></div>
+    <nav class="terminal-nav" aria-label="Navigation principale">
+      <ul>
+        <li><a href="index.html"        data-gate="T1 · GATE D01">Hall des départs</a></li>
+        <li><a href="passeport.html"    data-gate="T1 · GATE P02">Passeport du pilote</a></li>
+        <li><a href="embarquement.html" data-gate="T2 · GATE E12">Zone d’embarquement</a></li>
+        <li><a href="plandevol.html"    data-gate="T2 · GATE V03">Plan de vol</a></li>
+        <li><a href="profile.html"      data-gate="T3 · GATE C05">Profil / cockpit</a></li>
+        <li><a href="contact.html"      data-gate="T3 · GATE CTL">Tour de contrôle</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
-    
-    <!-- ECRAN PRINCIPAL (PFD) -->
-    <section class="cockpit-panel pfd-header">
-      <div class="horizon"></div>
-      <div class="pilot-info">
-        <p class="pilot-rank">COMMANDANT DE BORD / DEV FULLSTACK</p>
-        <h1>C. HASCOËT</h1>
-        <p class="pilot-rank" style="margin-top: 10px; color: var(--accent-amber);">BASE: LORIENT, FR (LFRH)</p>
+    <section aria-labelledby="screen-title">
+      <div class="hero-line">
+        <h1 id="screen-title" class="hero-title">ÉCRAN DE CONTRÔLE DES VOLS</h1>
       </div>
-    </section>
-
-    <!-- LOGBOOK (EXPÉRIENCES) -->
-    <section class="cockpit-panel logbook">
-      <span class="panel-label">FLIGHT LOG / EXPÉRIENCES</span>
-      
-      <div class="entry">
-        <p class="entry-date">2023 - PRÉSENT // ROUTE : LEAD UX/UI</p>
-        <h3 class="entry-title">CHEF DE CABINE DIGITAL - AGENCE XYZ</h3>
-        <p>Pilotage de design systems complexes. Optimisation de l'expérience passager (UX). Navigation sous GSAP et React.</p>
-      </div>
-
-      <div class="entry">
-        <p class="entry-date">2021 - 2023 // ROUTE : DEVELOPPER</p>
-        <h3 class="entry-title">OFFICIER PILOTE DE LIGNE - STARTUP TECH</h3>
-        <p>Développement d'infrastructures robustes. Maintenance en plein vol d'APIs critiques.</p>
-      </div>
-
-      <div class="entry">
-        <p class="entry-date">2019 - 2021 // ROUTE : WEB DESIGN</p>
-        <h3 class="entry-title">ÉCOLE DE PILOTAGE - STUDIO CRÉATIF</h3>
-        <p>Premiers décollages. Apprentissage des courants porteurs HTML/CSS et de l'aérodynamisme visuel.</p>
-      </div>
-    </section>
-
-    <!-- RADAR DE NAVIGATION (COMPÉTENCES) -->
-    <aside class="cockpit-panel nav-display">
-      <span class="panel-label">NAV DISPLAY / SKILLS</span>
-      <div class="radar-circle">
-        <div class="radar-sweep"></div>
-        <!-- Blips de compétences -->
-        <div class="skill-blip" style="top:20%; left:30%;" title="React"></div>
-        <div class="skill-blip" style="top:40%; left:70%;" title="JavaScript"></div>
-        <div class="skill-blip" style="top:60%; left:40%;" title="GSAP"></div>
-        <div class="skill-blip" style="top:10%; left:50%;" title="Figma"></div>
-      </div>
-      <div style="margin-top: 20px; font-family: var(--font-mono); font-size: 0.7rem;">
-        <p>> REACT ........ DETECTED</p>
-        <p>> GSAP ......... STABLE</p>
-        <p>> UI/UX ........ OPTIMAL</p>
-        <p>> LARAVEL ...... IN RANGE</p>
-      </div>
-    </aside>
-
-    <!-- CHECKLIST (FORMATIONS) -->
-    <section class="cockpit-panel checklist">
-      <span class="panel-label">PRE-FLIGHT CHECKLIST / FORMATIONS</span>
-      
-      <div class="check-item">
-        <span>MASTER JAVASCRIPT</span>
-        <div class="status-box">SET</div>
-      </div>
-      <div class="check-item">
-        <span>CERTIF UX DESIGN</span>
-        <div class="status-box">SET</div>
-      </div>
-      <div class="check-item">
-        <span>AGILE METHODOLOGY</span>
-        <div class="status-box">SET</div>
-      </div>
-      <div class="check-item">
-        <span>REACT FRAMEWORK</span>
-        <div class="status-box">SET</div>
-      </div>
-      <div class="check-item">
-        <span>ENGLISH (ICAO 5)</span>
-        <div class="status-box">SET</div>
-      </div>
-      <div class="check-item">
-        <span>ACCESSIBILITY AA</span>
-        <div class="status-box">SET</div>
-      </div>
-    </section>
-
-    <!-- MASTER WARNING (CTA) -->
-    <section class="master-warning-container">
-      <button class="btn-warning" onclick="window.location.href='contact.html'">
-        PUSH TO TALK / CONTACT
-      </button>
-      <p style="margin-top: 15px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-red);">
-        WARNING: DISPONIBLE POUR NOUVELLES MISSIONS
+      <p class="subtitle">
+        Situation opérationnelle — missions, compétences et formations du pilote.
       </p>
-    </section>
 
+      <div class="controls" aria-label="Filtre des vols">
+        <button id="btn-dep" type="button" class="active">DÉPARTS</button>
+        <button id="btn-arr" type="button">ARRIVÉES</button>
+      </div>
+
+      <section class="board" aria-label="Tableau des départs et arrivées">
+        <p id="table-desc" class="sr-only">
+          Tableau de type panneau d’aéroport listant les vols numériques, leurs destinations, horaires, types,
+          statuts, portes et pages correspondantes du site.
+        </p>
+        <table class="board-table" role="table" aria-describedby="table-desc">
+          <caption class="sr-only">
+            Tableau des vols – départs et arrivées du pilote CH-2025
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="col-vol">VOL</th>
+              <th scope="col" class="col-dest">DESTINATION</th>
+              <th scope="col" class="col-time">HEURE</th>
+              <th scope="col" class="col-type">TYPE</th>
+              <th scope="col" class="col-stat">STATUT</th>
+              <th scope="col" class="col-gate">PORTE</th>
+              <th scope="col" class="col-obs">OBSERVATIONS</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <footer>● Ground control — sélectionnez un vol pour consulter la zone</footer>
+      </section>
+    </section>
   </main>
 
-  <footer>
-    <p>// CH-2025 // TOUTES LES UNITÉS SONT OPÉRATIONNELLES // RESTER DANS L'AXE DE LA PISTE //</p>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <section class="footer-col" aria-label="Coordonnées de la tour de contrôle">
+        <h3>GROUND_CONTROL</h3>
+        <p>Email : flight-control@ch-2025.dev</p>
+        <p>Base : Lorient, France</p>
+      </section>
+      <section class="footer-col" aria-label="Canaux de navigation">
+        <h3>NAV_CHANNELS</h3>
+        <p><a href="#">GitHub</a></p>
+        <p><a href="#">LinkedIn</a></p>
+      </section>
+      <section class="footer-col" aria-label="Documents de vol">
+        <h3>FLIGHT_DOCS</h3>
+        <p><a href="#">CV · PDF</a></p>
+        <p>Portfolio 2025 · Thème aéroportuaire</p>
+      </section>
+    </div>
+    <div class="runway-strip">
+      STOP // END OF RUNWAY // T3 · ZONE COCKPIT
+    </div>
   </footer>
 
   <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      gsap.registerPlugin(ScrollTrigger);
+    const CONFIG = {
+      chars: " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/",
+      slots: {
+        vol:  6,
+        dest: 20,
+        time: 5,
+        type: 13,
+        stat: 14,
+        gate: 3,
+        obs:  12
+      }
+    };
 
-      // Animation du balayage radar
-      gsap.to(".radar-sweep", {
-        rotation: 360,
-        duration: 4,
-        repeat: -1,
-        ease: "none"
+    const DEPARTS = [
+      { time:"09:30", vol:"CHBK01", dest:"Booki intégration",      type:"Projet",        stat:"En vol",         gate:"E12", obs:"Zone projets",  link:"embarquement.html#booki" },
+      { time:"10:45", vol:"CHPF25", dest:"Portfolio 2025",        type:"Projet",        stat:"En vol",         gate:"E15", obs:"Zone projets",  link:"embarquement.html#portfolio-2025" },
+      { time:"11:30", vol:"CHJS06", dest:"JavaScript ES6+",       type:"Langage",       stat:"En reprise",     gate:"C03", obs:"Profil",        link:"profile.html#skills-js" },
+      { time:"13:00", vol:"CHRT01", dest:"React & TypeScript",    type:"Langage",       stat:"En préparation", gate:"C05", obs:"Profil",        link:"profile.html#skills-front" },
+      { time:"14:15", vol:"CHGS01", dest:"Animations GSAP",       type:"Compétence",    stat:"En préparation", gate:"C07", obs:"Profil",        link:"profile.html#skills-anim" },
+      { time:"15:45", vol:"CHPL01", dest:"Études de cas clients", type:"Étude de cas",  stat:"En préparation", gate:"V03", obs:"Plan de vol",   link:"plandevol.html" }
+    ];
+
+    const ARRIVEES = [
+      { time:"08:00", vol:"CHHT01", dest:"HTML5 / CSS3",           type:"Langage",       stat:"Acquis",         gate:"---", obs:"Profil",        link:"profile.html#skills-front" },
+      { time:"08:30", vol:"CHOC01", dest:"Projets OpenClassrooms", type:"Projets",      stat:"Validé",         gate:"---", obs:"Zone projets",  link:"embarquement.html" },
+      { time:"09:15", vol:"CHLV01", dest:"Laravel & PHP",          type:"Backend",      stat:"En pratique",    gate:"---", obs:"Plan de vol",   link:"plandevol.html" },
+      { time:"10:00", vol:"CHCC01", dest:"Cahiers des charges",    type:"Documentation",stat:"Expérimenté",    gate:"---", obs:"Plan de vol",   link:"plandevol.html#cahiers" }
+    ];
+
+    function createFlapGroup(text, slotCount) {
+      const target = (text || "").toUpperCase().padEnd(slotCount, " ").slice(0, slotCount);
+      return `<div class="flap-group">${[...target]
+        .map(c => `<span class="flap" data-char="${c}"></span>`)
+        .join("")}</div>`;
+    }
+
+    function animateFlaps() {
+      const flaps = document.querySelectorAll(".flap");
+      if (!flaps.length) return;
+
+      flaps.forEach((flap, index) => {
+        const target = flap.dataset.char;
+        let cycles = 0;
+        const maxCycles = 6 + (index % 4); // léger décalage par ligne
+        const delay = index * 10;
+
+        setTimeout(() => {
+          const interval = setInterval(() => {
+            const chars = CONFIG.chars;
+            flap.textContent = chars[Math.floor(Math.random() * chars.length)];
+            if (++cycles > maxCycles) {
+              clearInterval(interval);
+              flap.textContent = target;
+            }
+          }, 45);
+        }, delay);
       });
+    }
 
-      // Animation des entrées du logbook au scroll
-      gsap.utils.toArray(".entry").forEach(entry => {
-        gsap.from(entry, {
-          x: -50,
-          opacity: 0,
-          duration: 1,
-          scrollTrigger: {
-            trigger: entry,
-            start: "top 85%"
-          }
+    function renderFlights(data) {
+      const tbody = document.getElementById("tbody");
+      tbody.innerHTML = "";
+
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td data-label="VOL">${createFlapGroup(row.vol,  CONFIG.slots.vol)}</td>
+          <td data-label="DESTINATION">${createFlapGroup(row.dest, CONFIG.slots.dest)}</td>
+          <td data-label="HEURE">${createFlapGroup(row.time, CONFIG.slots.time)}</td>
+          <td data-label="TYPE">${createFlapGroup(row.type, CONFIG.slots.type)}</td>
+          <td data-label="STATUT" class="cyan">${createFlapGroup(row.stat, CONFIG.slots.stat)}</td>
+          <td data-label="PORTE">${createFlapGroup(row.gate, CONFIG.slots.gate)}</td>
+          <td data-label="OBSERVATIONS" class="red">${createFlapGroup(row.obs, CONFIG.slots.obs)}</td>
+        `;
+        tr.addEventListener("click", () => {
+          if (row.link) window.location.href = row.link;
         });
+        tbody.appendChild(tr);
       });
 
-      // Animation des check-items
-      gsap.from(".check-item", {
-        scale: 0.8,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.5,
-        scrollTrigger: {
-          trigger: ".checklist",
-          start: "top 80%"
-        }
+      animateFlaps();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const btnDep = document.getElementById("btn-dep");
+      const btnArr = document.getElementById("btn-arr");
+
+      btnDep.addEventListener("click", () => {
+        renderFlights(DEPARTS);
+        btnDep.classList.add("active");
+        btnArr.classList.remove("active");
       });
+
+      btnArr.addEventListener("click", () => {
+        renderFlights(ARRIVEES);
+        btnArr.classList.add("active");
+        btnDep.classList.remove("active");
+      });
+
+      // affichage initial : DÉPARTS
+      renderFlights(DEPARTS);
     });
   </script>
+
 </body>
 </html>
