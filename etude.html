@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>FLIGHT LOG // HALL DES DÉPARTS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Polices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #050b10;
+      --panel: #0c1622;
+      --accent: #1f6fea;
+      --accent-soft: #8ec5ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --green: #3fb950;
+
+      --mono: 'JetBrains Mono', monospace;
+      --display: 'Rajdhani', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #1b3957 0, #050b10 55%, #020407 100%);
+      color: var(--text);
+      font-family: var(--display);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 2rem;
+      text-align: center;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    header span {
+      color: var(--accent);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      border: 1px solid #2f588b;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .controls button {
+      background: transparent;
+      border: none;
+      padding: .6rem 1.5rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      cursor: pointer;
+      border-right: 1px solid #2f588b;
+    }
+
+    .controls button:last-child {
+      border-right: none;
+    }
+
+    .controls button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .subtitle {
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .terminal {
+      border: 1px solid rgba(142, 197, 255, .25);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      text-transform: uppercase;
+    }
+
+    th {
+      text-align: left;
+      color: var(--accent);
+      padding: .75rem;
+      font-size: .8rem;
+      border-bottom: 2px solid rgba(142, 197, 255, .2);
+    }
+
+    td {
+      padding: .9rem .75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      white-space: nowrap;
+    }
+
+    tr:hover {
+      background: rgba(31, 111, 234, .08);
+    }
+
+    .code {
+      color: var(--accent-soft);
+      font-weight: 700;
+    }
+
+    .status {
+      color: var(--green);
+    }
+
+    /* SPLIT FLAP */
+    .flap-cell {
+      display: flex;
+      gap: 2px;
+    }
+
+    .flap {
+      width: 22px;
+      height: 34px;
+      perspective: 800px;
+    }
+
+    .flap-inner {
+      width: 100%;
+      height: 100%;
+      background: var(--panel);
+      border: 1px solid rgba(142, 197, 255, .25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+
+    .flap.space .flap-inner {
+      background: transparent;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    CHRISTOPHE HASCOËT // <span>COMMANDANT DE BORD</span>
+  </header>
+
+  <main>
+    <div class="board-header">
+      <div class="controls">
+        <button class="active" data-board="departs">Départs</button>
+        <button data-board="arrivees">Arrivées</button>
+      </div>
+      <p id="subtitle" class="subtitle"></p>
+    </div>
+
+    <div class="terminal">
+      <table>
+        <thead>
+          <tr>
+            <th>VOL</th>
+            <th id="th-loc">DESTINATION</th>
+            <th id="th-time">ETD</th>
+            <th>GATE</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="board"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const FLAP_CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-";
+    const boardEl = document.getElementById("board");
+    const subtitleEl = document.getElementById("subtitle");
+    const thLoc = document.getElementById("th-loc");
+    const thTime = document.getElementById("th-time");
+
+    const BOARDS = {
+      departs: {
+        subtitle: "Tableau des départs — Compétences en montée",
+        loc: "DESTINATION",
+        time: "ETD",
+        data: [
+          { vol: "DEV01", loc: "TYPESCRIPT AVANCÉ", time: "13:45", gate: "A01", stat: "EN PRÉPARATION" },
+          { vol: "DEV02", loc: "ARCHITECTURE FRONT", time: "19:00", gate: "A02", stat: "EN MONTÉE" },
+          { vol: "DEV03", loc: "GSAP AVANCÉ", time: "10:00", gate: "B01", stat: "PROCÉDURE EN COURS" }
+        ]
+      },
+      arrivees: {
+        subtitle: "Tableau des arrivées — Compétences maîtrisées",
+        loc: "PROVENANCE",
+        time: "ATA",
+        data: [
+          { vol: "OPS01", loc: "HTML SÉMANTIQUE", time: "11:45", gate: "A", stat: "OPÉRATIONNEL" },
+          { vol: "OPS02", loc: "JAVASCRIPT ES6+", time: "09:00", gate: "B", stat: "VALIDÉ" }
+        ]
+      }
+    };
+
+    function createFlapCell(text) {
+      const td = document.createElement("td");
+      td.className = "flap-cell";
+
+      [...text].forEach(char => {
+        const flap = document.createElement("span");
+        flap.className = "flap" + (char === " " ? " space" : "");
+
+        const inner = document.createElement("span");
+        inner.className = "flap-inner";
+        inner.textContent = char === " " ? "" : char;
+
+        flap.appendChild(inner);
+        td.appendChild(flap);
+      });
+
+      return td;
+    }
+
+    function animateFlaps() {
+      document.querySelectorAll(".flap:not(.space)").forEach((flap, i) => {
+        const inner = flap.querySelector(".flap-inner");
+        const finalChar = inner.textContent;
+        const steps = 5 + Math.floor(Math.random() * 5);
+
+        const tl = gsap.timeline({ delay: i * 0.01 });
+
+        for (let j = 0; j < steps; j++) {
+          tl.to(inner, {
+            rotationX: -90,
+            duration: 0.06,
+            onComplete: () => {
+              inner.textContent = FLAP_CHARS[Math.floor(Math.random() * FLAP_CHARS.length)];
+            }
+          }).to(inner, {
+            rotationX: 0,
+            duration: 0.06
+          });
+        }
+
+        tl.to(inner, {
+          rotationX: -90,
+          duration: 0.06,
+          onComplete: () => inner.textContent = finalChar
+        }).to(inner, {
+          rotationX: 0,
+          duration: 0.06
+        });
+      });
+    }
+
+    function render(type) {
+      const board = BOARDS[type];
+      boardEl.innerHTML = "";
+      subtitleEl.textContent = board.subtitle;
+      thLoc.textContent = board.loc;
+      thTime.textContent = board.time;
+
+      board.data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="code">${row.vol}</td>
+        `;
+        tr.appendChild(createFlapCell(row.loc));
+        tr.innerHTML += `
+          <td>${row.time}</td>
+          <td>${row.gate}</td>
+          <td class="status">${row.stat}</td>
+        `;
+        boardEl.appendChild(tr);
+      });
+
+      gsap.from("tbody tr", {
+        opacity: 0,
+        y: 12,
+        stagger: .08,
+        duration: .4
+      });
+
+      animateFlaps();
+    }
+
+    document.querySelectorAll(".controls button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".controls button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        render(btn.dataset.board);
+      });
+    });
+
+    render("departs");
+  </script>
+
+</body>
+</html>

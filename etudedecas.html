@@ -1,386 +1,481 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Études de Cas — Christophe Hascoët</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLIGHT LOG // HALL DES DÉPARTS</title>
 
-    <!-- Polices optimisées pour la lisibilité -->
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <!-- Polices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap"
+    rel="stylesheet">
 
-    <style>
-        :root {
-            --primary: #0A0E27;
-            --accent: #8B1E3F;
-            --accent-bright: #FF3B3B;
-            --text: #E6EEF8;
-            --text-dim: #B0B8C4;
-            --success: #1acb4b;
-            --container-width: 900px;
-            --border-radius: 8px;
-        }
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-        body {
-            background-color: var(--primary);
-            color: var(--text);
-            font-family: 'Open Sans', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+  <style>
+    /* =======================
+       VARIABLES & BASE
+    ======================= */
+    :root {
+      --clr-bg: #0a0d14;
+      --clr-panel: #111820;
+      --clr-accent: #1f6fea;
+      --clr-accent-soft: #8ec5ff;
+      --clr-text: #e6edf3;
+      --clr-muted: #909aa7;
+      --clr-green: #40b950;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Rajdhani', sans-serif;
 
-        /* Header (identique à tes autres pages) */
-        .site-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            padding: 12px 0;
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--accent);
-        }
-        .header-inner {
-            max-width: 1250px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-family: 'Oswald', sans-serif;
-            font-weight: 600;
-            font-size: 1.8rem;
-            color: var(--text);
-            text-decoration: none;
-            position: relative;
-            padding-left: 40px;
-        }
-        .logo::before {
-            content: "✈";
-            position: absolute;
-            left: 0;
-            color: var(--accent-bright);
-        }
-        .nav-desktop {
-            display: flex;
-            gap: 14px;
-        }
-        .nav-link {
-            color: var(--text-dim);
-            text-decoration: none;
-            padding: 8px 12px;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            font-family: 'Oswald', sans-serif;
-            transition: color 0.3s;
-        }
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--accent-bright);
-        }
+      --clr-bg: #0a0d14;
+      --clr-panel: #111820;
+      --clr-accent: #1f6fea;
+      --clr-accent-soft: #8ec5ff;
+      --clr-text: #e6edf3;
+      --clr-muted: #909aa7;
+      --clr-green: #40b950;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-display: 'Rajdhani', sans-serif;
+    }
 
-        /* Conteneur principal */
-        main.container {
-            padding-top: 120px;
-            padding-bottom: 60px;
-            max-width: var(--container-width);
-            margin: 0 auto;
-            padding-left: 20px;
-            padding-right: 20px;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .page-title {
-            text-align: center;
-            font-family: 'Oswald', sans-serif;
-            font-size: 2.2rem;
-            color: var(--text);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    body {
+      background-color: var(--clr-bg);
+      color: var(--clr-text);
+      font-family: var(--font-display);
+      -webkit-font-smoothing: antialiased;
+      background: radial-gradient(circle at top, #1b3957 0, #050b10 52%, #020407 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .page-subtitle {
-            text-align: center;
-            color: var(--text-dim);
-            margin-bottom: 40px;
-            font-size: 1rem;
-        }
+    .wrapper {
+      width: min(1200px, 100% - 32px);
+      margin-inline: auto;
+    }
 
-        /* Ligne de vol (avec avion) */
-        .flight-path {
-            position: fixed;
-            left: 50px;
-            top: 150px;
-            bottom: 100px;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            z-index: 5;
-        }
-        .flight-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 0;
-            background: var(--accent-bright);
-            box-shadow: 0 0 10px var(--accent-bright);
-        }
-        .scrolling-plane {
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(0deg); /* Position initiale */
-            font-size: 1.5rem;
-            color: var(--accent-bright);
-            transition: transform 0.2s ease; /* Transition fluide */
-        }
+    main {
+      flex: 1;
+      padding-block: 2rem;
+    }
 
-        /* Étude de cas */
-        .case-study {
-            background: rgba(15, 22, 48, 0.6);
-            border: 1px solid rgba(139, 30, 63, 0.5);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin-bottom: 40px;
-        }
+    /* =======================
+       HEADER (Simplifié pour la démo)
+    ======================= */
+    header.site-header {
+      padding: 2rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-family: var(--font-display);
+    }
 
-        .case-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(139, 30, 63, 0.3);
-        }
+    header.site-header span {
+      color: var(--clr-accent);
+      font-weight: 700;
+    }
 
-        .case-id {
-            font-family: 'Oswald', sans-serif;
-            color: var(--accent);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
+    /* =======================
+       CONTROLES & TABLEAU
+    ======================= */
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
 
-        .case-status {
-            font-family: 'Oswald', sans-serif;
-            color: var(--success);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
+    .controls-group {
+      display: flex;
+      border: 1px solid #2f588b;
+      border-radius: 6px;
+      overflow: hidden;
+    }
 
-        .study-section {
-            margin-bottom: 30px;
-        }
+    .btn-cockpit {
+      background: transparent;
+      border: none;
+      color: var(--clr-muted);
+      padding: 10px 30px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      border-right: 1px solid #2f588b;
+    }
 
-        .section-title {
-            font-family: 'Oswald', sans-serif;
-            color: var(--text);
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .btn-cockpit:last-child {
+      border-right: none;
+    }
 
-        .section-content {
-            color: var(--text-dim);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
+    .btn-cockpit.active {
+      background: var(--clr-accent);
+      color: white;
+      box-shadow: 0 0 15px rgba(31, 111, 234, 0.4);
+    }
 
-        /* Listes à puces */
-        .checklist {
-            list-style: none;
-            padding-left: 0;
-            margin-top: 10px;
-        }
+    .board-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--clr-muted);
+    }
 
-        .checklist li {
-            padding-left: 25px;
-            position: relative;
-            margin-bottom: 8px;
-            color: var(--text-dim);
-        }
+    /* Modification : Suppression du fond sombre pour le tableau */
+    .terminal-screen {
+      overflow-x: auto;
+      /* Empêche l'écrasement du tableau sur mobile */
+    }
 
-        .checklist li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--success);
-            font-weight: bold;
-        }
+    .flight-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      table-layout: fixed;
+      /* Force le respect des largeurs de colonnes */
+    }
 
-        .warning-list li::before {
-            content: "!";
-            color: var(--accent);
-        }
+    .flight-table th {
+      color: var(--clr-accent);
+      text-align: left;
+      padding: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-bottom: 2px solid rgba(142, 197, 255, 0.2);
+    }
 
-        /* Blocs de données techniques */
-        .tech-data {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 15px;
-            font-family: 'monospace';
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
+    .flight-table td {
+      padding: 18px 12px;
+      font-size: 0.9rem;
+      color: var(--clr-text);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+      /* Empêche le texte de passer à la ligne */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 400;
+    }
 
-        /* Footer */
-        .footer {
-            background: var(--primary);
-            border-top: 2px solid var(--accent);
-            padding: 25px 0;
-            text-align: center;
-            color: var(--text-dim);
-            margin-top: 60px;
-        }
+    .flight-table tr:last-child td {
+      border-bottom: none;
+    }
 
-        .footer a {
-            color: var(--text);
-            margin: 0 10px;
-            text-decoration: none;
-        }
+    .flight-table .code-cell {
+      color: var(--clr-accent-soft);
+      font-weight: 700;
+    }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .flight-path {
-                left: 20px;
-            }
-            main.container {
-                padding-left: 20px;
-            }
-        }
-    </style>
+    .flight-table .status-cell {
+      color: var(--clr-green);
+    }
+
+    /* =======================
+   ÉCRAN TERMINAL (TABLEAU)
+======================= */
+    .terminal-screen {
+      background: linear-gradient(180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(0, 0, 0, 0.15));
+      border: 1px solid rgba(142, 197, 255, 0.25);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 30px 80px rgba(0, 0, 0, 0.6);
+      padding: 1rem;
+    }
+
+    /* =======================
+   TABLEAU AÉROPORT
+======================= */
+    .flight-table {
+      background: transparent;
+    }
+
+    .flight-table thead th {
+      border-right: 1px solid rgba(142, 197, 255, 0.15);
+    }
+
+    .flight-table thead th:last-child,
+    .flight-table td:last-child {
+      border-right: none;
+    }
+
+    .flight-table td {
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* =======================
+   SPLIT-FLAP
+======================= */
+    .flap {
+      width: 22px;
+      height: 34px;
+      perspective: 600px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .flap-inner {
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+
+    .flap.space {
+      background: transparent;
+      box-shadow: none;
+    }
+
+    /* Ligne cliquable plus “machine” */
+    .flight-table tbody tr {
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .flight-table tbody tr:hover {
+      background: rgba(31, 111, 234, 0.08);
+    }
+  </style>
 </head>
-<body>
-    <header class="site-header">
-        <div class="header-inner">
-            <a href="accueil2.html" class="logo">CH</a>
-            <nav class="nav-desktop">
-                <a href="accueil2.html" class="nav-link">Accueil</a>
-                <a href="about3.html" class="nav-link">À propos</a>
-                <a href="projects1.html" class="nav-link">Projets</a>
-                <a href="case-studies.html" class="nav-link active">Études de cas</a>
-                <a href="contact.html" class="nav-link">Contact</a>
-            </nav>
-        </div>
-    </header>
 
-    <!-- Ligne de vol avec avion -->
-    <div class="flight-path">
-        <div class="flight-progress" id="progress"></div>
-        <div class="scrolling-plane" id="plane">✈</div>
+<body>
+
+  <header class="site-header">
+    Christophe Hascoët // <span>Commandant de Bord</span>
+  </header>
+
+  <main class="wrapper">
+    <!-- Contrôles Cockpit -->
+    <div class="board-header">
+      <div class="controls-group" role="tablist">
+        <button class="btn-cockpit active" data-board="departs" role="tab" aria-selected="true">Départs</button>
+        <button class="btn-cockpit" data-board="arrivees" role="tab" aria-selected="false">Arrivées</button>
+      </div>
+      <p id="board-subtitle" class="board-subtitle">Tableau des départs — Compétences en montée</p>
     </div>
 
-    <main class="container">
-        <h1 class="page-title">Analyse Post-Vol</h1>
-        <p class="page-subtitle">Retour d'expérience technique sur les missions réalisées</p>
+    <!-- Tableau principal (sans fond sombre) -->
+    <div class="terminal-screen">
+      <table class="flight-table" id="main-board">
+        <thead>
+          <tr>
+            <th style="width: 10%;">VOL</th>
+            <th style="width: 40%;">DESTINATION</th>
+            <th style="width: 15%;">ETD</th>
+            <th style="width: 10%;">GATE</th>
+            <th style="width: 25%;">STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="board-body">
+          <!-- Les lignes du tableau seront injectées ici par JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </main>
 
-        <!-- Étude de cas 1: OhMyFood -->
-        <article class="case-study">
-            <div class="case-header">
-                <span class="case-id">Mission OMF-01</span>
-                <span class="case-status">Statut: Déploiement validé</span>
-            </div>
 
-            <div class="study-section">
-                <h2 class="section-title">Fiche de Pré-Vol</h2>
-                <div class="section-content">
-                    <p>Intégration d'une maquette Figma pour un site mobile-first avec animations CSS avancées. Objectif: performance optimale et respect strict des spécifications.</p>
-                    <div class="tech-data">
-                        <strong>Données initiales:</strong><br>
-                        - Maquette: Figma V3.1<br>
-                        - Contraintes: Performance max | UX prioritaire<br>
-                        - Type: Site statique (HTML/CSS/SASS)
-                    </div>
-                </div>
-            </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const FLAP_CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-";
 
-            <div class="study-section">
-                <h2 class="section-title">Trajectoire Technique</h2>
-                <div class="section-content">
-                    <p>Architecture modulaire SASS (pattern 7-1) pour une maintenance simplifiée et des animations fluides.</p>
-                    <ul class="checklist">
-                        <li>Variables SASS pour l'uniformité visuelle</li>
-                        <li>Animations @keyframes pour le loader</li>
-                        <li>Structure Flexbox pour le responsive</li>
-                    </ul>
-                </div>
-            </div>
 
-            <div class="study-section">
-                <h2 class="section-title">Anomalies Rencontrées</h2>
-                <div class="section-content">
-                    <p>Deux problèmes majeurs identifiés pendant le développement:</p>
-                    <ul class="checklist warning-list">
-                        <li>Désynchronisation des animations sur Safari iOS</li>
-                        <li>Temps de réponse du loader trop court</li>
-                    </ul>
-                    <div class="tech-data">
-                        <strong>Solutions appliquées:</strong><br>
-                        - Ajout de vendor prefixes (-webkit-)<br>
-                        - Calcul précis des animation-delay en SASS
-                    </div>
-                </div>
-            </div>
+      /* ======================
+         DONNÉES DES TABLEAUX
+      ====================== */
+      const BOARDS = {
+        departs: {
+          subtitle: "Tableau des départs — Compétences en montée",
+          label: "DESTINATION",
+          timeLabel: "ETD",
+          data: [
+            { vol: "DEV01", loc: "TYPESCRIPT AVANCÉ", time: "--:--", gate: "A01", stat: "EN PRÉPARATION" },
+            { vol: "DEV02", loc: "TESTS AUTOMATISÉS", time: "--:--", gate: "A02", stat: "EN CONFIGURATION" },
+            { vol: "DEV03", loc: "ARCHITECTURE FRONT", time: "--:--", gate: "B01", stat: "EN MONTÉE" },
+            { vol: "DEV04", loc: "PERFORMANCE WEB", time: "--:--", gate: "B02", stat: "EN APPROCHE" },
+            { vol: "DEV05", loc: "GSAP AVANCÉ", time: "--:--", gate: "C01", stat: "PROCÉDURE EN COURS" }
+          ]
+        },
+        arrivees: {
+          subtitle: "Tableau des arrivées — Compétences maîtrisées",
+          label: "PROVENANCE",
+          timeLabel: "ATA",
+          data: [
+            { vol: "OPS01", loc: "HTML SÉMANTIQUE", time: "--:--", gate: "A", stat: "OPÉRATIONNEL" },
+            { vol: "OPS02", loc: "CSS / SASS", time: "--:--", gate: "A", stat: "MAÎTRISE CONFIRMÉE" },
+            { vol: "OPS03", loc: "JAVASCRIPT ES6+", time: "--:--", gate: "B", stat: "PROCÉDURE VALIDÉE" },
+            { vol: "OPS04", loc: "ACCESSIBILITÉ", time: "--:--", gate: "B", stat: "AUTORISÉ AU SERVICE" },
+            { vol: "OPS05", loc: "PHP / LARAVEL", time: "--:--", gate: "C", stat: "EN SERVICE ACTIF" },
+            { vol: "OPS06", loc: "GIT / WORKFLOW", time: "--:--", gate: "C", stat: "CERTIFIÉ INTERNE" }
+          ]
+        }
+      };
 
-            <div class="study-section">
-                <h2 class="section-title">Résultats Finaux</h2>
-                <div class="section-content">
-                    <p>Projet déployé avec succès. Validation complète des critères:</p>
-                    <div class="tech-data">
-                        <strong>Scores:</strong><br>
-                        - Performance: 98/100 (Lighthouse)<br>
-                        - Accessibilité: 100%<br>
-                        - Bonnes pratiques: 100%
-                    </div>
-                </div>
-            </div>
-        </article>
+      function animateFlapsRealistic() {
+        const flaps = document.querySelectorAll("#board-body .flap:not(.space)");
 
-        <!-- Ajoute d'autres études de cas ici -->
-    </main>
+        flaps.forEach((flap, index) => {
+          const inner = flap.querySelector(".flap-inner");
+          const finalChar = inner.textContent;
+          const iterations = 6 + Math.floor(Math.random() * 6);
 
-    <footer class="footer">
-        <p>© 2025 Christophe Hascoët — Tous droits réservés</p>
-        <div style="margin-top: 10px;">
-            <a href="https://github.com/CHRISTOPHEHASCOET" target="_blank">GitHub</a>
-            <a href="#" target="_blank">LinkedIn</a>
-        </div>
-    </footer>
+          const chars = [];
+          for (let i = 0; i < iterations - 1; i++) {
+            chars.push(
+              FLAP_CHARS[Math.floor(Math.random() * FLAP_CHARS.length)]
+            );
+          }
+          chars.push(finalChar);
 
-    <script>
-        gsap.registerPlugin(ScrollTrigger);
+          const tl = gsap.timeline({
+            delay: index * 0.01
+          });
 
-        // Animation de la ligne rouge
-        gsap.to("#progress", {
-            height: "100%",
-            scrollTrigger: {
-                trigger: "main",
-                start: "top 20%",
-                end: "bottom 80%",
-                scrub: 1
-            }
+          chars.forEach(char => {
+            tl.to(inner, {
+              rotationX: -90,
+              duration: 0.07,
+              ease: "power1.in",
+              onComplete: () => {
+                inner.textContent = char;
+              }
+            }).to(inner, {
+              rotationX: 0,
+              duration: 0.07,
+              ease: "power1.out"
+            });
+          });
+        });
+      }
+
+
+
+      /* ======================
+         UTILITAIRES DOM
+      ====================== */
+      const $ = (selector) => document.querySelector(selector);
+
+      const boardBody = $("#board-body");
+      const subtitle = $("#board-subtitle");
+      const thLocation = $("#main-board thead th:nth-child(2)");
+      const thTime = $("#main-board thead th:nth-child(3)");
+
+      /* ======================
+         SPLIT-FLAP
+      ====================== */
+      function createFlapText(text) {
+        return [...text].map(char => {
+          if (char === " ") {
+            return `<span class="flap space"></span>`;
+          }
+          return `
+      <span class="flap">
+        <span class="flap-inner">${char}</span>
+      </span>
+    `;
+        }).join("");
+      }
+
+
+      /* ======================
+         RENDER TABLEAU
+      ====================== */
+      function renderBoard(type) {
+        const board = BOARDS[type];
+
+        // Labels
+        subtitle.textContent = board.subtitle;
+        thLocation.textContent = board.label;
+        thTime.textContent = board.timeLabel;
+
+        // Reset tableau
+        boardBody.innerHTML = "";
+
+        // Injection lignes
+        board.data.forEach(item => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+        <td class="code-cell">${item.vol}</td>
+        <td class="flap-text">${createFlapText(item.loc)}</td>
+        <td>${item.time}</td>
+        <td>${item.gate}</td>
+        <td class="status-cell">${item.stat}</td>
+      `;
+          boardBody.appendChild(row);
         });
 
-        // Animation de l'avion (corrigée)
-        let lastScroll = 0;
-        window.addEventListener('scroll', function() {
-            const currentScroll = window.scrollY;
-            const plane = document.getElementById("plane");
+        animateRows();
+        animateFlapsRealistic();
+      }
 
-            if (currentScroll > lastScroll) {
-                // Scroll vers le bas → avion pointe vers le haut
-                plane.style.transform = "translate(-50%, -50%) rotate(0deg)";
-            } else {
-                // Scroll vers le haut → avion pointe vers le bas
-                plane.style.transform = "translate(-50%, -50%) rotate(180deg)";
-            }
-            lastScroll = currentScroll;
+      /* ======================
+         ANIMATIONS GSAP
+      ====================== */
+      function animateRows() {
+        gsap.from("#board-body tr", {
+          opacity: 0,
+          y: 15,
+          duration: 0.4,
+          stagger: 0.08,
+          ease: "power2.out"
         });
-    </script>
+      }
+
+      function animateFlaps() {
+        gsap.fromTo(
+          "#board-body .flap:not(.space)",
+          { rotationX: -90, opacity: 0 },
+          {
+            rotationX: 0,
+            opacity: 1,
+            duration: 0.35,
+            stagger: {
+              each: 0.015,
+              from: "random"
+            },
+            ease: "steps(6)"
+          }
+        );
+      }
+
+      /* ======================
+         CONTROLES
+      ====================== */
+      document.querySelectorAll(".btn-cockpit").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".btn-cockpit").forEach(b => b.classList.remove("active"));
+          button.classList.add("active");
+          renderBoard(button.dataset.board);
+        });
+      });
+
+      /* ======================
+         INIT
+      ====================== */
+      renderBoard("departs");
+
+    });
+  </script>
+
+
 </body>
+
 </html>

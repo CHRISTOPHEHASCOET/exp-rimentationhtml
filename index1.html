@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLIGHT LOG // PORTFOLIO DEV</title>
+  <!-- Polices techniques -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #06090e;
+      --bg-panel: #0b121e;
+      --bg-card: #0f1724;
+
+      --primary-blue: #0066ff;
+      --accent-cyan: #00d2ff;
+      --status-green: #00ff41;
+      --text-main: #e6f1ff;
+      --text-muted: #64748b;
+
+      --font-heading: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --glass-border: 1px solid rgba(0, 210, 255, 0.15);
+      --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-heading);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* SCANLINES */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg,
+          rgba(0, 0, 0, 0.15),
+          rgba(0, 0, 0, 0.15) 1px,
+          transparent 1px,
+          transparent 2px);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* --- UTILS --- */
+    .glass-panel {
+      background: rgba(11, 18, 30, 0.7);
+      backdrop-filter: blur(10px);
+      border: var(--glass-border);
+      border-radius: 4px;
+    }
+
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* --- HEADER --- */
+    .flight-deck {
+      display: grid;
+      grid-template-columns: 280px 1fr 150px;
+      gap: 2rem;
+      margin-bottom: 4rem;
+      align-items: start;
+    }
+
+    /* PILOT BADGE */
+    .pilot-badge {
+      padding: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      position: relative;
+    }
+
+    .pilot-badge::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 15%;
+      height: 70%;
+      width: 3px;
+      background: var(--primary-blue);
+      box-shadow: 0 0 10px var(--primary-blue);
+    }
+
+    .pilot-img {
+      width: 60px;
+      height: 60px;
+      border: 1px solid var(--text-muted);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+
+    .pilot-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.25rem;
+    }
+
+    .id-code {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .status-indicator {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--status-green);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--status-green);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 6px rgba(0, 255, 65, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 65, 0);
+      }
+    }
+
+    /* FLIGHT BOARD NAV */
+    .flight-board {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .board-header,
+    .flight-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr 1fr;
+      padding: 0.8rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .board-header {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+    }
+
+    .flight-row {
+      transition: background 0.2s;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+
+    .flight-row:hover,
+    .flight-row.active {
+      background: rgba(0, 210, 255, 0.05);
+    }
+
+    .flight-row.active .f-code {
+      color: var(--primary-blue);
+      text-shadow: 0 0 8px rgba(0, 102, 255, 0.5);
+    }
+
+    .f-stat.blink {
+      color: var(--primary-blue);
+      animation: blink 1.5s infinite;
+    }
+
+    .text-green {
+      color: var(--status-green);
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* CLOCK */
+    .time-module {
+      text-align: right;
+      font-family: var(--font-mono);
+    }
+
+    .digital-clock {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .digital-date {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .timezone {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      border-radius: 2px;
+    }
+
+    /* --- MAIN --- */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .gate-tag {
+      background: var(--primary-blue);
+      color: white;
+      padding: 4px 8px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      border-radius: 2px;
+    }
+
+    .section-header h2 {
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .line-deco {
+      flex-grow: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .archive-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* CARDS */
+    .missions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .mission-card {
+      background: var(--bg-card);
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .mission-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary-blue);
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* RADAR VISUAL */
+    .radar-container {
+      height: 180px;
+      width: 100%;
+      background: radial-gradient(circle at center, #0f1724 0%, #080c14 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .radar-grid {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border: 1px solid rgba(0, 210, 255, 0.1);
+      border-radius: 50%;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .radar-grid::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 210, 255, 0.1);
+    }
+
+    .radar-grid::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: rgba(0, 210, 255, 0.1);
+    }
+
+    .radar-sweep {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 102, 255, 0.1) 60deg, rgba(0, 210, 255, 0.4) 90deg, transparent 91deg);
+      animation: radarSpin 4s linear infinite;
+    }
+
+    .radar-circle {
+      width: 4px;
+      height: 4px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      z-index: 2;
+    }
+
+    .radar-sweep.delay-1 {
+      animation-delay: -1.3s;
+    }
+
+    .radar-sweep.delay-2 {
+      animation-delay: -2.6s;
+    }
+
+    @keyframes radarSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* CARD INFO */
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 1.5rem 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--primary-blue);
+      font-weight: 700;
+    }
+
+    .route {
+      color: var(--text-muted);
+    }
+
+    .card-content {
+      padding: 0.5rem 1.5rem 1.5rem;
+    }
+
+    .card-content h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    .card-content p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .tech-stack span {
+      display: inline-block;
+      background: #1e293b;
+      color: #94a3b8;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      margin-right: 6px;
+      border-radius: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* --- RUNWAY LIGHTS --- */
+    .runway-lights {
+      display: flex;
+      justify-content: space-between;
+      margin: 4rem 0;
+      overflow: hidden;
+    }
+
+    .runway-lights span {
+      width: 4px;
+      height: 4px;
+      background: var(--primary-blue);
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+
+    /* --- FOOTER --- */
+    .control-tower {
+      border: 1px solid #1e293b;
+      background: rgba(11, 18, 30, 0.5);
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 2rem;
+    }
+
+    .tower-freq .frequency {
+      font-size: 2.5rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-text {
+      font-size: 0.8rem;
+      color: var(--status-green);
+      font-family: var(--font-mono);
+    }
+
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .channel-btn {
+      background: #161e2e;
+      border: 1px solid #1e293b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 0.5rem;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .channel-btn:hover {
+      background: #1e293b;
+      border-color: var(--primary-blue);
+    }
+
+    .channel-btn svg {
+      width: 24px;
+      height: 24px;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .channel-btn span {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .channel-btn:hover svg,
+    .channel-btn:hover span {
+      color: white;
+    }
+
+    .clearance {
+      text-align: right;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .bottom-bar {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #334155;
+    }
+
+    .rec-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .flight-deck {
+        grid-template-columns: 1fr;
+      }
+
+      .missions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .control-tower {
+        grid-template-columns: 1fr;
+      }
+
+      .channel-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SCANLINES OVERLAY (Effet écran) -->
+  <div class="overlay"></div>
+
+  <div class="container">
+    <!-- HEADER: TABLEAU DE BORD & PILOTE -->
+    <header class="flight-deck">
+
+      <!-- BLOC PILOTE -->
+      <div class="pilot-badge glass-panel">
+        <div class="pilot-img">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="pilot-info">
+          <span class="label">COMMANDANT DE BORD</span>
+          <h1 class="pilot-name">VOTRE NOM</h1>
+          <div class="pilot-meta">
+            <span class="id-code">ID: CPT-2024-001</span>
+            <span class="status-indicator"><span class="dot pulse"></span> EN SERVICE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOC NAVIGATION (Tableau des départs) -->
+      <nav class="flight-board glass-panel">
+        <div class="board-header">
+          <span>VOL</span>
+          <span>DESTINATION</span>
+          <span>PORTE</span>
+          <span>STATUT</span>
+        </div>
+        <ul class="flight-list">
+          <li class="flight-row active">
+            <span class="f-code">PF-001</span>
+            <span class="f-dest">ACCUEIL</span>
+            <span class="f-gate">A1</span>
+            <span class="f-stat blink">● EMBARQ.</span>
+          </li>
+          <li class="flight-row">
+            <span class="f-code">PF-002</span>
+            <span class="f-dest">PARCOURS</span>
+            <span class="f-gate">B3</span>
+            <span class="f-stat text-green">● À L'HEURE</span>
+          </li>
+          <li class="flight-row">
+            <span class="f-code">PF-003</span>
+            <span class="f-dest">PROJETS</span>
+            <span class="f-gate">C7</span>
+            <span class="f-stat text-green">● À L'HEURE</span>
+          </li>
+          <li class="flight-row">
+            <span class="f-code">PF-004</span>
+            <span class="f-dest">CONTACT</span>
+            <span class="f-gate">D2</span>
+            <span class="f-stat text-green">● À L'HEURE</span>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- BLOC TEMPS -->
+      <div class="time-module">
+        <div id="clock" class="digital-clock">00:00</div>
+        <div id="date" class="digital-date">01 JAN 2024</div>
+        <div class="timezone">UTC+1 / CDG</div>
+      </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL: GATE C7 (PROJETS) -->
+    <main>
+      <div class="section-header">
+        <span class="gate-tag">GATE C7</span>
+        <h2>MISSIONS ACCOMPLIES</h2>
+        <span class="line-deco"></span>
+        <span class="archive-link">PLANS DE VOL ARCHIVÉS</span>
+      </div>
+
+      <div class="missions-grid">
+
+        <!-- CARD 1 -->
+        <article class="mission-card">
+          <div class="radar-container">
+            <div class="radar-circle"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-grid"></div>
+          </div>
+          <div class="card-meta">
+            <span class="flight-no">VOL PF-101</span>
+            <span class="route">CDG → PROD</span>
+          </div>
+          <div class="card-content">
+            <h3>Application E-Commerce</h3>
+            <p>Plateforme complète avec gestion des stocks, paiements sécurisés et interface d'administration.</p>
+            <div class="tech-stack">
+              <span>React</span><span>Node.js</span><span>PostgreSQL</span><span>Stripe</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 2 -->
+        <article class="mission-card">
+          <div class="radar-container">
+            <div class="radar-circle"></div>
+            <div class="radar-sweep delay-1"></div>
+            <div class="radar-grid"></div>
+          </div>
+          <div class="card-meta">
+            <span class="flight-no">VOL PF-102</span>
+            <span class="route">DEV → LIVE</span>
+          </div>
+          <div class="card-content">
+            <h3>Dashboard Analytics</h3>
+            <p>Interface de visualisation des données en temps réel avec graphiques interactifs complexes.</p>
+            <div class="tech-stack">
+              <span>Vue.js</span><span>D3.js</span><span>Firebase</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 3 -->
+        <article class="mission-card">
+          <div class="radar-container">
+            <div class="radar-circle"></div>
+            <div class="radar-sweep delay-2"></div>
+            <div class="radar-grid"></div>
+          </div>
+          <div class="card-meta">
+            <span class="flight-no">VOL PF-103</span>
+            <span class="route">iOS → STORE</span>
+          </div>
+          <div class="card-content">
+            <h3>Application Mobile</h3>
+            <p>Application cross-platform de réservation avec notifications push et mode hors-ligne.</p>
+            <div class="tech-stack">
+              <span>React Native</span><span>Redux</span><span>AWS</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </main>
+
+    <!-- SÉPARATEUR DE PISTE -->
+    <div class="runway-lights">
+      <!-- Généré en CSS/JS ou simple répétition -->
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- FOOTER: TOUR DE CONTRÔLE -->
+    <footer class="control-tower">
+      <div class="tower-freq">
+        <span class="label">TOUR DE CONTRÔLE</span>
+        <div class="frequency">118.700</div>
+        <div class="status-text"><span class="dot-static green"></span> Fréquence active</div>
+      </div>
+
+      <div class="comm-channels">
+        <span class="label">CANAUX DE COMMUNICATION</span>
+        <div class="channel-grid">
+          <a href="#" class="channel-btn">
+            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>EMAIL</span>
+          </a>
+          <a href="#" class="channel-btn">
+            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+              <rect x="2" y="9" width="4" height="12"></rect>
+              <circle cx="4" cy="4" r="2"></circle>
+            </svg>
+            <span>LINKEDIN</span>
+          </a>
+          <a href="#" class="channel-btn">
+            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <path
+                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+              </path>
+            </svg>
+            <span>GITHUB</span>
+          </a>
+          <a href="#" class="channel-btn">
+            <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+              </path>
+            </svg>
+            <span>RADIO</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="clearance">
+        <span class="label">CLEARANCE</span>
+        <p>CLR TO CAREER VIA<br>PORTFOLIO DIRECT</p>
+      </div>
+    </footer>
+
+    <div class="bottom-bar">
+      <span><span class="rec-dot"></span> REC • Flight Data Recorder Active</span>
+      <span>© 2025 — Cleared for Takeoff</span>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="script.js">
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // --- 1. HORLOGE TEMPS RÉEL ---
+      const updateTime = () => {
+        const now = new Date();
+        const clockEl = document.getElementById('clock');
+        const dateEl = document.getElementById('date');
+
+        clockEl.innerText = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        dateEl.innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      };
+      setInterval(updateTime, 1000);
+      updateTime();
+
+      // --- 2. EFFET SCRAMBLE TEXT (Tableau d'affichage) ---
+      // Simulation d'effet mécanique sans plugin payant
+      const scrambleText = (element) => {
+        const originalText = element.innerText;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let iterations = 0;
+
+        const interval = setInterval(() => {
+          element.innerText = originalText
+            .split('')
+            .map((letter, index) => {
+              if (index < iterations) return originalText[index];
+              return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join('');
+
+          if (iterations >= originalText.length) clearInterval(interval);
+          iterations += 1 / 3; // Vitesse
+        }, 30);
+      };
+
+      // Appliquer l'effet sur les destinations au chargement
+      document.querySelectorAll('.f-dest').forEach(el => {
+        scrambleText(el);
+      });
+
+      // --- 3. ANIMATION GSAP INTRO ---
+      gsap.from(".flight-deck", {
+        y: -50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out"
+      });
+
+      gsap.from(".mission-card", {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+        delay: 0.5
+      });
+
+      // Génération des lumières de piste
+      const runwayContainer = document.querySelector('.runway-lights');
+      runwayContainer.innerHTML = ''; // Clear previous
+      for (let i = 0; i < 50; i++) {
+        const light = document.createElement('span');
+        runwayContainer.appendChild(light);
+      }
+    });
+  </script>
+</body>
+
+</html>

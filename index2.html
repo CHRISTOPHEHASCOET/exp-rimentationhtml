@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLIGHT LOG // FINAL FIDELITY</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0d14;
+            /* Fond global */
+            --bg-petrol: #111820;
+            /* Bleu pétrole (Nav et Footer) */
+            --bg-black: #05070a;
+            /* Noir profond (Boîte com) */
+            --primary-blue: #1f6fea;
+            /* Bleu des icônes et bordures */
+            --text-main: #e6edf3;
+            --text-muted: #909aa7;
+            --status-green: #40b950;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-heading: 'Rajdhani', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-heading);
+            padding: 2rem;
+        }
+
+        /* --- NAVIGATION HAUTE (STYLE COCKPIT DÉMARQUÉ) --- */
+        .cockpit-header {
+            background-color: var(--bg-petrol);
+            display: grid;
+            grid-template-columns: 300px 1fr 200px;
+            border: 1px solid #1a222d;
+            margin-bottom: 4rem;
+        }
+
+        /* Partie Gauche : Pilote */
+        .pilot-badge {
+            padding: 1.5rem;
+            border-right: 1px solid #1a222d;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            border-left: 4px solid var(--primary-blue);
+            /* Barre de côté */
+        }
+
+        .pilot-img {
+            width: 50px;
+            height: 50px;
+            border: 1px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Partie Centrale : Tableau de bord */
+        .fids-nav {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+        }
+
+        .fids-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 60px 120px;
+            padding: 0.5rem 1rem;
+            color: #2d3748;
+            border-bottom: 1px solid #1a222d;
+        }
+
+        .fids-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 60px 120px;
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .fids-row .code {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .fids-row .dest {
+            color: var(--text-muted);
+        }
+
+        .fids-row .stat {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* Partie Droite : Heure */
+        .time-nav {
+            padding: 1rem;
+            text-align: right;
+            border-left: 1px solid #1a222d;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .time-nav #clock {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .time-nav #date {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* --- LIGNE DÉMARCATION PISTE (AVANT FOOTER) --- */
+        .runway-boundary {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 4rem 0 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .runway-boundary i {
+            width: 4px;
+            height: 4px;
+            background: var(--primary-blue);
+            box-shadow: 0 0 10px var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        /* --- FOOTER TOUR DE CONTRÔLE --- */
+        .control-tower-block {
+            background-color: var(--bg-petrol);
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* Gauche : Fréquence */
+        .tower-tower {
+            font-family: var(--font-mono);
+        }
+
+        .tower-tower .label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .tower-tower .freq-val {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 5px 0;
+        }
+
+        .tower-tower .status {
+            color: var(--status-green);
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Milieu : Boîte Noire Communication */
+        .comm-black-box {
+            background-color: var(--bg-black);
+            border: 1px solid #1a222d;
+            padding: 1.5rem;
+        }
+
+        .comm-black-box .box-label {
+            display: block;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .comm-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .comm-item {
+            background: var(--bg-petrol);
+            border: 1px solid var(--primary-blue);
+            padding: 1.2rem 0.5rem;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        /* Animation de rotation demandée */
+        .comm-item svg {
+            width: 22px;
+            height: 22px;
+            color: var(--primary-blue);
+            display: block;
+            margin: 0 auto 8px;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .comm-item:hover svg {
+            transform: rotate(360deg);
+            color: #fff;
+        }
+
+        .comm-item span {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            color: var(--text-muted);
+        }
+
+        /* Droite : Clearance */
+        .clearance-side {
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .clearance-side .label {
+            font-size: 0.55rem;
+            margin-bottom: 5px;
+        }
+
+        /* --- BAS DE PAGE (TRAIT ET REC) --- */
+        .footer-divider {
+            width: 100%;
+            height: 1px;
+            background: #1a222d;
+            margin-top: 2rem;
+        }
+
+        .bottom-bar {
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .rec-point {
+            color: #ef4444;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION STYLE COCKPIT -->
+    <header class="cockpit-header">
+        <div class="pilot-badge">
+            <div class="pilot-img">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 0.6rem; color: var(--primary-blue); letter-spacing: 1px; font-weight: bold;">
+                    COMMANDANT DE BORD</div>
+                <div style="font-size: 1.1rem; font-weight: bold; text-transform: uppercase;">VOTRE NOM</div>
+                <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted);">ID:
+                    CPT-2024-001</div>
+                <div class="status"
+                    style="color: var(--status-green); font-size: 0.6rem; font-family: var(--font-mono); margin-top: 2px;">
+                    ● EN SERVICE</div>
+            </div>
+        </div>
+
+        <div class="fids-nav">
+            <div class="fids-header"><span>VOL</span><span>DESTINATION</span><span>GATE</span><span
+                    style="text-align:right">STATUT</span></div>
+            <div class="fids-row"><span class="code">PF-001</span><span class="dest">Accueil</span><span>A1</span><span
+                    class="stat" style="color: var(--primary-blue)">● EMBARQ.</span></div>
+            <div class="fids-row"><span class="code">PF-002</span><span class="dest">Parcours</span><span>B3</span><span
+                    class="stat" style="color: var(--status-green)">● À L'HEURE</span></div>
+            <div class="fids-row"><span class="code">PF-003</span><span class="dest">Projets</span><span>C7</span><span
+                    class="stat" style="color: var(--status-green)">● À L'HEURE</span></div>
+        </div>
+
+        <div class="time-nav">
+            <div id="clock">20:50</div>
+            <div id="date">05 JAN 2026</div>
+        </div>
+    </header>
+
+    <!-- CONTENU PROJETS (ZONE VIDE POUR L'INSTANT) -->
+    <main style="min-height: 200px;">
+        <h2 style="letter-spacing: 4px; font-weight: 500; margin-bottom: 2rem;">MISSIONS ACCOMPLIES</h2>
+        <!-- Tes cartes iront ici -->
+    </main>
+
+    <!-- LIGNE DE DÉMARCATION STYLE PISTE -->
+    <div class="runway-boundary">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+
+    <!-- FOOTER TOUR DE CONTRÔLE -->
+    <footer class="control-tower-block">
+        <div class="tower-tower">
+            <div class="label">TOUR DE CONTRÔLE</div>
+            <div class="freq-val">118.700</div>
+            <div class="status">● Fréquence active</div>
+        </div>
+
+        <div class="comm-black-box">
+            <span class="box-label">CANAUX DE COMMUNICATION</span>
+            <div class="comm-grid">
+                <a href="#" class="comm-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    <span>EMAIL</span>
+                </a>
+                <a href="#" class="comm-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                        <rect x="2" y="9" width="4" height="12" />
+                        <circle cx="4" cy="4" r="2" />
+                    </svg>
+                    <span>LINKEDIN</span>
+                </a>
+                <a href="#" class="comm-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                    </svg>
+                    <span>GITHUB</span>
+                </a>
+                <a href="#" class="comm-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    <span>RADIO</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="clearance-side">
+            <div class="label">CLEARANCE</div>
+            CLR TO CAREER VIA<br>PORTFOLIO DIRECT
+        </div>
+    </footer>
+
+    <!-- BARRE FINALE -->
+    <div class="footer-divider"></div>
+    <div class="bottom-bar">
+        <div><span class="rec-point">●</span> REC . flight data recorder active</div>
+        <div>© 2025 — PORTFOLIO DIRECT</div>
+    </div>
+
+    <script>
+        function clock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('date').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+        }
+        setInterval(clock, 1000); clock();
+    </script>
+</body>
+
+</html>

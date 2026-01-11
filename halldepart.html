@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLIGHT LOG // PORTFOLIO DEV</title>
+
+    <!-- Polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            /* Fonds */
+            --bg-page: #0a0d14;
+            /* fond général */
+            --bg-panel: #111820;
+            /* nav + footer (bleu pétrole) */
+            --bg-card: #101e38;
+            /* cartes / panneaux internes */
+            --bg-tab: #1a222d;
+
+            /* Couleurs */
+            --primary-blue: #1f6fea;
+            --accent-cyan: #00d2ff;
+            --status-green: #40b950;
+            --text-main: #e6edf3;
+            --text-muted: #909aa7;
+
+            --bg: #050b10;
+            --panel: #0c1622;
+            --accent: #1f6fea;
+            --accent-soft: #8ec5ff;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --green: #3fb950;
+
+            --mono: 'JetBrains Mono', monospace;
+            --display: 'Rajdhani', sans-serif;
+
+            /* Polices */
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text);
+            font-family: var(--font-heading);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            background: radial-gradient(circle at top, #1b3957 0, #050b10 55%, #020407 100%);
+        }
+
+        /* body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.25;
+      background-size: 120px 120px;
+      mix-blend-mode: screen;
+      z-index: 1;
+    } */
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wrapper {
+            width: min(1180px, 100% - 32px);
+            margin-inline: auto;
+        }
+
+        /* Effet scanlines */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 999;
+
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+
+        }
+
+        .label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 0.5rem;
+
+        }
+
+        /* ======================= NAV / HEADER ======================= */
+        header.site-header {
+            background-color: #111820;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+            padding: 1.5rem 0;
+            margin-bottom: 4rem;
+            z-index: 1;
+            position: relative;
+        }
+
+        .nav-inner::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            width: 20%;
+            height: 5px;
+            background: var(--primary-blue);
+
+        }
+
+        .nav-inner::after {
+            content: "";
+            position: absolute;
+            left: 25%;
+            right: 0;
+            top: 0;
+            width: 10%;
+            height: 5px;
+            background: var(--status-green);
+
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: grid;
+            gap: 2rem;
+            align-items: stretch;
+            grid-template-columns: 220px 1fr 150px;
+            /* colonne pilote plus petite que le tableau */
+            gap: 1.75rem;
+            align-items: center;
+
+        }
+
+        /* PILOTE */
+        .pilot-panel {
+            position: relative;
+            background: #1a222d;
+            /* fond du badge */
+            border-radius: 5px;
+            padding: 0.7rem 1.1rem 0.8rem;
+            /* plus compact */
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+
+
+        }
+
+        /* Trait bleu vertical à gauche du badge */
+        .pilot-panel::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 1%;
+            bottom: 1%;
+            width: 3px;
+            background: #1f6fea;
+            border-radius: 3px;
+        }
+
+        /* Ligne "COMMANDANT DE BORD" en haut, bien horizontale */
+        .pilot-role {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #1f6fea;
+            /* bleu */
+            text-align: center;
+        }
+
+        /* Ligne principale : avatar + textes côte à côte */
+        .pilot-main {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        /* Avatar avec photo */
+        .pilot-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            border: 1px solid #2f588b;
+            background: #0a0d14;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pilot-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+        }
+
+        /* Icône par-dessus si pas de photo */
+        .pilot-avatar svg {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            color: var(--text-muted);
+        }
+
+        /* Textes à droite de l'avatar */
+        .pilot-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .pilot-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+            /* blanc */
+        }
+
+        .pilot-id {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #909aa7;
+            /* gris */
+        }
+
+        .pilot-status {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: #40b950;
+            /* EN SERVICE en vert */
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Petit point vert */
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #40b950;
+        }
+
+        .dot.pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(64, 185, 80, 0.5);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(64, 185, 80, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(64, 185, 80, 0);
+            }
+        }
+
+        /* TABLEAU DES VOLS (NAV) */
+        nav.flight-board {
+            border-radius: 9px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        table.flight-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        .flight-table td>div {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .flight-table thead {
+            background: var(--bg-tab);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .flight-table th,
+        .flight-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        .flight-table thead th {
+            font-weight: 500;
+            border-bottom: 1px solid #154287;
+        }
+
+        /* lignes */
+        .flight-row {
+            background: #111820;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            transition: background 0.25s ease, transform 0.25s ease;
+        }
+
+        .flight-row:hover .f-code {
+            color: var(--primary-blue);
+            border: 1px solid rgba(31, 111, 234, 0.7);
+            background: #0b1422;
+        }
+
+
+        /* .flight-row:last-child {
+            border-bottom: none;
+        } */
+
+        .flight-table tbody tr:last-child {
+            border-bottom: 1px solid #154287;
+            /* même teinte que le thead */
+        }
+
+        .flight-table tbody::after {
+            content: "";
+            display: block;
+            height: 4px;
+            background: linear-gradient(to right,
+                    transparent,
+                    rgba(31, 111, 234, .6),
+                    transparent);
+        }
+
+        .flight-row:hover {
+            background: rgba(31, 111, 234, 0.18);
+            transform: translateX(2px);
+            /* glissement léger, effet “vol sélectionné” */
+        }
+
+        .flight-row.active {
+            background: radial-gradient(circle at left, rgba(31, 111, 234, 0.35) 0, #111820 40%);
+        }
+
+        /* code vol */
+        .f-code {
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: #0a0d14;
+            border-radius: 2px;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .flight-row.active .f-code {
+            color: #1f6fea;
+            box-shadow: 0 0 0 1px rgba(31, 111, 234, 0.7) inset;
+        }
+
+        /* lien de destination */
+        .flight-link {
+            color: inherit;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .flight-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 1px;
+            width: 0;
+            background: var(--primary-blue);
+            transition: width 0.3s ease;
+        }
+
+        .flight-row:hover .flight-link::after,
+        .flight-row.active .flight-link::after {
+            width: 100%;
+        }
+
+        /* statut */
+        .f-stat.blink {
+            color: var(--primary-blue);
+            animation: blink 1.5s infinite;
+        }
+
+        .f-stat.text-green {
+            color: var(--status-green);
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* HEURE / DATE */
+        aside.time-module {
+            font-family: var(--font-mono);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+
+        }
+
+        .digital-clock {
+            font-size: 2.4rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 2px;
+            margin-bottom: 0.4rem;
+        }
+
+        .digital-date {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .timezone {
+            display: inline-block;
+            background: #0a0d14;
+            border-radius: 999px;
+            border: 1px solid #154287;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+
+
+
+        /* ======================= MAIN / MISSIONS ======================= */
+
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            border: 1px solid #2f588b;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .controls button {
+            background: transparent;
+            border: none;
+            padding: .6rem 1.5rem;
+            color: var(--muted);
+            font-family: var(--mono);
+            cursor: pointer;
+            border-right: 1px solid #2f588b;
+        }
+
+        .controls button:last-child {
+            border-right: none;
+        }
+
+        .controls button.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .subtitle {
+            font-family: var(--mono);
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .terminal table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--mono);
+            text-transform: uppercase;
+        }
+
+        .terminal th {
+            text-align: left;
+            color: var(--accent);
+            padding: .75rem;
+            font-size: .8rem;
+            border-bottom: 2px solid rgba(142, 197, 255, .2);
+        }
+
+        .terminal td {
+            padding: .9rem .75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            white-space: nowrap;
+        }
+
+        .terminal tr:hover {
+            background: rgba(31, 111, 234, .08);
+        }
+
+        .terminal {
+            border: 1px solid rgba(142, 197, 255, .25);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .terminal tbody tr:last-child td {
+            border-bottom: 1px solid #154287;
+        }
+
+
+        .terminal thead th {
+            border-bottom: 1px solid #154287;
+        }
+
+        /* table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--mono);
+            text-transform: uppercase;
+        }
+
+        th {
+            text-align: left;
+            color: var(--accent);
+            padding: .75rem;
+            font-size: .8rem;
+            border-bottom: 2px solid rgba(142, 197, 255, .2);
+        }
+
+        td {
+            padding: .9rem .75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background: rgba(31, 111, 234, .08);
+        }  */
+
+        .code {
+            color: var(--accent-soft);
+            font-weight: 700;
+        }
+
+        .status {
+            color: var(--green);
+        }
+
+        /* SPLIT FLAP */
+        .flap-cell {
+            display: flex;
+            gap: 2px;
+        }
+
+        .flap {
+            width: 22px;
+            height: 34px;
+            perspective: 800px;
+        }
+
+        .flap-inner {
+            width: 100%;
+            height: 100%;
+            background: var(--panel);
+            border: 1px solid rgba(142, 197, 255, .25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+
+        .flap.space .flap-inner {
+            background: transparent;
+            border: none;
+        }
+
+
+
+        /* ======================= FIN DE PISTE ======================= */
+
+        .runway-boundary {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 4rem 0 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .runway-boundary i {
+            width: 4px;
+            height: 4px;
+            background: var(--primary-blue);
+            box-shadow: 0 0 10px var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        /* ======================= FOOTER ======================= */
+
+        footer.site-footer {
+            background: var(--bg-panel);
+            /* même bleu pétrole que la nav */
+            padding: 2rem 0 1.5rem;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .control-tower {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Tour de contrôle */
+        .tower-freq h2 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .tower-freq .frequency {
+            font-size: 2.5rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+            /* 118.700 en blanc */
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            color: var(--status-green);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-text .dot-static {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--status-green);
+            box-shadow: 0 0 10px rgba(64, 185, 80, 0.8);
+        }
+
+        /* Canaux de communication : rectangle noir */
+        .comm-channels {
+            background: #050a12;
+            border-radius: 6px;
+            border: 1px solid #11171f;
+            padding: 1.25rem 1.5rem 1.5rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+            background: radial-gradient(circle at center, #1a222d 0%, #05070a 100%);
+            border-radius: 15px;
+        }
+
+        .comm-channels h2 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--font-mono);
+            color: var(--primary-blue);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .channel-btn {
+            background: #1c2533;
+            border: 1px solid #11171f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.4rem 0.5rem;
+            text-decoration: none;
+            transition: border-color 0.3s, background 0.3s, transform 0.3s;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .channel-btn svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+            transition: transform 0.6s ease, color 0.3s ease;
+        }
+
+        .channel-btn span {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: #2f588b;
+            /* texte bleu pétrole */
+        }
+
+        /* au survol : contour bleu + rotation de l'icône */
+        .channel-btn:hover {
+            border-color: var(--primary-blue);
+            background: #0b121e;
+            transform: translateY(-2px);
+        }
+
+        .channel-btn:hover svg {
+            transform: rotate(360deg);
+            color: var(--text-main);
+        }
+
+        .channel-btn:hover span {
+            color: var(--text-main);
+        }
+
+        /* Clearance */
+        .clearance {
+            text-align: right;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .clearance h2 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Ligne + REC en bas */
+        .footer-bottom {
+            border-top: 1px solid #154287;
+            /* grand trait sur toute la largeur interne */
+            padding-top: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: #606a78;
+        }
+
+        .rec-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #e5533d;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+
+
+        /* ======================= Responsive ======================= */
+        @media (max-width: 1024px) {
+            .nav-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .missions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-tower {
+                grid-template-columns: 1fr;
+            }
+
+            .channel-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay"></div>
+
+    <!-- ======================= NAV / HEADER ======================= -->
+    <header class="site-header">
+        <div class="nav-inner">
+            <!-- Pilote -->
+            <section class="pilot-panel" aria-labelledby="pilot-name">
+                <!-- Ligne du haut : texte bleu centré -->
+                <p class="pilot-role">COMMANDANT DE BORD</p>
+
+                <!-- Ligne du bas : avatar + infos, en HORIZONTAL -->
+                <div class="pilot-main">
+                    <figure class="pilot-avatar">
+                        <!-- Mets ici ta vraie photo -->
+                        <img src="pilote christophehascoet3.png" alt="Votre nom" class="pilot-photo">
+                        <!-- Icône de secours (visible si tu enlèves la photo ou si elle ne charge pas) -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </figure>
+
+                    <div class="pilot-text">
+                        <h1 id="pilot-name" class="pilot-name">VOTRE NOM</h1>
+                        <p class="pilot-id">ID : CPT-2024-001</p>
+                        <p class="pilot-status">
+                            <span class="dot pulse" aria-hidden="true"></span>
+                            EN SERVICE
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tableau des vols (nav) -->
+            <nav class="flight-board" aria-label="Navigation principale">
+                <table class="flight-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Vol</th>
+                            <th scope="col">Destination</th>
+                            <th scope="col">Porte</th>
+                            <th scope="col">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- PF‑001 : Check‑in / Profil -->
+                        <tr class="flight-row">
+                            <th scope="row" class="f-code">PF-001</th>
+                            <td class="f-dest">
+                                <a class="flight-link" href="accueil1.html">
+                                    Check‑in · Profil
+                                </a>
+                            </td>
+                            <td class="f-gate">A1</td>
+                            <td class="f-stat blink">● EMBARQ.</td>
+                        </tr>
+
+                        <!-- PF‑002 : Sécurité / Compétences -->
+                        <tr class="flight-row">
+                            <th scope="row" class="f-code">PF-002</th>
+                            <td class="f-dest">
+                                <a class="flight-link" href="about.html">
+                                    Contrôle sécurité · Compétences
+                                </a>
+                            </td>
+                            <td class="f-gate">B2</td>
+                            <td class="f-stat text-green">● À L'HEURE</td>
+                        </tr>
+
+                        <!-- PF‑003 : Embarquement / Projets -->
+                        <tr class="flight-row">
+                            <th scope="row" class="f-code">PF-003</th>
+                            <td class="f-dest">
+                                <a class="flight-link" href="etudedecas1.html">
+                                    Porte d’embarquement · Projets
+                                </a>
+                            </td>
+                            <td class="f-gate">C3</td>
+                            <td class="f-stat text-green">● À L'HEURE</td>
+                        </tr>
+
+                        <!-- PF‑004 : Cabine / Méthodes -->
+                        <tr class="flight-row">
+                            <th scope="row" class="f-code">PF-004</th>
+                            <td class="f-dest">
+                                <a class="flight-link" href="nav1.html">
+                                    Cabine / Briefing · Méthodes
+                                </a>
+                            </td>
+                            <td class="f-gate">D4</td>
+                            <td class="f-stat text-green">● À L'HEURE</td>
+                        </tr>
+
+                        <!-- PF‑005 : Journal de vol / CV -->
+                        <tr class="flight-row">
+                            <th scope="row" class="f-code">PF-005</th>
+                            <td class="f-dest">
+                                <a class="flight-link" href="#journal">
+                                    Journal de vol · CV
+                                </a>
+                            </td>
+                            <td class="f-gate">E5</td>
+                            <td class="f-stat text-green">● À L'HEURE</td>
+                        </tr>
+
+                        <!-- PF‑006 : Arrivée / Contact -->
+                        <tr class="flight-row">
+                            <th scope="row" class="f-code">PF-006</th>
+                            <td class="f-dest">
+                                <a class="flight-link" href="#contact">
+                                    Arrivée · Tour de contrôle / Contact
+                                </a>
+                            </td>
+                            <td class="f-gate">F6</td>
+                            <td class="f-stat text-green">● À L'HEURE</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </nav>
+
+            <!-- Heure / date -->
+            <aside class="time-module">
+                <p id="clock" class="digital-clock">00:00</p>
+                <p id="date" class="digital-date">01 JAN 2024</p>
+                <p class="timezone">UTC+1 / CDG</p>
+            </aside>
+        </div>
+    </header>
+
+    <!-- ======================= MAIN ======================= -->
+    <main class="container">
+
+        <div class="board-header">
+            <div class="controls">
+                <button class="active" data-board="departs">Départs</button>
+                <button data-board="arrivees">Arrivées</button>
+            </div>
+            <p id="subtitle" class="subtitle"></p>
+        </div>
+
+        <div class="terminal">
+            <table>
+                <thead>
+                    <tr>
+                        <th>VOL</th>
+                        <th id="th-loc">DESTINATION</th>
+                        <th id="th-time">ETD</th>
+                        <th>GATE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="board"></tbody>
+            </table>
+        </div>
+
+
+    </main>
+
+    <!-- ======================= FOOTER ======================= -->
+    <!-- Fin de piste -->
+    <div class="runway-boundary">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <section class="control-tower">
+                <!-- Tour de contrôle -->
+                <section class="tower-freq">
+                    <h2>Tour de contrôle</h2>
+                    <p class="frequency">118.700</p>
+                    <p class="status-text">
+                        <span class="dot-static"></span>
+                        Fréquence active
+                    </p>
+                </section>
+
+                <!-- Canaux de communication -->
+                <section class="comm-channels">
+                    <h2>Canaux de communication</h2>
+                    <ul class="channel-grid">
+                        <li>
+                            <a href="#" class="channel-btn">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                                    </path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <span>EMAIL</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="channel-btn">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                    <path
+                                        d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                    </path>
+                                    <rect x="2" y="9" width="4" height="12"></rect>
+                                    <circle cx="4" cy="4" r="2"></circle>
+                                </svg>
+                                <span>LINKEDIN</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="channel-btn">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                    <path
+                                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                                    </path>
+                                </svg>
+                                <span>GITHUB</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="channel-btn">
+                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                    <path
+                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                    </path>
+                                </svg>
+                                <span>RADIO</span>
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Clearance -->
+                <section class="clearance">
+                    <h2>Clearance</h2>
+                    <p>CLR TO CAREER VIA<br>PORTFOLIO DIRECT</p>
+                </section>
+            </section>
+
+            <div class="footer-bottom">
+                <p><span class="rec-dot"></span>REC · Enregistreur de données de vol actif</p>
+                <p>© 2025 — Cleared for Takeoff</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ======================= Script ======================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Horloge
+            const updateTime = () => {
+                const now = new Date();
+                document.getElementById('clock').innerText =
+                    now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('date').innerText =
+                    now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+            };
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Effet "tableau aéroport" sur les destinations
+            // 1. Horloge (tu peux garder exactement ce que tu avais)
+
+            // 2. Effet "scramble" sur les destinations au chargement
+            const scrambleText = (element) => {
+                const originalText = element.innerText;
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let iterations = 0;
+
+                const interval = setInterval(() => {
+                    element.innerText = originalText
+                        .split('')
+                        .map((letter, index) => {
+                            if (index < iterations) return originalText[index];
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        })
+                        .join('');
+
+                    if (iterations >= originalText.length) clearInterval(interval);
+                    iterations += 1 / 3; // vitesse
+                }, 30);
+            };
+
+            // applique sur le texte à l’intérieur des liens de destination
+            document.querySelectorAll('.f-dest .flight-link').forEach(el => scrambleText(el));
+
+            // 3. Animation GSAP du tableau (apparition des lignes)
+            gsap.from("#board tr", {
+                opacity: 0,
+                y: 12,
+                stagger: .08,
+                duration: .4
+            });
+
+
+            // 4. Nav interactive : change la ligne active + scroll doux vers la section
+            document.querySelectorAll(".flight-table tbody tr").forEach(row => {
+                row.addEventListener("click", (e) => {
+                    const link = row.querySelector(".flight-link");
+                    if (!link) return;
+
+                    const href = link.getAttribute("href") || "";
+
+                    // 1) Met à jour la ligne active pour TOUTES les lignes
+                    document.querySelectorAll(".flight-row").forEach(r => r.classList.remove("active"));
+                    row.classList.add("active");
+
+                    // 2) Si c'est un ancre interne (#...), on empêche la navigation
+                    //    et on fait un scroll doux. Sinon, on laisse charger la page .html.
+                    if (href.startsWith("#")) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                    }
+                });
+            });
+
+            // Animations GSAP
+            gsap.from(".site-header", {
+                y: -50,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+            gsap.from(".mission-card", {
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: "power2.out",
+                delay: 0.5
+            });
+
+            // Génération des lumières de piste
+            const runway = document.querySelector('.runway-lights');
+            for (let i = 0; i < 50; i++) {
+                const light = document.createElement('span');
+                runway.appendChild(light);
+            }
+        });
+
+        const FLAP_CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-";
+        const boardEl = document.getElementById("board");
+        const subtitleEl = document.getElementById("subtitle");
+        const thLoc = document.getElementById("th-loc");
+        const thTime = document.getElementById("th-time");
+
+        const BOARDS = {
+            departs: {
+                subtitle: "Tableau des départs — Compétences en montée",
+                loc: "DESTINATION",
+                time: "ETD",
+                data: [
+                    { vol: "DEV01", loc: "TYPESCRIPT AVANCÉ", time: "13:45", gate: "A01", stat: "EN PRÉPARATION" },
+                    { vol: "DEV02", loc: "ARCHITECTURE FRONT", time: "19:00", gate: "A02", stat: "EN MONTÉE" },
+                    { vol: "DEV03", loc: "GSAP AVANCÉ", time: "10:00", gate: "B01", stat: "PROCÉDURE EN COURS" }
+                ]
+            },
+            arrivees: {
+                subtitle: "Tableau des arrivées — Compétences maîtrisées",
+                loc: "PROVENANCE",
+                time: "ATA",
+                data: [
+                    { vol: "OPS01", loc: "HTML SÉMANTIQUE", time: "11:45", gate: "A", stat: "OPÉRATIONNEL" },
+                    { vol: "OPS02", loc: "JAVASCRIPT ES6+", time: "09:00", gate: "B", stat: "VALIDÉ" }
+                ]
+            }
+        };
+
+        function createFlapCell(text) {
+            const td = document.createElement("td");
+            td.className = "flap-cell";
+
+            [...text].forEach(char => {
+                const flap = document.createElement("span");
+                flap.className = "flap" + (char === " " ? " space" : "");
+
+                const inner = document.createElement("span");
+                inner.className = "flap-inner";
+                inner.textContent = char === " " ? "" : char;
+
+                flap.appendChild(inner);
+                td.appendChild(flap);
+            });
+
+            return td;
+        }
+
+        function animateFlaps() {
+            document.querySelectorAll(".flap:not(.space)").forEach((flap, i) => {
+                const inner = flap.querySelector(".flap-inner");
+                const finalChar = inner.textContent;
+                const steps = 5 + Math.floor(Math.random() * 5);
+
+                const tl = gsap.timeline({ delay: i * 0.01 });
+
+                for (let j = 0; j < steps; j++) {
+                    tl.to(inner, {
+                        rotationX: -90,
+                        duration: 0.06,
+                        onComplete: () => {
+                            inner.textContent = FLAP_CHARS[Math.floor(Math.random() * FLAP_CHARS.length)];
+                        }
+                    }).to(inner, {
+                        rotationX: 0,
+                        duration: 0.06
+                    });
+                }
+
+                tl.to(inner, {
+                    rotationX: -90,
+                    duration: 0.06,
+                    onComplete: () => inner.textContent = finalChar
+                }).to(inner, {
+                    rotationX: 0,
+                    duration: 0.06
+                });
+            });
+        }
+
+        function render(type) {
+            const board = BOARDS[type];
+            boardEl.innerHTML = "";
+            subtitleEl.textContent = board.subtitle;
+            thLoc.textContent = board.loc;
+            thTime.textContent = board.time;
+
+            board.data.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td class="code">${row.vol}</td>
+        `;
+                tr.appendChild(createFlapCell(row.loc));
+                tr.innerHTML += `
+          <td>${row.time}</td>
+          <td>${row.gate}</td>
+          <td class="status">${row.stat}</td>
+        `;
+                boardEl.appendChild(tr);
+            });
+
+            gsap.from("tbody tr", {
+                opacity: 0,
+                y: 12,
+                stagger: .08,
+                duration: .4
+            });
+
+            animateFlaps();
+        }
+
+        document.querySelectorAll(".controls button").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".controls button").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                render(btn.dataset.board);
+            });
+        });
+
+        render("departs");
+    </script>
+</body>
+
+</html>

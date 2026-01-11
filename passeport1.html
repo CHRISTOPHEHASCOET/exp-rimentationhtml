@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>FLIGHT LOG // PASSEPORT DU PILOTE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Polices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #050b10;
+      --panel: #0c1622;
+      --accent: #1f6fea;
+      --accent-soft: #8ec5ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --green: #3fb950;
+
+      --mono: 'JetBrains Mono', monospace;
+      --display: 'Rajdhani', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #1b3957 0, #050b10 55%, #020407 100%);
+      color: var(--text);
+      font-family: var(--display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      font-size: 0.9rem;
+    }
+
+    header span {
+      color: var(--accent);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* Passeport */
+
+    .passport-wrapper {
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .passport-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .passport-country {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .passport-title {
+      margin-top: 0.4rem;
+      font-size: 1.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+    }
+
+    .passport-subtitle {
+      margin-top: 0.2rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .passport-book {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 18px;
+      padding: 2px;
+      background: linear-gradient(135deg, rgba(142, 197, 255, 0.18), rgba(31, 111, 234, 0.08));
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.75);
+      transform-style: preserve-3d;
+    }
+
+    /* Effet verre dépoli / semi transparent */
+
+    .passport-inner {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(135deg,
+          rgba(12, 22, 34, 0.92),
+          rgba(5, 11, 16, 0.84));
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(142, 197, 255, 0.18);
+      position: relative;
+      isolation: isolate;
+    }
+
+    /* Reliure centrale */
+
+    .passport-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle at top, rgba(142, 197, 255, 0.4), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .passport-page {
+      position: relative;
+      padding: 2rem 2.5rem;
+    }
+
+    .passport-page--left {
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .passport-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent-soft);
+      margin-bottom: 1.2rem;
+    }
+
+    /* Page gauche : identité */
+
+    .passport-identity {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .passport-photo-frame {
+      max-width: 180px;
+      border-radius: 12px;
+      padding: 0.35rem;
+      background: radial-gradient(circle at top, #1a2635 0, #050b10 65%);
+      border: 1px solid rgba(142, 197, 255, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .passport-photo {
+      display: block;
+      width: 100%;
+      border-radius: 9px;
+      object-fit: cover;
+    }
+
+    .passport-photo-caption {
+      margin-top: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    .passport-details {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .passport-detail-row {
+      display: grid;
+      grid-template-columns: minmax(0, 40%) minmax(0, 60%);
+      gap: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .passport-detail-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .passport-detail-value {
+      color: var(--text);
+    }
+
+    .passport-page-footer {
+      margin-top: 1.8rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Page droite : mission / spécialités / historique */
+
+    .passport-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .passport-section-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-soft);
+      margin-bottom: 0.5rem;
+    }
+
+    .passport-section-text {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .passport-skills-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .passport-skill-item {
+      display: flex;
+      gap: 0.75rem;
+      align-items: baseline;
+    }
+
+    .passport-skill-code {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-soft);
+    }
+
+    .passport-skill-label {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+
+    .passport-stamp-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .passport-stamp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.7rem 1.4rem;
+      border-radius: 999px;
+      border: 1px dashed rgba(142, 197, 255, 0.7);
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--accent-soft);
+    }
+
+    /* Résumé sous le passeport (optionnel) */
+
+    .passport-footer-note {
+      margin-top: 1.6rem;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 960px) {
+      .passport-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .passport-inner::before {
+        display: none;
+      }
+
+      .passport-page--left {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .passport-page {
+        padding: 1.8rem 1.7rem;
+      }
+
+      .passport-identity {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      main {
+        padding-top: 2rem;
+        padding-bottom: 2.5rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 1.5rem 1rem;
+        font-size: 0.8rem;
+        letter-spacing: 3px;
+      }
+
+      .passport-title {
+        font-size: 1.4rem;
+      }
+
+      .passport-page {
+        padding: 1.4rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    CHRISTOPHE HASCOËT // <span>COMMANDANT DE BORD</span>
+  </header>
+
+  <main>
+    <div class="passport-wrapper">
+      <div class="passport-header">
+        <p class="passport-country">RÉPUBLIQUE DU CODE // SECTION AVIATION NUMÉRIQUE</p>
+        <h1 class="passport-title">Passeport du pilote</h1>
+        <p class="passport-subtitle">Autorisation de vol en environnement web</p>
+      </div>
+
+      <section class="passport-book" aria-label="Passeport professionnel du pilote développeur">
+        <div class="passport-inner">
+          <!-- Page gauche : identité -->
+          <section class="passport-page passport-page--left" aria-label="Identité du commandant de bord">
+            <p class="passport-label">Zone d’identification du commandant de bord</p>
+
+            <div class="passport-identity">
+              <figure class="passport-photo-frame">
+                <!-- REMPLACE src PAR LE CHEMIN DE TA VRAIE PHOTO -->
+                <img src="assets/img/pilot-photo.jpg" alt="Photo d’identité du pilote développeur"
+                  class="passport-photo">
+                <figcaption class="passport-photo-caption">
+                  Commandant de bord<br>
+                  Développement front & intégration
+                </figcaption>
+              </figure>
+
+              <dl class="passport-details">
+                <div class="passport-detail-row">
+                  <dt class="passport-detail-label">Nom de code</dt>
+                  <dd class="passport-detail-value">HASCOËT</dd>
+                </div>
+                <div class="passport-detail-row">
+                  <dt class="passport-detail-label">Prénom</dt>
+                  <dd class="passport-detail-value">Christophe</dd>
+                </div>
+                <div class="passport-detail-row">
+                  <dt class="passport-detail-label">Rôle à bord</dt>
+                  <dd class="passport-detail-value">Pilote de stack front / intégrateur</dd>
+                </div>
+                <div class="passport-detail-row">
+                  <dt class="passport-detail-label">Type d’appareil</dt>
+                  <dd class="passport-detail-value">
+                    Interfaces web immersives, tableaux de bord techniques, systèmes embarqués UX.
+                  </dd>
+                </div>
+                <div class="passport-detail-row">
+                  <dt class="passport-detail-label">Base principale</dt>
+                  <dd class="passport-detail-value">Région parisienne — fuseau CET</dd>
+                </div>
+                <div class="passport-detail-row">
+                  <dt class="passport-detail-label">N° de vol personnel</dt>
+                  <dd class="passport-detail-value">CH-75001 // FLIGHT LOG 2025</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="passport-page-footer">
+              Ce passeport atteste que le commandant de bord est habilité à piloter des vols front-end complets :
+              de l’analyse du plan de vol jusqu’à l’atterrissage en production, en conditions réelles.
+            </div>
+          </section>
+
+          <!-- Page droite : mission / spécialités / historique -->
+          <section class="passport-page passport-page--right" aria-label="Mission, spécialités et historique de vol">
+            <p class="passport-label">Autorisation de mission</p>
+
+            <article class="passport-section" aria-labelledby="mission-titre">
+              <h2 id="mission-titre" class="passport-section-title">Mission de vol</h2>
+              <p class="passport-section-text">
+                Assurer des vols numériques stables, lisibles et performants : cadrer le besoin, définir le plan de vol
+                technique, construire l’interface et garantir une expérience passager fluide, du décollage au roulage
+                final.
+              </p>
+            </article>
+
+            <article class="passport-section" aria-labelledby="specialites-titre">
+              <h2 id="specialites-titre" class="passport-section-title">Spécialités cockpit</h2>
+              <ul class="passport-skills-list">
+                <li class="passport-skill-item">
+                  <span class="passport-skill-code">SK-01</span>
+                  <span class="passport-skill-label">HTML5 sémantique & accessibilité embarquée</span>
+                </li>
+                <li class="passport-skill-item">
+                  <span class="passport-skill-code">SK-02</span>
+                  <span class="passport-skill-label">CSS / SASS structuré & systèmes de design modulaires</span>
+                </li>
+                <li class="passport-skill-item">
+                  <span class="passport-skill-code">SK-03</span>
+                  <span class="passport-skill-label">JavaScript ES6+ & animations maîtrisées (GSAP, micro‑interactions)
+                  </span>
+                </li>
+                <li class="passport-skill-item">
+                  <span class="passport-skill-code">SK-04</span>
+                  <span class="passport-skill-label">Intégration responsive & optimisation des performances en montée
+                  </span>
+                </li>
+                <li class="passport-skill-item">
+                  <span class="passport-skill-code">SK-05</span>
+                  <span class="passport-skill-label">Workflow Git, checklists de déploiement & suivi de trajectoire
+                  </span>
+                </li>
+              </ul>
+            </article>
+
+            <article class="passport-section" aria-labelledby="historique-titre">
+              <h2 id="historique-titre" class="passport-section-title">Historique de vol</h2>
+              <p class="passport-section-text">
+                Vols effectués sur des projets web variés : intégration complète d’interfaces, refonte de terminaux
+                existants, optimisation de parcours passagers (UX) et mise en place de procédures de vol (Git, revues
+                de code, livraisons continues).
+              </p>
+            </article>
+
+            <div class="passport-page-footer">
+              <p class="passport-stamp-label">Visa technique</p>
+              <p class="passport-stamp">Aptitude au vol // Environnement front-end</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <p class="passport-footer-note">
+        Ce passeport remplace la page “à propos” : ici, le code se pilote comme un cockpit.
+      </p>
+    </div>
+  </main>
+
+  <script>
+    const book = document.querySelector(".passport-book");
+    const inner = document.querySelector(".passport-inner");
+    const leftPage = document.querySelector(".passport-page--left");
+    const rightPage = document.querySelector(".passport-page--right");
+
+    if (book && inner && leftPage && rightPage && window.gsap) {
+      // État initial
+      gsap.set(book, {
+        opacity: 0,
+        scale: 0.96,
+        y: 30
+      });
+
+      gsap.set(inner, {
+        transformOrigin: "50% 50%",
+        rotateY: -12
+      });
+
+      gsap.set(leftPage, {
+        opacity: 0,
+        x: -24
+      });
+
+      gsap.set(rightPage, {
+        opacity: 0,
+        x: 24
+      });
+
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power2.out"
+        }
+      });
+
+      tl.to(book, {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        duration: 0.6
+      })
+        .to(inner, {
+          rotateY: 0,
+          duration: 0.7
+        }, "-=0.25")
+        .to(leftPage, {
+          opacity: 1,
+          x: 0,
+          duration: 0.45
+        }, "-=0.35")
+        .to(rightPage, {
+          opacity: 1,
+          x: 0,
+          duration: 0.45
+        }, "-=0.4");
+    }
+  </script>
+
+</body>
+
+</html>
