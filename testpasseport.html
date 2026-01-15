@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Passeport professionnel — Christophe</title>
+    <style>
+        /* =========================
+   RESET MINIMAL
+========================= */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "JetBrains Mono", monospace;
+            background-color: #f4f6f8;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        /* =========================
+   STRUCTURE GÉNÉRALE
+========================= */
+        main {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2.5rem 3rem;
+            background-color: #ffffff;
+            border: 2px solid #0f172a;
+        }
+
+        /* =========================
+   TITRES
+========================= */
+        h1 {
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #0f172a;
+            padding-bottom: 0.4rem;
+        }
+
+        /* =========================
+   SECTIONS
+========================= */
+        section {
+            margin-bottom: 2.2rem;
+        }
+
+        header p {
+            margin: 0.2rem 0;
+        }
+
+        /* =========================
+   LISTES FACTUELLES
+========================= */
+        ul,
+        ol {
+            padding-left: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        /* =========================
+   LISTE DÉFINITION (DL)
+========================= */
+        dl {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 0.4rem 1.2rem;
+        }
+
+        dt {
+            font-weight: 700;
+        }
+
+        dd {
+            margin: 0;
+        }
+
+        /* =========================
+   PORTRAIT
+========================= */
+        figure {
+            margin: 0;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        figure img {
+            width: 120px;
+            height: auto;
+            border: 2px solid #0f172a;
+        }
+
+        figcaption {
+            font-size: 0.75rem;
+        }
+
+        /* =========================
+   ZONE MRZ
+========================= */
+        pre {
+            background-color: #0f172a;
+            color: #e5e7eb;
+            padding: 1rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            overflow-x: auto;
+        }
+
+        /* =========================
+   FOOTER
+========================= */
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 2rem;
+            color: #475569;
+        }
+
+        /* =========================
+   SÉPARATEURS
+========================= */
+        hr {
+            border: none;
+            border-top: 1px dashed #0f172a;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main aria-labelledby="passport-title">
+
+        <!-- 1. EN-TÊTE D’AUTORITÉ -->
+        <header>
+            <h1 id="passport-title">Passeport professionnel</h1>
+            <p><strong>Autorité émettrice :</strong> Portfolio de développement — Flight Authority</p>
+            <p><strong>Type de document :</strong> Passeport professionnel — Développement web</p>
+            <p><strong>Numéro :</strong> PASS-DEV-JR-001</p>
+            <p><strong>Date d’émission :</strong> 2026</p>
+            <p><strong>Statut :</strong> Valide — Profil junior</p>
+        </header>
+
+        <hr />
+
+        <!-- 2. IDENTIFICATION DU TITULAIRE -->
+        <section aria-labelledby="identification-title">
+            <h2 id="identification-title">Identification du titulaire</h2>
+
+            <dl>
+                <dt>Nom</dt>
+                <dd>Christophe</dd>
+
+                <dt>Fonction principale</dt>
+                <dd>Chef de projet & Développeur web junior</dd>
+
+                <dt>Niveau</dt>
+                <dd>Junior</dd>
+
+                <dt>Statut opérationnel</dt>
+                <dd>En reprise active de pratique</dd>
+
+                <dt>Domaine</dt>
+                <dd>Développement web & intégration front-end</dd>
+
+                <dt>Base principale</dt>
+                <dd>France</dd>
+
+                <dt>Disponibilité</dt>
+                <dd>Projets web — apprentissage encadré</dd>
+            </dl>
+        </section>
+
+        <hr />
+
+        <!-- 3. PORTRAIT & AUTHENTIFICATION -->
+        <section aria-labelledby="auth-title">
+            <h2 id="auth-title">Portrait & authentification</h2>
+
+            <figure>
+                <img src="portrait.jpg" alt="Portrait du titulaire" />
+                <figcaption>Photographie du titulaire</figcaption>
+            </figure>
+
+            <p>
+                Document valide sans signature manuscrite.<br />
+                Identification numérique interne.
+            </p>
+        </section>
+
+        <hr />
+
+        <!-- 4. RÔLE & AUTORISATIONS -->
+        <section aria-labelledby="role-title">
+            <h2 id="role-title">Rôle & autorisations</h2>
+
+            <p><strong>Fonction autorisée :</strong></p>
+            <p>
+                Participation à des projets web en tant que développeur junior
+                et chef de projet débutant.
+            </p>
+
+            <p><strong>Périmètre d’intervention :</strong></p>
+            <ul>
+                <li>Intégration front-end</li>
+                <li>Développement web sous encadrement ou cahier des charges défini</li>
+                <li>Contribution au suivi et à l’organisation de projet</li>
+            </ul>
+        </section>
+
+        <hr />
+
+        <!-- 5. COMPÉTENCES TECHNIQUES -->
+        <section aria-labelledby="skills-title">
+            <h2 id="skills-title">Compétences techniques déclarées</h2>
+
+            <ul>
+                <li>HTML sémantique</li>
+                <li>CSS (bases, responsive)</li>
+                <li>JavaScript (fondamentaux)</li>
+                <li>Notions de TypeScript</li>
+                <li>Bases de React</li>
+                <li>Bases PHP</li>
+                <li>Découverte de Laravel</li>
+                <li>Outils collaboratifs (Git, GitHub)</li>
+            </ul>
+
+            <p>
+                Les compétences listées sont en cours de consolidation par la pratique.
+            </p>
+        </section>
+
+        <hr />
+
+        <!-- 6. PROCÉDURES OPÉRATIONNELLES -->
+        <section aria-labelledby="procedures-title">
+            <h2 id="procedures-title">Procédures opérationnelles connues</h2>
+
+            <ol>
+                <li>Analyse d’un besoin fonctionnel</li>
+                <li>Lecture et compréhension d’un cahier des charges</li>
+                <li>Structuration d’interfaces web</li>
+                <li>Intégration HTML / CSS</li>
+                <li>Ajout d’interactions simples en JavaScript</li>
+                <li>Tests et ajustements</li>
+            </ol>
+        </section>
+
+        <hr />
+
+        <!-- 7. EXPÉRIENCE CONSIGNÉE -->
+        <section aria-labelledby="experience-title">
+            <h2 id="experience-title">Expérience consignée</h2>
+
+            <ul>
+                <li>Projets web personnels et pédagogiques</li>
+                <li>Création de pages et d’interfaces web</li>
+                <li>Approche de la gestion de projet</li>
+                <li>Travail orienté apprentissage et amélioration continue</li>
+            </ul>
+        </section>
+
+        <hr />
+
+        <!-- 8. OBSERVATIONS OFFICIELLES -->
+        <section aria-labelledby="observations-title">
+            <h2 id="observations-title">Observations officielles</h2>
+
+            <p>
+                Profil junior en reprise de pratique, sérieux, méthodique,
+                orienté apprentissage et progression continue.
+                Attentif à la clarté, à la structure et à l’expérience utilisateur.
+            </p>
+        </section>
+
+        <hr />
+
+        <!-- 9. VALIDATION & VISA -->
+        <section aria-labelledby="validation-title">
+            <h2 id="validation-title">Validation & visa</h2>
+
+            <p><strong>Visa technique :</strong> Apte à participer à des projets web dans un cadre junior</p>
+            <p><strong>Mention :</strong> Document établi à des fins de présentation professionnelle</p>
+        </section>
+
+        <hr />
+
+        <!-- 10. ZONE TECHNIQUE -->
+        <section aria-labelledby="mrz-title">
+            <h2 id="mrz-title">Zone technique</h2>
+
+            <pre aria-label="Zone de lecture symbolique">
+DEV&lt;CHRISTOPHE&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+FRA&lt;WEB&lt;JUNIOR&lt;2026&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+PASS&lt;PORTFOLIO&lt;VALID&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+    </pre>
+        </section>
+
+    </main>
+
+    <footer>
+        <address>
+            Document consultable à des fins professionnelles uniquement.
+        </address>
+    </footer>
+
+</body>
+
+</html>

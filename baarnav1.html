@@ -17,35 +17,6 @@
 
   <style>
     :root {
-      /* === Couleurs hero branchées sur ta palette principale === */
-      --clr-bg: var(--bg-page);
-      --clr-bg-elevated: var(--bg-card);
-      --clr-panel: var(--bg-panel);
-
-      --clr-accent: var(--primary-blue);
-      --clr-accent-soft: #5ea8ff;
-      /* bleu un peu plus clair pour le hero */
-
-      --clr-text: var(--text-main);
-      --clr-text-muted: var(--text-muted);
-
-      --clr-border-soft: rgba(255, 255, 255, 0.08);
-      --clr-badge: #20354a;
-      --clr-danger: #ff6b6b;
-
-
-
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
-
-      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.45);
-
-      --transition-fast: 180ms ease-out;
-      --transition-med: 260ms ease-out;
-
-      --nav-height: 82px;
-
       /* Fonds */
       --bg-page: #0a0d14;
       /* fond général */
@@ -54,7 +25,6 @@
       --bg-card: #101e38;
       /* cartes / panneaux internes */
       --bg-tab: #1a222d;
-
       /* Couleurs */
       --primary-blue: #1f6fea;
       --accent-cyan: #00d2ff;
@@ -62,10 +32,20 @@
       --text-main: #e6edf3;
       --text-muted: #909aa7;
 
+      --bg: #050b10;
+      --panel: #0c1622;
+      --accent: #1f6fea;
+      --accent-soft: #8ec5ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --green: #3fb950;
+
+
       /* Polices */
       --font-heading: 'Rajdhani', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
+
 
     * {
       margin: 0;
@@ -74,14 +54,14 @@
     }
 
     body {
-      background-color: var(--bg-page);
+      background: radial-gradient(circle at top, #1b3957 0, #050b10 55%, #020407 100%);
+      /* background-color: var(--bg-page); */
       color: var(--text-main);
       font-family: var(--font-heading);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
       min-height: 100vh;
       position: relative;
-      background: radial-gradient(circle at top, #1b3957 0, #050b10 52%, #020407 100%);
     }
 
     body::before {
@@ -128,7 +108,7 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
+      padding: 0 1.5rem;
 
     }
 
@@ -494,23 +474,24 @@
 
     @media (max-width: 900px) {
       .hero-grid {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: 1fr;
       }
     }
 
-    .hero-primary,
-    .hero-secondary {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
+    /* === COLONNE 1 === */
+
 
     .hero-primary {
-      background: linear-gradient(145deg, rgba(16, 33, 56, 0.98), rgba(7, 13, 22, 0.98));
-      border-radius: var(--radius-lg);
-      padding: 22px 22px 24px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(142, 197, 255, 0.24);
+      /* bordure HUD */
+      background: rgba(12, 22, 34, 0.22);
+      /* plus transparent */
+      backdrop-filter: blur(10px);
+      /* blur plus léger */
+      border: 1px solid rgba(142, 197, 255, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+      padding: 26px 28px 26px;
       position: relative;
       overflow: hidden;
     }
@@ -519,9 +500,9 @@
       content: "";
       position: absolute;
       inset: -80px;
-      background: radial-gradient(circle at 0 0, rgba(79, 163, 255, 0.25) 0, transparent 55%);
+      background: radial-gradient(circle at 0 0, rgba(31, 111, 234, 0.28) 0, transparent 55%);
+      opacity: 0.6;
       pointer-events: none;
-      opacity: 0.85;
     }
 
     .hero-primary-inner {
@@ -533,7 +514,7 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.3em;
-      color: var(--clr-accent-soft);
+      color: #8ec5ff;
       margin-bottom: 12px;
       display: inline-flex;
       align-items: center;
@@ -550,16 +531,17 @@
       font-size: clamp(26px, 3vw, 32px);
       line-height: 1.1;
       margin: 0 0 10px;
+      color: var(--text);
     }
 
     .hero-title span {
-      color: var(--clr-accent-soft);
+      color: var(--accent-soft);
       font-weight: 600;
     }
 
     .hero-subtitle {
       margin: 0 0 18px;
-      color: var(--clr-text-muted);
+      color: var(--muted);
       font-size: 14px;
       max-width: 40rem;
     }
@@ -567,7 +549,7 @@
     .hero-subtitle-roles {
       margin-top: 4px;
       font-size: 13px;
-      color: var(--clr-text);
+      color: var(--text);
       opacity: 0.9;
     }
 
@@ -580,28 +562,26 @@
       font-size: 11px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--clr-text-muted);
+      color: var(--muted);
     }
 
     .hero-status-pill {
       padding: 6px 12px;
       border-radius: 999px;
+      background: rgba(12, 22, 34, 0.4);
       border: 1px solid rgba(142, 197, 255, 0.4);
-      background: rgba(9, 25, 43, 0.9);
-      color: var(--clr-accent-soft);
-      font-weight: 500;
+      color: var(--accent-soft);
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-feature-settings: "tnum" 1;
     }
 
     .hero-status-pill-dot {
       width: 7px;
       height: 7px;
       border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #4fa3ff 0, #162b40 50%, #070b11 100%);
-      box-shadow: 0 0 10px rgba(79, 163, 255, 0.9);
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(64, 185, 80, 0.9);
     }
 
     .hero-status-sep {
@@ -629,36 +609,19 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      transition: background-color var(--transition-med), color var(--transition-med), transform var(--transition-fast), box-shadow var(--transition-med), border-color var(--transition-med);
-      background: none;
-      color: inherit;
+      transition: 180ms ease-out;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #4fa3ff, #8ec5ff);
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
       color: #04111f;
       border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 14px 30px rgba(6, 19, 33, 0.9);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 40px rgba(6, 19, 33, 1);
     }
 
     .btn-ghost {
-      border-color: rgba(255, 255, 255, 0.14);
-      background: rgba(6, 13, 22, 0.7);
-      color: var(--clr-text);
-    }
-
-    .btn-ghost:hover {
-      background: rgba(9, 18, 30, 0.95);
-      transform: translateY(-1px);
-    }
-
-    .btn-icon {
-      font-feature-settings: "tnum" 1;
+      background: rgba(63, 185, 80, 0.5);
+      color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(63, 185, 80, 0.4);
     }
 
     .hero-footnote {
@@ -666,16 +629,14 @@
       flex-wrap: wrap;
       gap: 10px 18px;
       font-size: 11px;
-      color: var(--clr-text-muted);
-      margin-top: 4px;
+      color: var(--text-muted);
     }
 
     .hero-footnote strong {
-      color: var(--clr-text);
-      font-weight: 500;
+      color: var(--text-main);
     }
 
-    /* Carte “plan de vol” à droite */
+    /* === COLONNE 2 — PLAN DE VOL === */
 
     .hero-secondary {
       display: flex;
@@ -687,48 +648,42 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: linear-gradient(150deg, rgba(10, 21, 36, 0.96), rgba(5, 9, 16, 0.96));
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      box-shadow: var(--shadow-soft);
-      padding: 16px 18px 18px;
+      background: rgba(12, 22, 34, 0.20);
+      backdrop-filter: blur(9px);
+      border: 1px solid rgba(142, 197, 255, 0.16);
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+      padding: 22px 24px 22px;
       position: relative;
       overflow: hidden;
-      min-height: 260px;
+
     }
 
     .flight-plan-card::before {
       content: "";
       position: absolute;
-      inset: -60px;
-      background:
-        radial-gradient(circle at 80% 0, rgba(79, 163, 255, 0.24) 0, transparent 60%),
-        radial-gradient(circle at 0 100%, rgba(79, 163, 255, 0.13) 0, transparent 55%);
-      opacity: 0.9;
+      inset: 0;
+      background: radial-gradient(circle at 20% 0%,
+          rgba(31, 111, 234, 0.12),
+          transparent 55%);
       pointer-events: none;
     }
 
-    .flight-plan-inner {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      z-index: 1;
-    }
-
-    .card-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 10px;
+    .flight-plan-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% 0%,
+          rgba(64, 185, 80, 0.08),
+          transparent 60%);
+      pointer-events: none;
     }
 
     .card-title {
       font-size: 13px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--clr-text-muted);
+      color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -737,60 +692,24 @@
     .card-title-badge {
       padding: 3px 8px;
       border-radius: 999px;
-      background: rgba(79, 163, 255, 0.12);
-      border: 1px solid rgba(79, 163, 255, 0.3);
-      color: var(--clr-accent-soft);
+      background: rgba(31, 111, 234, 0.12);
+      border: 1px solid rgba(31, 111, 234, 0.3);
+      color: var(--accent-soft);
       font-size: 10px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
     }
-
-    .card-meta {
-      font-size: 11px;
-      color: var(--clr-text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pill-small {
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-      background: rgba(6, 13, 22, 0.9);
-    }
-
-    /* Mini “carte de vol” */
 
     .flight-map {
       flex: 1;
       margin-bottom: 20px;
       margin-top: 10px;
-      border-radius: var(--radius-md);
+      border-radius: 12px;
       padding: 12px 14px;
-      background: radial-gradient(circle at 0 0, rgba(79, 163, 255, 0.22) 0, rgba(79, 163, 255, 0) 55%),
-        rgba(8, 18, 30, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(12, 22, 34, 0.25);
+      border: 1px solid rgba(142, 197, 255, 0.15);
       position: relative;
       overflow: hidden;
-    }
-
-    .flight-map::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: 0.4;
-      background-image:
-        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.06) 0, transparent 55%),
-        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 100% 100%, 40px 40px, 40px 40px;
-      mix-blend-mode: screen;
-      pointer-events: none;
     }
 
     .flight-map-inner {
@@ -802,23 +721,10 @@
       align-items: center;
     }
 
-    @media (max-width: 640px) {
-      .flight-map-inner {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
     .flight-leg {
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-
-    .airport-code {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
     }
 
     .airport-code-main {
@@ -826,15 +732,14 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       font-weight: 600;
-      font-feature-settings: "tnum" 1;
+      color: var(--text);
     }
 
     .airport-code-label {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-      white-space: nowrap;
+      color: var(--muted);
     }
 
     .flight-lane {
@@ -852,7 +757,6 @@
       background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 30%, transparent 30%);
       background-size: 8px 2px;
       opacity: 0.5;
-      mix-blend-mode: screen;
     }
 
     .flight-lane-plane {
@@ -865,31 +769,6 @@
       border-radius: 999px;
       background: radial-gradient(circle at 30% 0, #ffffff 0, #4fa3ff 50%, #193147 100%);
       box-shadow: 0 0 12px rgba(79, 163, 255, 0.9);
-    }
-
-    .flight-extra {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 11px;
-      color: var(--clr-text-muted);
-    }
-
-    .flight-extra-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .flight-extra-row strong {
-      font-weight: 500;
-      color: var(--clr-text);
-    }
-
-    .flight-leg-secondary {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
     }
 
     .flight-tags {
@@ -906,23 +785,12 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--clr-text-muted);
+      color: var(--text-muted);
     }
 
-    .flight-score {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 4px;
-      font-size: 12px;
-      color: var(--clr-accent-soft);
-      font-feature-settings: "tnum" 1;
-    }
-
-    .flight-score span {
-      font-size: 10px;
-      color: var(--clr-text-muted);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+    .flight-extra,
+    .flight-tag {
+      color: var(--muted);
     }
 
     .card-footer {
@@ -931,14 +799,8 @@
       align-items: center;
       gap: 10px;
       font-size: 11px;
-      color: var(--clr-text-muted);
+      color: var(--text-muted);
       margin-top: 6px;
-    }
-
-    .card-footer span {
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      margin-top: auto;
     }
 
 
@@ -1148,6 +1010,7 @@
         grid-template-columns: repeat(2, 1fr);
       }
     }
+    
   </style>
 </head>
 
@@ -1282,153 +1145,119 @@
   </header>
 
   <!-- ======================= MAIN ======================= -->
-  <main class="container">
-
-
+  <main>
     <section class="hero" id="checkin">
-      <div class="wrapper hero-grid">
-        <!-- Hall principal / Check-in -->
-        <article class="hero-primary" aria-labelledby="hero-title">
-          <div class="hero-primary-inner">
-            <div class="hero-tagline">
-              Boarding pass
-              <span></span>
-            </div>
+      <div class="container">
+        <div class="wrapper hero-grid">
+          <!-- COLONNE 1 — HERO PRINCIPAL -->
+          <article class="hero-primary">
+            <div class="hero-primary-inner">
 
-            <h1 class="hero-title" id="hero-title">
-              Développeur web &amp; mobile ·
-              <span>Commandant de bord de vos projets digitaux</span>
-            </h1>
-
-            <p class="hero-subtitle">
-              Un portfolio pensé comme un terminal aéroportuaire : chaque porte
-              correspond à une étape réelle de vol, de votre besoin business au
-              déploiement en production. Tout est piloté avec un souci de
-              performance, de lisibilité et de continuité d’expérience.
-              <span class="hero-subtitle-roles">
-                Rôles à bord : développement front-end, intégration mobile, chef de projet junior.
-              </span>
-            </p>
-
-            <div class="hero-status-row" aria-hidden="true">
-              <div class="hero-status-pill">
-                <span class="hero-status-pill-dot"></span>
-                Flight&nbsp;DEV&nbsp;320 · On time
+              <div class="hero-tagline">
+                Boarding Pass · Préparation au décollage <span></span>
               </div>
-              <div class="hero-status-sep"></div>
-              <span>Origine · Curiosité</span>
-              <span>Destination · Produits utilisables</span>
-            </div>
 
-            <div class="hero-cta-row">
-              <button class="btn btn-primary" data-target="#boarding">
-                Embarquer sur un projet
-                <span aria-hidden="true" class="btn-icon">→</span>
-              </button>
+              <h1 class="hero-title">
+                Chef de projet & Développeur Web Junior ·
+                <span>Commandant de bord de vos expériences digitales</span>
+              </h1>
 
-              <button class="btn btn-ghost" data-target="#security">
-                Passer les contrôles techniques
-              </button>
-            </div>
+              <p class="hero-subtitle">
+                Je pilote vos projets comme un véritable plan de vol : du briefing initial
+                jusqu’à l’atterrissage en production, avec une navigation précise,
+                une communication claire et une attention constante portée à la performance
+                et à l’expérience utilisateur.
+                <span class="hero-subtitle-roles">
+                  Rôles à bord : gestion de projet, développement front‑end, intégration web.
+                </span>
+              </p>
 
-            <div class="hero-footnote">
-              <span>
-                <strong>UX/UI</strong> comme tour de contrôle : lisibilité, priorisation, parcours.
-              </span>
-              <span>
-                <strong>Code</strong> comme plan de vol : HTML5 sémantique, CSS modulaire, JS ES6 structuré.
-              </span>
-            </div>
-          </div>
-        </article>
-
-        <!-- À droite : plan de vol + mini tableau -->
-        <!-- À droite : plan de vol (agrandi) -->
-        <aside class="hero-secondary" aria-label="Résumé de plan de vol">
-          <section class="flight-plan-card" aria-label="Plan de vol du portfolio">
-            <div class="flight-plan-inner">
-              <header class="card-head">
-                <h2 class="card-title">
-                  Flight plan
-                  <span class="card-title-badge">
-                    Portfolio&nbsp;·&nbsp;Non-stop
-                  </span>
-                </h2>
-                <div class="card-meta">
-                  <span>Durée prévue : 6 sections</span>
-                  <span>·</span>
-                  <span>ESC&nbsp;·&nbsp;Retour à tout moment</span>
+              <div class="hero-status-row">
+                <div class="hero-status-pill">
+                  <span class="hero-status-pill-dot"></span>
+                  Flight DEV‑320 · On Time
                 </div>
-              </header>
+                <div class="hero-status-sep"></div>
+                <span>Origine · Objectifs</span>
+                <span>Destination · Produits utilisables</span>
+              </div>
 
-              <div class="flight-map" aria-hidden="true">
-                <div class="flight-map-inner">
-                  <div class="flight-leg">
-                    <div class="airport-code">
-                      <div class="airport-code-main">CVL</div>
-                      <div class="airport-code-label">Origine · Curiculum</div>
-                    </div>
-                    <div class="flight-lane">
-                      <div class="flight-lane-dashes"></div>
-                      <div class="flight-lane-plane"></div>
-                    </div>
-                    <div class="airport-code">
-                      <div class="airport-code-main">PRD</div>
-                      <div class="airport-code-label">Destination · Produit</div>
-                    </div>
-                  </div>
-                  <div class="flight-leg-secondary">
-                    <div class="flight-tags">
-                      <span class="flight-tag">Check-in · Présentation</span>
-                      <span class="flight-tag">Contrôles · Tech &amp; stack</span>
-                      <span class="flight-tag">Boarding · Projets</span>
-                    </div>
-                    <div class="flight-extra">
-                      <div class="flight-extra-row">
-                        <span>Altitude de détail</span>
-                        <strong>De synthétique à très concret, selon la porte choisie</strong>
+              <div class="hero-cta-row">
+              <a href="halldepart.html#controle-technique" class="btn btn-ghost"> Passer les contrôles techniques </a>
+              </div>
+
+              <div class="hero-footnote">
+                <span><strong>UX/UI</strong> comme tour de contrôle.</span>
+                <span><strong>Code</strong> comme plan de vol.</span>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- COLONNE 2 — PLAN DE VOL -->
+          <aside class="hero-secondary">
+            <section class="flight-plan-card">
+              <div class="flight-plan-inner">
+
+                <header class="card-head">
+                  <h2 class="card-title">
+                    Flight Plan
+                    <span class="card-title-badge">Portfolio · Non‑stop</span>
+                  </h2>
+                </header>
+
+                <div class="flight-map">
+                  <div class="flight-map-inner">
+
+                    <div class="flight-leg">
+                      <div class="airport-code">
+                        <div class="airport-code-main">CVL</div>
+                        <div class="airport-code-label">Origine · Curriculum</div>
                       </div>
-                      <span>
-                        Interfaces inspirées des vrais terminaux : rien de décoratif, tout est guidage.
-                      </span>
+
+                      <div class="flight-lane">
+                        <div class="flight-lane-dashes"></div>
+                        <div class="flight-lane-plane"></div>
+                      </div>
+
+                      <div class="airport-code">
+                        <div class="airport-code-main">PRD</div>
+                        <div class="airport-code-label">Destination · Produit</div>
+                      </div>
                     </div>
+
+                    <div class="flight-leg-secondary">
+                      <div class="flight-tags">
+                        <span class="flight-tag">Check‑in · Présentation</span>
+                        <span class="flight-tag">Contrôles · Tech & Stack</span>
+                        <span class="flight-tag">Boarding · Projets</span>
+                      </div>
+
+                      <div class="flight-extra">
+                        <div class="flight-extra-row">
+                          <span>Altitude de détail</span>
+                          <strong>De synthétique à très concret selon la porte choisie</strong>
+                        </div>
+                        <span>
+                          Interfaces inspirées des vrais terminaux : rien de décoratif, tout est guidage.
+                        </span>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-              </div>
 
-              <footer class="card-footer">
-                <span>Seatbelt sign · On</span>
-                <span>Veuillez attacher vos ceintures, la démo va décoller.</span>
-              </footer>
-            </div>
-          </section>
-        </aside>
+                <footer class="card-footer">
+                  <span>Seatbelt sign · On</span>
+                  <span>Veuillez attacher vos ceintures.</span>
+                </footer>
+
+              </div>
+            </section>
+          </aside>
+        </div>
       </div>
     </section>
-
-    <!-- Placeholder des 5 autres sections pour la nav (structure uniquement,
-         tu rempliras le contenu détaillé plus tard dans le même thème) -->
-
-    <section id="security" aria-label="Contrôles de sécurité · Stack technique">
-      <!-- Contenu des stacks / outils / bonnes pratiques ici -->
-    </section>
-
-    <section id="boarding" aria-label="Porte d'embarquement · Projets">
-      <!-- Contenu projets détaillés, mis en scène comme des vols / routes -->
-    </section>
-
-    <section id="cockpit" aria-label="Cockpit · Méthode &amp; pilotage de projet">
-      <!-- Contenu méthode de travail, gestion de projet, communication -->
-    </section>
-
-    <section id="cruise" aria-label="Croisière · Expériences &amp; parcours">
-      <!-- Parcours pro/formation, présenté comme historique de vols -->
-    </section>
-
-    <section id="arrival" aria-label="Zone d’arrivée · Contact">
-      <!-- Call-to-action contact, disponibilité, prochains vols (missions) -->
-    </section>
-
 
   </main>
 

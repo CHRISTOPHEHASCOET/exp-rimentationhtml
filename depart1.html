@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Solari Board</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<style>
+:root {
+  --panel: rgba(12,22,34,.55);
+  --border: rgba(142,197,255,.25);
+  --text: #e6edf3;
+  --accent: #1f6fea;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: radial-gradient(circle at top, #1b3957, #050b10 60%);
+  font-family: var(--mono);
+  color: var(--text);
+  padding: 3rem;
+}
+
+/* ===== TABLE ===== */
+.solari-board {
+  border: 1px solid var(--border);
+  padding: 1rem;
+}
+
+.solari-header {
+  display: grid;
+  grid-template-columns: 6ch 26ch 6ch 6ch 18ch;
+  gap: .6rem;
+  margin-bottom: .5rem;
+  color: var(--accent);
+  font-size: .75rem;
+}
+
+.solari-row {
+  display: grid;
+  grid-template-columns: 6ch 26ch 6ch 6ch 18ch;
+  gap: .6rem;
+  margin-bottom: .4rem;
+}
+
+/* ===== SPLIT FLAP ===== */
+.flap-cell {
+  display: flex;
+  gap: 2px;
+}
+
+.flap {
+  width: 20px;
+  height: 32px;
+  perspective: 900px;
+  position: relative;
+}
+
+.flap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,.2);
+  z-index: 5;
+}
+
+.flap-top,
+.flap-bottom {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+}
+
+.flap-top {
+  top: 0;
+  transform-origin: bottom;
+  z-index: 2;
+}
+
+.flap-bottom {
+  bottom: 0;
+  transform-origin: top;
+  transform: rotateX(90deg);
+}
+
+.flap.space .flap-top,
+.flap.space .flap-bottom {
+  background: transparent;
+  border: none;
+}
+</style>
+</head>
+
+<body>
+
+<section class="solari-board" aria-label="Tableau des vols">
+
+  <div class="solari-header">
+    <div>VOL</div><div>DESTINATION</div><div>ETD</div><div>PORTE</div><div>STATUS</div>
+  </div>
+
+  <div id="solari-body"></div>
+
+</section>
+
+<script>
+(() => {
+  "use strict";
+
+  const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const DATA = [
+    ["DEV01", "TYPESCRIPT AVANCE", "13:45", "A01", "EN PREPARATION"],
+    ["DEV02", "ARCHITECTURE FRONT", "19:00", "A02", "EN MONTEE"],
+    ["DEV03", "GSAP AVANCE", "10:00", "B01", "PROCEDURE"]
+  ];
+
+  const WIDTHS = [6, 26, 6, 6, 18];
+  const body = document.getElementById("solari-body");
+
+  const pad = (t, l) => t.padEnd(l, " ").slice(0, l);
+
+  const makeCell = text => {
+    const cell = document.createElement("div");
+    cell.className = "flap-cell";
+
+    [...text].forEach(char => {
+      const flap = document.createElement("span");
+      flap.className = "flap" + (char === " " ? " space" : "");
+      flap.innerHTML = `
+        <span class="flap-top">${char}</span>
+        <span class="flap-bottom">${char}</span>`;
+      cell.appendChild(flap);
+    });
+
+    return cell;
+  };
+
+  // RENDER
+  DATA.forEach(row => {
+    const r = document.createElement("div");
+    r.className = "solari-row";
+
+    row.forEach((col, i) => {
+      r.appendChild(makeCell(pad(col, WIDTHS[i])));
+    });
+
+    body.appendChild(r);
+  });
+
+  // ANIMATION SOLARI (ÇA TOURNE POUR DE VRAI)
+  document.querySelectorAll(".flap:not(.space)").forEach((flap, i) => {
+    const top = flap.querySelector(".flap-top");
+    const bottom = flap.querySelector(".flap-bottom");
+    const finalChar = top.textContent;
+
+    const tl = gsap.timeline({ delay: i * 0.02 });
+
+    for (let k = 0; k < 5; k++) {
+      tl.to(top, {
+        rotationX: -90,
+        duration: 0.05,
+        ease: "power1.in",
+        onComplete: () => {
+          const r = CHARS[Math.floor(Math.random() * CHARS.length)];
+          top.textContent = r;
+          bottom.textContent = r;
+          gsap.set(top, { rotationX: 0 });
+        }
+      });
+    }
+
+    tl.to(top, {
+      rotationX: -90,
+      duration: 0.05,
+      onComplete: () => {
+        top.textContent = finalChar;
+        bottom.textContent = finalChar;
+        gsap.set(top, { rotationX: 0 });
+      }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLIGHT LOG // PORTFOLIO DEV</title>
+
+    <!-- Polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* ===== VARIABLES ===== */
+        :root {
+            --bg-main: radial-gradient(circle at top, #12314f 0%, #050b10 65%);
+            --panel-bg: rgba(6, 14, 22, 0.92);
+            --border-green: rgba(63, 185, 80, 0.75);
+            --text-main: #e6eef6;
+            --text-muted: #9fb3c8;
+            --accent: #3fb950;
+            --clr-accent: #3b82f6;
+        }
+
+        /* ===== WRAPPER ===== */
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        .terminal-wrapper {
+            max-width: 1300px;
+            margin: 6rem auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        /* ===== PANELS ===== */
+        .terminal-panel {
+            border: 3px solid var(--border-green);
+            border-radius: 18px;
+            padding: 2.2rem;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        /* force la colonne droite à occuper toute la hauteur */
+        .terminal-panel-full {
+            justify-content: space-between;
+        }
+
+        /* ===== HEADER ===== */
+        .panel-header .label {
+            font-size: .7rem;
+            letter-spacing: .2em;
+            color: var(--text-muted);
+        }
+
+        h1 {
+            margin: .8rem 0 1.2rem;
+            line-height: 1.25;
+            font-size: 2rem;
+
+        }
+
+        /* ===== TEXT ===== */
+        .intro,
+        .long-text {
+            color: var(--accent);
+            line-height: 1.55;
+        }
+
+        span {
+            color: var( --clr-accent);
+
+        }
+
+        /* ===== INFO ===== */
+        .flight-info {
+            margin: 1.5rem 0 .8rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .badge {
+            background: rgba(63, 185, 80, 0.15);
+            border: 1px solid var(--border-green);
+            padding: .4rem .8rem;
+            border-radius: 999px;
+            font-size: .75rem;
+        }
+
+        .meta,
+        .destination span {
+            font-size: .7rem;
+            letter-spacing: .15em;
+            color: var(--text-muted);
+        }
+
+        /* ===== CTA ===== */
+        .cta {
+            margin: 1.8rem 0;
+            align-self: flex-start;
+            background: linear-gradient(180deg, #46c768, #2e9e4f);
+            border: none;
+            color: #06210f;
+            font-weight: 600;
+            padding: .9rem 1.6rem;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        /* ===== FOOTER ===== */
+        .panel-footer {
+            display: flex;
+            gap: 1rem;
+            font-size: .8rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== RIGHT PANEL CONTENT ===== */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .block h3 {
+            margin: 0;
+            letter-spacing: .15em;
+        }
+
+        .block span {
+            font-size: .7rem;
+            color: var(--text-muted);
+        }
+
+        .checklist {
+            display: flex;
+            gap: .7rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+        }
+
+        .chip {
+            border: 1px solid rgba(255, 255, 255, .15);
+            padding: .4rem .8rem;
+            border-radius: 999px;
+            font-size: .7rem;
+        }
+
+        /* ===== SEATBELT ===== */
+        .seatbelt {
+            display: flex;
+            justify-content: space-between;
+            font-size: .75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay"></div>
+
+
+
+
+    <!-- ======================= MAIN ======================= -->
+    <main>
+        <section class="terminal-wrapper">
+
+            <!-- PANNEAU GAUCHE -->
+            <article class="terminal-panel">
+                <header class="panel-header">
+                    <span class="label">BOARDING PASS · PRÉPARATION AU DÉCOLLAGE</span>
+                    <h1>
+                        Chef de projet & Développeur Web Junior<br>
+                        Commandant de bord de vos expériences digitales
+                    </h1>
+                </header>
+
+                <p class="intro">
+                    Je pilote vos projets comme un véritable plan de vol : du briefing initial
+                    jusqu’à l’atterrissage en production, avec une navigation précise, une
+                    communication claire et une attention constante portée à la performance et
+                    à l’expérience utilisateur.<br> <span>Rôles à bord : gestion de projet, développement
+                        front-end, intégration web.</span>
+                </p>
+
+                <div class="flight-info">
+                    <span class="badge">FLIGHT DEV-320 · ON TIME</span>
+                    <span class="meta">ORIGINE · OBJECTIFS</span>
+                </div>
+
+                <div class="destination">
+                    <span>DESTINATION · PRODUITS UTILISABLES</span>
+                </div>
+
+                <button class="cta">
+                    PASSER LES CONTRÔLES TECHNIQUES
+                </button>
+
+                <footer class="panel-footer">
+                    <span>UX/UI comme tour de contrôle.</span>
+                    <span><strong>Code</strong> comme plan de vol.</span>
+                </footer>
+            </article>
+
+            <!-- PANNEAU DROIT -->
+            <article class="terminal-panel terminal-panel-full">
+                <header class="panel-header">
+                    <span class="label">FLIGHT PLAN · PORTFOLIO · NON-STOP</span>
+                </header>
+
+                <div class="content-grid">
+                    <div class="block">
+                        <h3>CVL</h3>
+                        <span>ORIGINE</span>
+                        <p>Curriculum</p>
+                    </div>
+
+                    <div class="block">
+                        <h3>PRD</h3>
+                        <span>DESTINATION</span>
+                        <p>Produit</p>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <span class="chip">CHECK-IN · PRÉSENTATION</span>
+                    <span class="chip">CONTRÔLES · TECH & STACK</span>
+                    <span class="chip">BOARDING · PROJETS</span>
+                </div>
+
+                <p class="long-text">
+                    Altitude de détail. De synthétique à très concret selon la porte choisie.
+                    Interfaces inspirées des vrais terminaux : rien de décoratif, tout est
+                    guidage.
+                </p>
+
+                <div class="seatbelt">
+                    <span>Seatbelt sign · On</span>
+                    <span>Veuillez attacher vos ceintures.</span>
+                </div>
+            </article>
+
+        </section>
+
+
+    </main>
+
+</body>
+
+</html>

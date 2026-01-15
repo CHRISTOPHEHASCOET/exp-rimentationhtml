@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Passeport professionnel — Développement web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #050b10;
+  --panel: #0c1622;
+  --blue: #1f6fea;
+  --blue-soft: #8ec5ff;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --green: #3fb950;
+  --border: rgba(63,185,80,.9);
+
+  --mono: 'JetBrains Mono', monospace;
+  --display: 'Rajdhani', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1b3957, var(--bg) 65%);
+  font-family: var(--display);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================= PASSEPORT ================= */
+
+.passport {
+  width: 960px;
+  max-width: 95%;
+  perspective: 2200px;
+}
+
+.booklet {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: radial-gradient(circle at top, #1b3957, var(--bg) 60%);
+  border: 5px solid var(--border);
+  border-radius: 18px;
+  transform-style: preserve-3d;
+  transform: rotateY(-18deg) scale(.96);
+  transition: transform .6s ease;
+}
+
+.passport:hover .booklet {
+  transform: rotateY(-6deg) scale(1);
+}
+
+/* ================= PAGES ================= */
+
+.page {
+  min-height: 620px;
+  padding: 2.6rem;
+  border-right: 1px solid rgba(63,185,80,.2);
+}
+
+.page:last-child {
+  border-right: none;
+}
+
+/* ================= HEADERS ================= */
+
+.header {
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--muted);
+}
+
+/* ================= COVER ================= */
+
+.cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cover h1 {
+  text-align: center;
+  font-size: 1.6rem;
+  letter-spacing: .18em;
+}
+
+.cover .type {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.cover .seal {
+  margin: 3rem auto;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  letter-spacing: .2em;
+  color: var(--green);
+}
+
+.cover footer {
+  font-family: var(--mono);
+  font-size: .75rem;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ================= CONTENT ================= */
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
+  font-size: .9rem;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: var(--blue);
+  margin-bottom: .6rem;
+}
+
+.list {
+  font-family: var(--mono);
+  font-size: .85rem;
+  line-height: 1.7;
+}
+
+.list div {
+  margin-bottom: .4rem;
+}
+
+/* ================= VISA ================= */
+
+.visa {
+  margin-top: 2rem;
+  display: inline-block;
+  padding: .6rem 1.4rem;
+  border: 1px dashed var(--green);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .18em;
+  color: var(--green);
+}
+
+/* ================= MRZ ================= */
+
+.mrz {
+  margin-top: 2rem;
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .12em;
+  opacity: .6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="passport">
+  <div class="booklet">
+
+    <!-- PAGE 1 : COUVERTURE -->
+    <section class="page cover">
+      <div>
+        <h1>PORTFOLIO DE DÉVELOPPEMENT</h1>
+        <p class="type">Passeport professionnel — Développement web</p>
+      </div>
+
+      <div class="seal">DEV</div>
+
+      <footer>
+        ID-PASS-DEV-XXXX<br>
+        Valide — Autorisé au vol
+      </footer>
+    </section>
+
+    <!-- PAGE 2 : IDENTITÉ -->
+    <section class="page">
+      <p class="header">Identification du titulaire</p>
+
+      <div class="section">
+        <h2>Données certifiées</h2>
+        <div class="list">
+          <div>Nom de code : HASCOËT</div>
+          <div>Prénom : Christophe</div>
+          <div>Rôle : Chef de projet & développeur web junior</div>
+          <div>Statut : Actif — Autorisé au vol</div>
+          <div>Base : Région parisienne — CET</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Compétences déclarées</h2>
+        <div class="list">
+          HTML sémantique · CSS / SASS · JavaScript · TypeScript · React · PHP · Laravel
+        </div>
+      </div>
+
+      <div class="visa">Visa technique — Apte au vol</div>
+
+      <div class="mrz">
+        DEV&lt;HASCOET&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+        FRA&lt;WEB&lt;JUNIOR&lt;2026&lt;&lt;&lt;&lt;<br>
+        PASS&lt;PORTFOLIO&lt;VALID&lt;&lt;&lt;
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</body>
+</html>

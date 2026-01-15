@@ -1,61 +1,78 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TERMINAL // HALL DES DÉPARTS</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Rajdhani:wght@600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <style>
         :root {
             --clr-bg: #0a0d14;
+            --clr-bg-gradient: radial-gradient(circle at top, #1b3957, #050b10 60%);
             --clr-panel-bg: #10141c;
             --clr-accent: #3b82f6;
             --clr-text: #e5e7eb;
             --clr-muted: #9ca3af;
             --clr-green: #22c55e;
+            --clr-warning: #f59e0b;
             --clr-char-bg: rgba(0, 0, 0, 0.25);
+            --clr-border-green: rgba(63, 185, 80, 0.9);
             --font-mono: 'JetBrains Mono', monospace;
             --font-display: 'Rajdhani', sans-serif;
         }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         /* --- BASE & LAYOUT --- */
         body {
-            background-color: var(--clr-bg);
+            background: var(--clr-bg-gradient);
             color: var(--clr-text);
             font-family: var(--font-display);
-            background: radial-gradient(circle at top, #1b3957 0, #050b10 70%);
             min-height: 100vh;
             display: grid;
             place-content: center;
+            padding: 1rem;
         }
+
         main {
             width: min(1200px, 95vw);
         }
 
         /* --- PANNEAU DU TABLEAU --- */
         .terminal-board {
-            background-color: var(--clr-panel-bg);
-            border-radius: 8px;
+            background: var(--clr-bg-gradient);
+            border-radius: 20px;
             padding: 1.5rem 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--clr-border-green);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
         }
 
-        /* --- CONTROLES (BOUTONS) --- */
+        /* --- CONTRÔLES (BOUTONS) --- */
         .board-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
+
         .controls-group {
             display: flex;
             border: 1px solid #374151;
             border-radius: 6px;
             overflow: hidden;
         }
+
         .btn-cockpit {
             background: transparent;
             border: none;
@@ -67,12 +84,21 @@
             text-transform: uppercase;
             transition: all 0.3s ease;
         }
-        .btn-cockpit:first-child { border-right: 1px solid #374151; }
+
+        .btn-cockpit:first-child {
+            border-right: 1px solid #374151;
+        }
+
+        .btn-cockpit:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
         .btn-cockpit.active {
             background: var(--clr-accent);
             color: white;
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
         }
+
         .board-subtitle {
             font-family: var(--font-mono);
             color: var(--clr-muted);
@@ -85,17 +111,48 @@
             font-family: var(--font-mono);
             text-transform: uppercase;
         }
-        .flight-table th {
+
+        /* .flight-table th {
             color: var(--clr-accent);
             text-align: left;
             padding-bottom: 1rem;
             font-size: 0.8rem;
+        } */
+        .flight-table th {
+            color: var(--clr-accent);
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            border: 2px solid var(--clr-flap-border); 
+            background: var(--clr-bg-gradient);
         }
+
+        /* Largeurs des colonnes */
+        .flight-table th:nth-child(1) {
+            width: 15%;
+        }
+
+        .flight-table th:nth-child(2) {
+            width: 35%;
+        }
+
+        .flight-table th:nth-child(3) {
+            width: 15%;
+        }
+
+        .flight-table th:nth-child(4) {
+            width: 10%;
+        }
+
+        .flight-table th:nth-child(5) {
+            width: 25%;
+        }
+
         .flight-table td {
             padding-block: 0.8rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid var(--clr-green);
             font-size: 1rem;
-            white-space: pre; /* Conserve les espaces pour l'alignement */
         }
 
         /* --- STYLE "SPLIT-FLAP" (UN CARRÉ PAR LETTRE) --- */
@@ -105,31 +162,229 @@
             background-color: var(--clr-char-bg);
             padding: 4px 0;
             margin: 0 1px;
-            min-width: 1ch; /* largeur d'un caractère */
-            border-radius: 2px;
+            min-width: 1ch;
+            border-radius: 3px;
+        }
+
+        .char.space {
+            background: transparent;
+        }
+
+        /* =========================================================
+           PORTE D'EMBARQUEMENT PLEIN ÉCRAN (INTRO)
+           ========================================================= */
+        .doors-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            pointer-events: none;
+            background: var(--clr-bg-gradient);
+        }
+
+        .door {
+            flex: 1;
+            height: 100%;
+            background: var(--clr-bg-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9);
+            z-index: 1;
+        }
+
+        /* Bandes de sécurité */
+        .door::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 18px;
+            height: 100%;
+            background: repeating-linear-gradient(135deg,
+                    var(--clr-green) 0px,
+                    var(--clr-green) 6px,
+                    #020617 6px,
+                    #020617 12px);
+            opacity: 0.8;
+        }
+
+        .door.left::after {
+            right: 0;
+        }
+
+        .door.right::after {
+            left: 0;
+        }
+
+        .door-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* Hublot */
+        .door-window {
+            width: 180px;
+            height: 54px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%,
+                    #e5e7eb 0,
+                    #9ca3af 35%,
+                    #020617 100%);
+            border: 2px solid #1f2937;
+            box-shadow:
+                0 0 25px rgba(15, 23, 42, 0.9) inset,
+                0 0 30px rgba(139, 30, 63, 0.6);
+            position: relative;
+        }
+
+        .door-window::after {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border-radius: inherit;
+            border: 1px dashed rgba(15, 23, 42, 0.4);
+        }
+
+        .door-label {
+            text-align: center;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--clr-text);
+            font-size: 0.65rem;
+        }
+
+        .door-label-top {
+            display: block;
+            color: var(--clr-muted);
+            margin-bottom: 6px;
+        }
+
+        .door-label-main {
+            display: block;
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            letter-spacing: 0.25em;
+            color: var(--clr-accent);
+        }
+
+        .door-label-bottom {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.6rem;
+            color: var(--clr-warning);
+            animation: doorBlink 1s infinite;
+        }
+
+        @keyframes doorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+        @media (max-width: 768px) {
+            .terminal-board {
+                padding: 1rem;
+            }
+
+            .board-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .flight-table {
+                font-size: 0.75rem;
+            }
+
+            .flight-table th,
+            .flight-table td {
+                padding: 0.5rem 0.25rem;
+            }
+
+            .char {
+                padding: 2px 0;
+                margin: 0;
+            }
+
+            .door-window {
+                width: 120px;
+                height: 40px;
+            }
+
+            .door-label-main {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .flight-table th:nth-child(3),
+            .flight-table td:nth-child(3),
+            .flight-table th:nth-child(4),
+            .flight-table td:nth-child(4) {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
+    <!-- ========== PORTE D'EMBARQUEMENT ANIMÉE ========== -->
+    <section class="doors-overlay" id="doors-overlay" aria-hidden="true">
+        <div class="door left">
+            <div class="door-inner">
+                <div class="door-window"></div>
+                <p class="door-label">
+                    <span class="door-label-top">TERMINAL CH-2025</span>
+                    <span class="door-label-main">GATE A01</span>
+                    <span class="door-label-bottom">BOARDING</span>
+                </p>
+            </div>
+        </div>
+        <div class="door right">
+            <div class="door-inner">
+                <div class="door-window"></div>
+                <p class="door-label">
+                    <span class="door-label-top">DIGITAL FLIGHT</span>
+                    <span class="door-label-main">DEST. PORTFOLIO</span>
+                    <span class="door-label-bottom">CLEARANCE OK</span>
+                </p>
+            </div>
+        </div>
+    </section>
 
     <main>
         <div class="terminal-board">
             <header class="board-header">
                 <div class="controls-group" role="tablist">
-                    <button class="btn-cockpit active" data-board="departs" role="tab">Départs</button>
-                    <button class="btn-cockpit" data-board="arrivees" role="tab">Arrivées</button>
+                    <button class="btn-cockpit active" data-board="departs" role="tab"
+                        aria-selected="true">Départs</button>
+                    <button class="btn-cockpit" data-board="arrivees" role="tab" aria-selected="false">Arrivées</button>
                 </div>
-                <p id="board-subtitle" class="board-subtitle"></p>
+                <p id="board-subtitle" class="board-subtitle" aria-live="polite"></p>
             </header>
-            
-            <table class="flight-table" id="main-board">
+
+            <table class="flight-table" id="main-board" role="grid">
                 <thead>
                     <tr>
-                        <th style="width: 15%;">VOL</th>
-                        <th style="width: 35%;">DESTINATION</th>
-                        <th style="width: 15%;">ETD</th>
-                        <th style="width: 10%;">GATE</th>
-                        <th style="width: 25%;">STATUS</th>
+                        <th scope="col">VOL</th>
+                        <th scope="col">DESTINATION</th>
+                        <th scope="col">ETD</th>
+                        <th scope="col">GATE</th>
+                        <th scope="col">STATUS</th>
                     </tr>
                 </thead>
                 <tbody id="board-body"></tbody>
@@ -137,123 +392,172 @@
         </div>
     </main>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+    <script>
+        // =========================================================
+        // CONSTANTES GLOBALES
+        // =========================================================
+        const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*#@&!?';
 
-    const BOARDS = {
-        departs: {
-            subtitle: "Compétences en montée",
-            headers: ["VOL", "DESTINATION", "ETD", "GATE", "STATUS"],
-            data: [
-                { vol: 'DEV01', loc: 'TYPESCRIPT AVANCÉ', time: '--:--', gate: 'A01', stat: 'EN PRÉPARATION' },
-                { vol: 'DEV02', loc: 'TESTS AUTOMATISÉS', time: '--:--', gate: 'A02', stat: 'EN CONFIGURATION' },
-                { vol: 'DEV03', loc: 'ARCHITECTURE FRONT', time: '--:--', gate: 'B01', stat: 'EN MONTÉE' },
-                { vol: 'DEV04', loc: 'PERFORMANCE WEB', time: '--:--', gate: 'B02', stat: 'EN APPROCHE' },
-                { vol: 'DEV05', loc: 'GSAP AVANCÉ', time: '--:--', gate: 'C01', stat: 'PROCÉDURE EN COURS' }
-            ]
-        },
-        arrivees: {
-            subtitle: "Compétences maîtrisées",
-            headers: ["VOL", "PROVENANCE", "ATA", "STAND", "STATUS"],
-            data: [
-                { vol: 'OPS01', loc: 'HTML SÉMANTIQUE', time: '--:--', gate: 'A', stat: 'OPÉRATIONNEL' },
-                { vol: 'OPS02', loc: 'CSS / SASS', time: '--:--', gate: 'A', stat: 'MAÎTRISE CONFIRMÉE' },
-                { vol: 'OPS03', loc: 'JAVASCRIPT ES6+', time: '--:--', gate: 'B', stat: 'PROCÉDURE VALIDÉE' },
-                { vol: 'OPS04', loc: 'ACCESSIBILITÉ', time: '--:--', gate: 'B', stat: 'AUTORISÉ AU SERVICE' },
-                { vol: 'OPS05', loc: 'PHP / LARAVEL', time: '--:--', gate: 'C', stat: 'EN SERVICE ACTIF' },
-                { vol: 'OPS06', loc: 'GIT / WORKFLOW', time: '--:--', gate: 'C', stat: 'CERTIFIÉ INTERNE' }
-            ]
-        }
-    };
-
-    const tbody = document.getElementById('board-body');
-    const subtitleEl = document.getElementById('board-subtitle');
-    const headersEl = document.querySelectorAll('#main-board th');
-
-    // --- FONCTION DE L'ANIMATION "SPLIT-FLAP" ---
-    function animateText(element, text) {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*#@&!?';
-        let html = '';
-        for (let i = 0; i < text.length; i++) {
-            // L'espace est juste un espace, pas un "carré"
-            if (text[i] === ' ') {
-                html += '<span class="char" style="background:transparent;"> </span>';
-            } else {
-                html += `<span class="char">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
+        const BOARDS = {
+            departs: {
+                subtitle: "Compétences en montée",
+                headers: ["VOL", "DESTINATION", "ETD", "GATE", "STATUS"],
+                data: [
+                    { vol: 'DEV01', loc: 'TYPESCRIPT AVANCÉ', time: '12:54', gate: 'A01', stat: 'EN PRÉPARATION' },
+                    { vol: 'DEV02', loc: 'TESTS AUTOMATISÉS', time: '13:00', gate: 'A02', stat: 'EN CONFIGURATION' },
+                    { vol: 'DEV03', loc: 'ARCHITECTURE FRONT', time: '12:15', gate: 'B01', stat: 'EN MONTÉE' },
+                    { vol: 'DEV04', loc: 'PERFORMANCE WEB', time: '09:00', gate: 'B02', stat: 'EN APPROCHE' },
+                    { vol: 'DEV05', loc: 'GSAP AVANCÉ', time: '05:15', gate: 'C01', stat: 'PROCÉDURE EN COURS' }
+                ]
+            },
+            arrivees: {
+                subtitle: "Compétences maîtrisées",
+                headers: ["VOL", "PROVENANCE", "ATA", "STAND", "STATUS"],
+                data: [
+                    { vol: 'OPS01', loc: 'HTML SÉMANTIQUE', time: '--:--', gate: 'A', stat: 'OPÉRATIONNEL' },
+                    { vol: 'OPS02', loc: 'CSS / SASS', time: '--:--', gate: 'A', stat: 'MAÎTRISE CONFIRMÉE' },
+                    { vol: 'OPS03', loc: 'JAVASCRIPT ES6+', time: '--:--', gate: 'B', stat: 'PROCÉDURE VALIDÉE' },
+                    { vol: 'OPS04', loc: 'ACCESSIBILITÉ', time: '--:--', gate: 'B', stat: 'AUTORISÉ AU SERVICE' },
+                    { vol: 'OPS05', loc: 'GIT / WORKFLOW', time: '--:--', gate: 'C', stat: 'CERTIFIÉ INTERNE' }
+                ]
             }
+        };
+
+        // =========================================================
+        // ÉLÉMENTS DU DOM
+        // =========================================================
+        const tbody = document.getElementById('board-body');
+        const subtitleEl = document.getElementById('board-subtitle');
+        const headersEl = document.querySelectorAll('#main-board th');
+        const doorsOverlay = document.getElementById('doors-overlay');
+
+        // =========================================================
+        // FONCTION SPLIT-FLAP (ANIMATION DES LETTRES)
+        // =========================================================
+        function animateText(element, text) {
+            let html = '';
+
+            for (let i = 0; i < text.length; i++) {
+                if (text[i] === ' ') {
+                    html += '<span class="char space"> </span>';
+                } else {
+                    html += `<span class="char">${CHARS[Math.floor(Math.random() * CHARS.length)]}</span>`;
+                }
+            }
+            element.innerHTML = html;
+
+            const charElements = element.querySelectorAll('.char:not(.space)');
+
+            charElements.forEach((charEl, index) => {
+                const originalIndex = [...element.querySelectorAll('.char')].indexOf(charEl);
+                const finalChar = text[originalIndex];
+                const duration = 1000 + (index * 50);
+                const intervalTime = 70;
+
+                const interval = setInterval(() => {
+                    charEl.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+                }, intervalTime);
+
+                setTimeout(() => {
+                    clearInterval(interval);
+                    charEl.textContent = finalChar;
+                }, duration);
+            });
         }
-        element.innerHTML = html;
 
-        const charElements = element.querySelectorAll('.char');
-        
-        charElements.forEach((charEl, index) => {
-            if (text[index] === ' ') return; // On n'anime pas les espaces
-            
-            const finalChar = text[index];
-            const duration = 1000 + (index * 50); // Plus la lettre est loin, plus l'animation est longue
-            const intervalTime = 70;
+        // =========================================================
+        // MISE À JOUR DU TABLEAU
+        // =========================================================
+        function updateBoard(type) {
+            const board = BOARDS[type];
+            subtitleEl.textContent = board.subtitle;
 
-            const interval = setInterval(() => {
-                charEl.textContent = chars[Math.floor(Math.random() * chars.length)];
-            }, intervalTime);
+            // Mettre à jour les en-têtes
+            board.headers.forEach((header, i) => {
+                if (headersEl[i]) headersEl[i].textContent = header;
+            });
 
-            setTimeout(() => {
-                clearInterval(interval);
-                charEl.textContent = finalChar;
-            }, duration);
+            tbody.innerHTML = '';
+            gsap.set(tbody, { opacity: 0 });
+
+            board.data.forEach(item => {
+                const row = document.createElement('tr');
+
+                const cells = [
+                    { key: 'vol', value: item.vol },
+                    { key: 'loc', value: item.loc },
+                    { key: 'time', value: item.time },
+                    { key: 'gate', value: item.gate },
+                    { key: 'stat', value: item.stat }
+                ];
+
+                cells.forEach(cell => {
+                    const td = document.createElement('td');
+                    animateText(td, cell.value);
+                    row.appendChild(td);
+                });
+
+                tbody.appendChild(row);
+            });
+
+            gsap.to(tbody, { opacity: 1, duration: 0.5, delay: 0.2 });
+        }
+
+        // =========================================================
+        // ANIMATION DES PORTES D'EMBARQUEMENT
+        // =========================================================
+        function animateDoors() {
+            const tl = gsap.timeline();
+
+            tl.to('.door.left', {
+                x: '-100%',
+                duration: 1.3,
+                ease: 'power4.inOut'
+            }, 0)
+                .to('.door.right', {
+                    x: '100%',
+                    duration: 1.3,
+                    ease: 'power4.inOut'
+                }, 0)
+                .to(doorsOverlay, {
+                    opacity: 0,
+                    duration: 0.6,
+                    ease: 'power2.out'
+                }, 1.0)
+                .set(doorsOverlay, { display: 'none' });
+        }
+
+        // =========================================================
+        // ÉVÉNEMENTS
+        // =========================================================
+        document.querySelectorAll('.btn-cockpit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Mise à jour des attributs ARIA
+                document.querySelectorAll('.btn-cockpit').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-selected', 'false');
+                });
+
+                e.target.classList.add('active');
+                e.target.setAttribute('aria-selected', 'true');
+
+                updateBoard(e.target.dataset.board);
+            });
         });
-    }
 
-    // --- MISE À JOUR DU TABLEAU ---
-    function updateBoard(type) {
-        const board = BOARDS[type];
-        subtitleEl.textContent = board.subtitle;
-
-        // Mettre à jour les en-têtes
-        board.headers.forEach((header, i) => headersEl[i].textContent = header);
-
-        tbody.innerHTML = ''; // Vider le tableau
-        gsap.set(tbody, { opacity: 0 }); // Cacher avant de remplir
-
-        board.data.forEach(item => {
-            const row = document.createElement('tr');
-            
-            const cellVol = document.createElement('td');
-            animateText(cellVol, item.vol);
-            
-            const cellLoc = document.createElement('td');
-            animateText(cellLoc, item.loc);
-            
-            const cellTime = document.createElement('td');
-            animateText(cellTime, item.time);
-
-            const cellGate = document.createElement('td');
-            animateText(cellGate, item.gate);
-
-            const cellStat = document.createElement('td');
-            animateText(cellStat, item.stat);
-
-            row.append(cellVol, cellLoc, cellTime, cellGate, cellStat);
-            tbody.appendChild(row);
+        // =========================================================
+        // INITIALISATION
+        // =========================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            updateBoard('departs');
         });
-        
-        // Faire apparaître le tableau avec une transition douce
-        gsap.to(tbody, { opacity: 1, duration: 0.5, delay: 0.2 });
-    }
 
-    // --- ÉVÉNEMENTS ---
-    document.querySelectorAll('.btn-cockpit').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelector('.btn-cockpit.active').classList.remove('active');
-            e.target.classList.add('active');
-            updateBoard(e.target.dataset.board);
+        window.addEventListener('load', () => {
+            // Petit délai pour que tout soit bien rendu
+            setTimeout(animateDoors, 300);
         });
-    });
-
-    // --- AFFICHAGE INITIAL ---
-    updateBoard('departs');
-});
-</script>
+    </script>
 
 </body>
+
 </html>

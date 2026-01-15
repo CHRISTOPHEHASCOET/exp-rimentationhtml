@@ -102,13 +102,7 @@
         }
 
         /* Effet scanlines */
-        .overlay {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 999;
 
-        }
 
 
 
@@ -128,7 +122,7 @@
             background-color: #111820;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
             padding: 1.5rem 0;
-            margin-bottom: 1.5rem;
+            margin-bottom: 4rem;
             z-index: 1;
             position: relative;
         }
@@ -162,6 +156,7 @@
             margin: 0 auto;
             padding: 0 1.5rem;
             display: grid;
+            gap: 2rem;
             align-items: stretch;
             grid-template-columns: 220px 1fr 150px;
             /* colonne pilote plus petite que le tableau */
@@ -182,7 +177,6 @@
             flex-direction: column;
             gap: 0.5rem;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
-
 
         }
 
@@ -313,27 +307,11 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
         }
 
-        .flight-table {
-            border-collapse: collapse;
-        }
-
-        .flight-table th,
-        .flight-table td {
-            padding: 0;
-            /* ou une valeur précise */
-        }
-
         table.flight-table {
             width: 100%;
-            border-collapse: collapse;
+            /* border-collapse: collapse; */
             font-family: var(--font-mono);
             font-size: 0.8rem;
-        }
-
-        .flight-table td>div {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
         }
 
         .flight-table thead {
@@ -367,24 +345,8 @@
             background: #0b1422;
         }
 
-
         .flight-row:last-child {
             border-bottom: none;
-        }
-
-        .flight-table tbody tr:last-child {
-            border-bottom: 1px solid #154287;
-            /* même teinte que le thead */
-        }
-
-        .flight-table tbody::after {
-            content: "";
-            display: block;
-            height: 4px;
-            background: linear-gradient(to right,
-                    transparent,
-                    rgba(31, 111, 234, .6),
-                    transparent);
         }
 
         .flight-row:hover {
@@ -486,17 +448,7 @@
             color: var(--text-muted);
         }
 
-
-
-
         /* ======================= MAIN / MISSIONS ======================= */
-
-        main {
-            max-width: 1200px;
-            margin: auto;
-            padding: 2rem;
-        }
-
         .board-header {
             display: flex;
             justify-content: space-between;
@@ -538,14 +490,27 @@
             font-size: .9rem;
         }
 
-        .terminal table {
+        /* .terminal {
+            border: 1px solid rgba(142, 197, 255, .25);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+            padding: 1rem;
+            overflow-x: auto;
+        } */
+
+        /* table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--mono);
+            text-transform: uppercase;
+        } */
+        .terminal-table {
             width: 100%;
             border-collapse: collapse;
             font-family: var(--mono);
             text-transform: uppercase;
         }
 
-        .terminal th {
+        .terminal-table th {
             text-align: left;
             color: var(--accent);
             padding: .75rem;
@@ -553,37 +518,14 @@
             border-bottom: 2px solid rgba(142, 197, 255, .2);
         }
 
-        .terminal td {
+        .terminal-table td {
             padding: .9rem .75rem;
             border-bottom: 1px solid rgba(255, 255, 255, .08);
             white-space: nowrap;
         }
 
-        .terminal tr:hover {
+        .terminal-table tr:hover {
             background: rgba(31, 111, 234, .08);
-        }
-
-        .terminal {
-            border: 1px solid rgba(142, 197, 255, .25);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
-            padding: 1rem;
-            overflow-x: auto;
-        }
-
-        .terminal tbody tr:last-child td {
-            border-bottom: 1px solid #154287;
-        }
-
-
-        .terminal thead th {
-            border-bottom: 1px solid #154287;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: var(--mono);
-            text-transform: uppercase;
         }
 
         th {
@@ -641,8 +583,6 @@
             background: transparent;
             border: none;
         }
-
-
 
         /* ======================= FIN DE PISTE ======================= */
 
@@ -1014,7 +954,7 @@
         </div>
 
         <div class="terminal">
-            <table>
+            <table class="terminal-table">
                 <thead>
                     <tr>
                         <th>VOL</th>
@@ -1114,12 +1054,6 @@
 
     <!-- ======================= Script ======================= -->
     <script>
-        const runway = document.getElementById("runwayLights");
-
-        setInterval(() => {
-            const seconds = new Date().getSeconds();
-            runway.style.opacity = seconds % 2 === 0 ? "1" : "0.3";
-        }, 1000);
         document.addEventListener('DOMContentLoaded', () => {
             // Horloge
             const updateTime = () => {
@@ -1159,13 +1093,14 @@
             document.querySelectorAll('.f-dest .flight-link').forEach(el => scrambleText(el));
 
             // 3. Animation GSAP du tableau (apparition des lignes)
-            gsap.from("#board tr", {
+            gsap.from(".flight-row", {
+                y: -10,
                 opacity: 0,
-                y: 12,
-                stagger: .08,
-                duration: .4
+                duration: 0.6,
+                stagger: 0.05,
+                ease: "power2.out",
+                delay: 0.2
             });
-
 
             // 4. Nav interactive : change la ligne active + scroll doux vers la section
             document.querySelectorAll("#board tr").forEach(row => {
@@ -1175,6 +1110,12 @@
 
                     const href = link.getAttribute("href") || "";
 
+                    // 1) Met à jour la ligne active pour TOUTES les lignes
+                    document.querySelectorAll(".flight-row").forEach(r => r.classList.remove("active"));
+                    row.classList.add("active");
+
+                    // 2) Si c'est un ancre interne (#...), on empêche la navigation
+                    //    et on fait un scroll doux. Sinon, on laisse charger la page .html.
                     if (href.startsWith("#")) {
                         e.preventDefault();
                         const target = document.querySelector(href);
@@ -1184,7 +1125,6 @@
                     }
                 });
             });
-
 
             // Animations GSAP
             gsap.from(".site-header", {
@@ -1209,6 +1149,8 @@
                 runway.appendChild(light);
             }
         });
+
+
 
         const FLAP_CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-";
         const boardEl = document.getElementById("board");
@@ -1310,12 +1252,13 @@
                 boardEl.appendChild(tr);
             });
 
-            gsap.from("tbody tr", {
+            gsap.from("#board tr", {
                 opacity: 0,
                 y: 12,
-                stagger: .08,
-                duration: .4
+                stagger: 0.08,
+                duration: 0.4
             });
+
 
             animateFlaps();
         }
@@ -1329,6 +1272,7 @@
         });
 
         render("departs");
+
     </script>
 </body>
 

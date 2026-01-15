@@ -1,1156 +1,1191 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>C.Hascoët — Terminal Interactif</title>
 
-    <!-- Je charge les polices utilisées dans toute l'interface -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>C.Hascoët — Terminal Interactif</title>
 
-    <!-- Je charge GSAP pour gérer les animations (porte, tableau, avion) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Je charge les polices utilisées dans toute l'interface -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&display=swap"
+    rel="stylesheet" />
 
-    <style>
-      :root {
-        /* Palette globale */
-        --primary: #0a0e27;
-        --primary-2: #0f1630;
-        --accent: #8b1e3f;
-        --accent-bright: #ff3b3b;
-        --warning: #facc15;
-        --text: #e6eef8;
-        --text-dim: #9fa8b3;
-        --container-width: 1400px;
+  <!-- Je charge GSAP pour gérer les animations (porte, tableau, avion) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-        /* Dimensions des clapets pour le split-flap */
-        --tile-w: 22px;
-        --tile-h: 36px;
-        --gap-char: 2px;
-      }
+  <style>
+    :root {
+      /* Palette globale */
+      --primary: #0a0e27;
+      --primary-2: #0f1630;
+      --accent: #8b1e3f;
+      --accent-bright: #ff3b3b;
+      --warning: #facc15;
+      --text: #e6eef8;
+      --text-dim: #9fa8b3;
+      --container-width: 1400px;
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+      /* Dimensions des clapets pour le split-flap */
+      --tile-w: 22px;
+      --tile-h: 36px;
+      --gap-char: 2px;
+    }
 
-      body {
-        background: linear-gradient(
-          135deg,
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg,
           var(--primary) 0%,
-          var(--primary-2) 100%
-        );
-        color: var(--text);
-        font-family: "Inter", sans-serif;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
+          var(--primary-2) 100%);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-      a {
-        color: inherit;
-      }
+    a {
+      color: inherit;
+    }
 
-      main {
-        flex: 1;
-      }
+    main {
+      flex: 1;
+    }
 
-      .visually-hidden {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
-        overflow: hidden;
-      }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      overflow: hidden;
+    }
 
-      /* =========================================================
+    /* =========================================================
            HEADER / NAVIGATION
            ========================================================= */
 
-      .site-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1001;
-        padding: 15px 0;
-        height: 90px;
-      }
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1001;
+      padding: 15px 0;
+      height: 90px;
+    }
 
-      .header-inner {
-        max-width: var(--container-width);
-        margin: 0 auto;
-        padding: 12px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(10, 14, 39, 0.95);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 59, 59, 0.3);
-        border-bottom: 3px solid var(--accent);
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        position: relative;
-      }
+    .header-inner {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 12px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 14, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 59, 59, 0.3);
+      border-bottom: 3px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
 
-      .logo {
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
+    .logo {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-      .logo img {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        border: 2px solid var(--accent-bright);
-        object-fit: cover;
-      }
+    .logo img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-bright);
+      object-fit: cover;
+    }
 
-      .logo-title {
-        font-family: "Oswald", sans-serif;
-        font-weight: 700;
-        font-size: 1.8rem;
-        color: #fff;
-        line-height: 1;
-      }
+    .logo-title {
+      font-family: "Oswald", sans-serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #fff;
+      line-height: 1;
+    }
 
-      .flight-id {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.6rem;
-        color: var(--accent-bright);
-        letter-spacing: 2px;
-        margin-top: 4px;
-        display: block;
-      }
+    .flight-id {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.6rem;
+      color: var(--accent-bright);
+      letter-spacing: 2px;
+      margin-top: 4px;
+      display: block;
+    }
 
-      /* Avion dans la nav */
+    /* Avion dans la nav */
 
-      .plane-animated {
-        position: absolute;
-        left: 175px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--warning);
-        font-size: 1.2rem;
-        z-index: 10;
-        pointer-events: none;
-        filter: drop-shadow(0 0 5px var(--warning));
-      }
+    .plane-animated {
+      position: absolute;
+      left: 175px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--warning);
+      font-size: 1.2rem;
+      z-index: 10;
+      pointer-events: none;
+      filter: drop-shadow(0 0 5px var(--warning));
+    }
 
-      .trail {
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.5);
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 9;
-      }
+    .trail {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9;
+    }
 
-      .nav-desktop {
-        display: flex;
-        gap: 10px;
-      }
+    .nav-desktop {
+      display: flex;
+      gap: 10px;
+    }
 
-      .nav-link {
-        color: var(--text-dim);
-        text-decoration: none;
-        padding: 10px 15px;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        font-family: "Oswald", sans-serif;
-        letter-spacing: 1px;
-        position: relative;
-        transition: 0.3s;
-      }
+    .nav-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 10px 15px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      font-family: "Oswald", sans-serif;
+      letter-spacing: 1px;
+      position: relative;
+      transition: 0.3s;
+    }
 
-      .nav-link::before {
-        content: "GATE " attr(data-gate);
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.55rem;
-        color: var(--accent-bright);
-        opacity: 0;
-        transition: 0.3s;
-      }
+    .nav-link::before {
+      content: "GATE " attr(data-gate);
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.55rem;
+      color: var(--accent-bright);
+      opacity: 0;
+      transition: 0.3s;
+    }
 
-      .nav-link:hover::before {
-        opacity: 1;
-        top: -2px;
-      }
+    .nav-link:hover::before {
+      opacity: 1;
+      top: -2px;
+    }
 
-      /* =========================================================
+    /* =========================================================
            PORTE D'EMBARQUEMENT PLEIN ÉCRAN (INTRO)
            ========================================================= */
 
-      .doors-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 2000;
-        display: flex;
-        pointer-events: none;
-        background: #020617; /* opaque pour cacher la nav et le contenu */
-      }
+    .doors-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      pointer-events: none;
+      background: #020617;
+      /* opaque pour cacher la nav et le contenu */
+    }
 
-      .doors-overlay::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-          circle at 50% 40%,
+    .doors-overlay::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 40%,
           rgba(15, 23, 42, 1) 0,
           rgba(3, 4, 7, 1) 55%,
-          rgba(0, 0, 0, 1) 100%
-        );
-        opacity: 1;
-      }
+          rgba(0, 0, 0, 1) 100%);
+      opacity: 1;
+    }
 
-      .door {
-        flex: 1;
-        height: 100%;
-        background: linear-gradient(
-          135deg,
+    .door {
+      flex: 1;
+      height: 100%;
+      background: linear-gradient(135deg,
           #050816 0%,
           #111827 40%,
-          #020617 100%
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-        box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9);
-        z-index: 1;
-      }
+          #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9);
+      z-index: 1;
+    }
 
-      /* Bandes de sécurité aux couleurs du site */
+    /* Bandes de sécurité aux couleurs du site */
 
-      .door.left::after,
-      .door.right::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        width: 18px;
-        height: 100%;
-        background: repeating-linear-gradient(
-          135deg,
+    .door.left::after,
+    .door.right::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 18px;
+      height: 100%;
+      background: repeating-linear-gradient(135deg,
           var(--warning) 0px,
           var(--warning) 6px,
           #020617 6px,
-          #020617 12px
-        );
-        opacity: 0.8;
-      }
+          #020617 12px);
+      opacity: 0.8;
+    }
 
-      .door.left::after {
-        right: 0;
-      }
+    .door.left::after {
+      right: 0;
+    }
 
-      .door.right::after {
-        left: 0;
-      }
+    .door.right::after {
+      left: 0;
+    }
 
-      .door-inner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 18px;
-      }
+    .door-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
 
-      /* Hublot */
+    /* Hublot */
 
-      .door-window {
-        width: 180px;
-        height: 54px;
-        border-radius: 999px;
-        background: radial-gradient(
-          circle at 30% 20%,
+    .door-window {
+      width: 180px;
+      height: 54px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%,
           #e5e7eb 0,
           #9ca3af 35%,
-          #020617 100%
-        );
-        border: 2px solid #1f2937;
-        box-shadow: 0 0 25px rgba(15, 23, 42, 0.9) inset,
-          0 0 30px rgba(139, 30, 63, 0.6);
-        position: relative;
+          #020617 100%);
+      border: 2px solid #1f2937;
+      box-shadow: 0 0 25px rgba(15, 23, 42, 0.9) inset,
+        0 0 30px rgba(139, 30, 63, 0.6);
+      position: relative;
+    }
+
+    .door-window::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: inherit;
+      border: 1px dashed rgba(15, 23, 42, 0.4);
+    }
+
+    .door-label {
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #e5e7eb;
+      font-size: 0.65rem;
+    }
+
+    .door-label-top {
+      display: block;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .door-label-main {
+      display: block;
+      font-family: "Oswald", sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.25em;
+      color: var(--accent-bright);
+    }
+
+    .door-label-bottom {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.6rem;
+      color: var(--warning);
+      animation: doorBlink 1s infinite;
+    }
+
+    @keyframes doorBlink {
+
+      0%,
+      100% {
+        opacity: 1;
       }
 
-      .door-window::after {
-        content: "";
-        position: absolute;
-        inset: 8px;
-        border-radius: inherit;
-        border: 1px dashed rgba(15, 23, 42, 0.4);
+      50% {
+        opacity: 0.2;
       }
+    }
 
-      .door-label {
-        text-align: center;
-        font-family: "JetBrains Mono", monospace;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: #e5e7eb;
-        font-size: 0.65rem;
-      }
-
-      .door-label-top {
-        display: block;
-        color: #9ca3af;
-        margin-bottom: 6px;
-      }
-
-      .door-label-main {
-        display: block;
-        font-family: "Oswald", sans-serif;
-        font-size: 1.4rem;
-        letter-spacing: 0.25em;
-        color: var(--accent-bright);
-      }
-
-      .door-label-bottom {
-        display: block;
-        margin-top: 6px;
-        font-size: 0.6rem;
-        color: var(--warning);
-        animation: doorBlink 1s infinite;
-      }
-
-      @keyframes doorBlink {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.2;
-        }
-      }
-
-      /* =========================================================
+    /* =========================================================
            SECTION PRINCIPALE : TABLEAU DES DÉPARTS
            ========================================================= */
 
-      .departures {
-        max-width: var(--container-width);
-        margin: 0 auto;
-        padding: 140px 20px 40px;
-      }
+    .departures {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 140px 20px 40px;
+    }
 
-      .departures-header {
-        margin-bottom: 20px;
-      }
+    .departures-header {
+      margin-bottom: 20px;
+    }
 
-      .departures-header h1 {
-        font-family: "Oswald", sans-serif;
-        font-size: 1.8rem;
-        letter-spacing: 0.28em;
-        text-transform: uppercase;
-      }
+    .departures-header h1 {
+      font-family: "Oswald", sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
 
-      .departures-header p {
-        margin-top: 8px;
-        font-size: 0.9rem;
-        color: var(--text-dim);
-      }
+    .departures-header p {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
 
-      .board {
-        width: 100%;
-        border-collapse: collapse;
-        background: #020308;
-        border: 6px solid #1e293b;
-        border-radius: 10px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
-        padding: 16px;
-        perspective: 800px; /* pour le flip 3D des clapets */
-      }
+    .board {
+      width: 100%;
+      border-collapse: collapse;
+      background: #020308;
+      border: 6px solid #1e293b;
+      border-radius: 10px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+      padding: 16px;
+      perspective: 800px;
+      /* pour le flip 3D des clapets */
+    }
 
-      .board thead {
-        border-bottom: 2px solid var(--accent);
-      }
+    .board thead {
+      border-bottom: 2px solid var(--accent);
+    }
 
-      .board th,
-      .board td {
-        padding: 8px 4px;
-      }
+    .board th,
+    .board td {
+      padding: 8px 4px;
+    }
 
-      .col-head {
-        font-family: "Oswald", sans-serif;
-        font-size: 14px;
-        color: var(--accent);
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        text-align: left;
-      }
+    .col-head {
+      font-family: "Oswald", sans-serif;
+      font-size: 14px;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: left;
+    }
 
-      .col-vol {
-        width: 140px;
-      }
-      .col-dest {
-        width: 520px;
-      }
-      .col-time {
-        width: 120px;
-      }
-      .col-gate {
-        width: 80px;
-      }
-      .col-obs {
-        width: 180px;
-        text-align: right;
-      }
+    .col-vol {
+      width: 140px;
+    }
 
-      .board tbody tr {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      }
+    .col-dest {
+      width: 520px;
+    }
 
-      .board tbody td:last-child {
-        text-align: right;
-      }
+    .col-time {
+      width: 120px;
+    }
 
-      /* Mot composé de plusieurs clapets */
+    .col-gate {
+      width: 80px;
+    }
 
-      .word {
-        display: inline-flex;
-        gap: var(--gap-char);
-      }
+    .col-obs {
+      width: 180px;
+      text-align: right;
+    }
 
-      /* Clapet individuel type split-flap */
+    .board tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
 
-      .flap {
-        display: inline-block;
-        width: var(--tile-w);
-        height: var(--tile-h);
-        background: var(--primary);
-        color: #fff;
-        font-family: "Oswald", sans-serif;
-        font-size: 20px;
-        text-align: center;
-        line-height: var(--tile-h);
-        position: relative;
-        border-radius: 2px;
-        box-shadow: inset 0 0 5px #000;
-        transform-origin: center bottom;
-        transform-style: preserve-3d;
-      }
+    .board tbody td:last-child {
+      text-align: right;
+    }
 
-      .flap::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: rgba(0, 0, 0, 0.5);
-      }
+    /* Mot composé de plusieurs clapets */
 
-      /* =========================================================
+    .word {
+      display: inline-flex;
+      gap: var(--gap-char);
+    }
+
+    /* Clapet individuel type split-flap */
+
+    .flap {
+      display: inline-block;
+      width: var(--tile-w);
+      height: var(--tile-h);
+      background: var(--primary);
+      color: #fff;
+      font-family: "Oswald", sans-serif;
+      font-size: 20px;
+      text-align: center;
+      line-height: var(--tile-h);
+      position: relative;
+      border-radius: 2px;
+      box-shadow: inset 0 0 5px #000;
+      transform-origin: center bottom;
+      transform-style: preserve-3d;
+    }
+
+    .flap::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* =========================================================
            FOOTER : PISTE DE NUIT
            ========================================================= */
 
-      .site-footer {
-        margin-top: auto;
-        padding: 40px 0 30px;
-        background: radial-gradient(
-          circle at top,
+    .site-footer {
+      margin-top: auto;
+      padding: 40px 0 30px;
+      background: radial-gradient(circle at top,
           #020617 0,
           #020617 40%,
-          #05060a 100%
-        );
-        border-top: 2px solid var(--accent);
-      }
+          #05060a 100%);
+      border-top: 2px solid var(--accent);
+    }
 
-      .footer-inner {
-        max-width: var(--container-width);
-        margin: 0 auto;
-        padding: 0 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 25px;
-        flex-wrap: wrap;
-      }
+    .footer-inner {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
 
-      .footer-left-block {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
+    .footer-left-block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-      .runway-visual {
-        position: relative;
-        width: 260px;
-        height: 50px;
-        background: linear-gradient(
-          to bottom,
+    .runway-visual {
+      position: relative;
+      width: 260px;
+      height: 50px;
+      background: linear-gradient(to bottom,
           #020617 0%,
           #030712 60%,
-          #000 100%
-        );
-        border-radius: 10px;
-        border: 1px solid #1f2937;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) inset;
-        overflow: hidden;
-      }
+          #000 100%);
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) inset;
+      overflow: hidden;
+    }
 
-      .runway-centerline {
-        position: absolute;
-        left: 50%;
-        top: 6px;
-        bottom: 6px;
-        width: 4px;
-        transform: translateX(-50%);
-        background: repeating-linear-gradient(
-          to bottom,
+    .runway-centerline {
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      bottom: 6px;
+      width: 4px;
+      transform: translateX(-50%);
+      background: repeating-linear-gradient(to bottom,
           #f9fafb 0,
           #f9fafb 10px,
           transparent 10px,
-          transparent 20px
-        );
-        opacity: 0.9;
+          transparent 20px);
+      opacity: 0.9;
+    }
+
+    .runway-lights {
+      position: absolute;
+      bottom: 6px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .runway-light {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-bright);
+      box-shadow: 0 0 8px rgba(255, 59, 59, 0.9);
+      animation: blinkLight 1.4s infinite ease-in-out;
+    }
+
+    .runway-light:nth-child(2),
+    .runway-light:nth-child(4) {
+      background: var(--warning);
+      box-shadow: 0 0 8px rgba(250, 204, 21, 0.9);
+      animation-duration: 1.9s;
+    }
+
+    @keyframes blinkLight {
+
+      0%,
+      100% {
+        opacity: 0.2;
+        transform: translateY(0);
       }
 
-      .runway-lights {
-        position: absolute;
-        bottom: 6px;
-        left: 10px;
-        right: 10px;
-        display: flex;
-        justify-content: space-between;
+      50% {
+        opacity: 1;
+        transform: translateY(-1px);
       }
+    }
 
-      .runway-light {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background: var(--accent-bright);
-        box-shadow: 0 0 8px rgba(255, 59, 59, 0.9);
-        animation: blinkLight 1.4s infinite ease-in-out;
-      }
+    .runway-label {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.65rem;
+      color: #e5e7eb;
+      letter-spacing: 0.12em;
+    }
 
-      .runway-light:nth-child(2),
-      .runway-light:nth-child(4) {
-        background: var(--warning);
-        box-shadow: 0 0 8px rgba(250, 204, 21, 0.9);
-        animation-duration: 1.9s;
-      }
+    .runway-code {
+      position: absolute;
+      top: 16px;
+      right: 12px;
+      font-family: "Oswald", sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      color: var(--accent-bright);
+    }
 
-      @keyframes blinkLight {
-        0%,
-        100% {
-          opacity: 0.2;
-          transform: translateY(0);
-        }
-        50% {
-          opacity: 1;
-          transform: translateY(-1px);
-        }
-      }
+    .piste-lights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--accent-bright);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
 
-      .runway-label {
-        position: absolute;
-        top: 8px;
-        left: 12px;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.65rem;
-        color: #e5e7eb;
-        letter-spacing: 0.12em;
-      }
+    .footer-right-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: right;
+    }
 
-      .runway-code {
-        position: absolute;
-        top: 16px;
-        right: 12px;
-        font-family: "Oswald", sans-serif;
-        font-size: 1rem;
-        letter-spacing: 0.15em;
-        color: var(--accent-bright);
-      }
+    .status-row {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
 
-      .piste-lights {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        color: var(--accent-bright);
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-      }
+    .status-tag {
+      background: rgba(255, 59, 59, 0.08);
+      padding: 5px 15px;
+      border: 1px solid var(--accent-bright);
+      color: var(--accent-bright);
+      font-size: 0.7rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: "JetBrains Mono", monospace;
+    }
 
-      .footer-right-block {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        text-align: right;
-      }
+    .status-tag.secondary {
+      border-color: var(--warning);
+      color: var(--warning);
+      background: rgba(250, 204, 21, 0.08);
+    }
 
-      .status-row {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-      }
+    .footer-links {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-      .status-tag {
-        background: rgba(255, 59, 59, 0.08);
-        padding: 5px 15px;
-        border: 1px solid var(--accent-bright);
-        color: var(--accent-bright);
-        font-size: 0.7rem;
-        border-radius: 4px;
-        text-transform: uppercase;
-        font-family: "JetBrains Mono", monospace;
-      }
+    .footer-links a {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
 
-      .status-tag.secondary {
-        border-color: var(--warning);
-        color: var(--warning);
-        background: rgba(250, 204, 21, 0.08);
-      }
+    .footer-links a:hover {
+      color: var(--accent-bright);
+    }
 
-      .footer-links {
-        display: flex;
-        gap: 15px;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-        align-items: center;
-      }
+    .footer-links span {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
 
-      .footer-links a {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.7rem;
-        text-decoration: none;
-        text-transform: uppercase;
-        color: var(--text-dim);
-      }
-
-      .footer-links a:hover {
-        color: var(--accent-bright);
-      }
-
-      .footer-links span {
-        font-size: 0.7rem;
-        color: var(--text-dim);
-      }
-
-      /* =========================================================
+    /* =========================================================
            RESPONSIVE
            ========================================================= */
 
-      @media (max-width: 1024px) {
-        .header-inner {
-          padding: 10px 15px;
-          flex-direction: column;
-          gap: 15px;
-        }
-
-        .nav-desktop {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-
-        .departures {
-          padding-top: 130px;
-        }
-
-        .col-dest {
-          width: auto;
-        }
-
-        .footer-inner {
-          align-items: flex-start;
-        }
-
-        .footer-right-block {
-          text-align: left;
-          align-items: flex-start;
-        }
-
-        .status-row {
-          justify-content: flex-start;
-        }
-
-        .footer-links {
-          justify-content: flex-start;
-        }
+    @media (max-width: 1024px) {
+      .header-inner {
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 15px;
       }
-    </style>
-  </head>
 
-  <body>
-    <!-- ========== HEADER / NAV ========== -->
-    <header class="site-header">
-      <div class="header-inner" id="nav-container">
-        <a href="accueil2.html" class="logo" id="logo-ref">
-          <img
-            src="pilote christophehascoet3.png"
-            alt="Portrait de Christophe Hascoët"
-          />
-          <div class="logo-text-group">
-            <span class="logo-title">FLIGHT</span>
-            <span class="flight-id">SYS: CH-2025</span>
-          </div>
-        </a>
+      .nav-desktop {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
 
-        <!-- L'avion qui survole les portes d'embarquement de la nav -->
-        <span class="plane-animated" id="plane">✈</span>
+      .departures {
+        padding-top: 130px;
+      }
 
-        <nav class="nav-desktop" aria-label="Navigation principale">
-          <a href="accueil2.html" class="nav-link" data-gate="01">Départs</a>
-          <a href="about3.html" class="nav-link" data-gate="02">Passeport</a>
-          <a href="projects1.html" class="nav-link" data-gate="03"
-            >Embarquement</a
-          >
-          <a href="case-studies.html" class="nav-link" data-gate="04"
-            >Plan de vol</a
-          >
-          <a href="profile.html" class="nav-link" data-gate="05">Cockpit</a>
-          <a href="contact.html" class="nav-link" data-gate="06"
-            >Tour de Contrôle</a
-          >
-        </nav>
-      </div>
-    </header>
+      .col-dest {
+        width: auto;
+      }
 
-    <!-- ========== PORTE D'EMBARQUEMENT ANIMÉE ========== -->
-    <section class="doors-overlay" aria-hidden="true">
-      <div class="door left">
-        <div class="door-inner">
-          <div class="door-window"></div>
-          <p class="door-label">
-            <span class="door-label-top">TERMINAL CH-2025</span>
-            <span class="door-label-main">GATE A01</span>
-            <span class="door-label-bottom">BOARDING</span>
-          </p>
+      .footer-inner {
+        align-items: flex-start;
+      }
+
+      .footer-right-block {
+        text-align: left;
+        align-items: flex-start;
+      }
+
+      .status-row {
+        justify-content: flex-start;
+      }
+
+      .footer-links {
+        justify-content: flex-start;
+      }
+    }
+
+    .gate-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.3rem;
+      padding: 0.12rem 0.4rem;
+      border-radius: 3px;
+      background: rgba(10, 14, 39, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .obs-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.12rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(10, 14, 39, 0.95);
+      border: 1px solid rgba(96, 165, 250, 0.7);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* Pied du panneau */
+
+    .board-footer {
+      padding: 0.5rem 1.5rem 0.7rem;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(52, 60, 106, 0.8);
+    }
+
+    /* Accessibilité visuelle pour lecteurs d’écran */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ========== HEADER / NAV ========== -->
+  <header class="site-header">
+    <div class="header-inner" id="nav-container">
+      <a href="accueil2.html" class="logo" id="logo-ref">
+        <img src="pilote christophehascoet3.png" alt="Portrait de Christophe Hascoët" />
+        <div class="logo-text-group">
+          <span class="logo-title">FLIGHT</span>
+          <span class="flight-id">SYS: CH-2025</span>
         </div>
+      </a>
+
+      <!-- L'avion qui survole les portes d'embarquement de la nav -->
+      <span class="plane-animated" id="plane">✈</span>
+
+      <nav class="nav-desktop" aria-label="Navigation principale">
+        <a href="accueil2.html" class="nav-link" data-gate="01">Départs</a>
+        <a href="about3.html" class="nav-link" data-gate="02">Passeport</a>
+        <a href="projects1.html" class="nav-link" data-gate="03">Embarquement</a>
+        <a href="case-studies.html" class="nav-link" data-gate="04">Plan de vol</a>
+        <a href="profile.html" class="nav-link" data-gate="05">Cockpit</a>
+        <a href="contact.html" class="nav-link" data-gate="06">Tour de Contrôle</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========== PORTE D'EMBARQUEMENT ANIMÉE ========== -->
+  <section class="doors-overlay" aria-hidden="true">
+    <div class="door left">
+      <div class="door-inner">
+        <div class="door-window"></div>
+        <p class="door-label">
+          <span class="door-label-top">TERMINAL CH-2025</span>
+          <span class="door-label-main">GATE A01</span>
+          <span class="door-label-bottom">BOARDING</span>
+        </p>
       </div>
-      <div class="door right">
-        <div class="door-inner">
-          <div class="door-window"></div>
-          <p class="door-label">
-            <span class="door-label-top">DIGITAL FLIGHT</span>
-            <span class="door-label-main">DEST. PORTFOLIO</span>
-            <span class="door-label-bottom">CLEARANCE OK</span>
-          </p>
+    </div>
+    <div class="door right">
+      <div class="door-inner">
+        <div class="door-window"></div>
+        <p class="door-label">
+          <span class="door-label-top">DIGITAL FLIGHT</span>
+          <span class="door-label-main">DEST. PORTFOLIO</span>
+          <span class="door-label-bottom">CLEARANCE OK</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MAIN / TABLEAU DES DÉPARTS ========== -->
+  <main>
+    <section class="departures" aria-labelledby="departures-title">
+      <header class="departures-header">
+        <h1 id="departures-title">Tableau des départs</h1>
+        <p id="departures-intro">
+          Je présente ici les “vols” principaux de mon parcours : mes projets
+          de développement web, mes cahiers des charges et les langages que
+          j’ai appris (même si certains sont à revoir).
+        </p>
+      </header>
+
+      <table class="board" aria-describedby="departures-intro">
+        <caption class="visually-hidden">
+          Tableau des départs présentant mes projets, études de cas et
+          compétences.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col" class="col-head col-vol">Vol</th>
+            <th scope="col" class="col-head col-dest">Destination</th>
+            <th scope="col" class="col-head col-time">Heure</th>
+            <th scope="col" class="col-head col-gate">Porte</th>
+            <th scope="col" class="col-head col-obs">Observations</th>
+          </tr>
+        </thead>
+        <tbody id="board-body">
+          <!-- Les lignes sont générées en JavaScript -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- ========== FOOTER / PISTE DE NUIT ========== -->
+  <footer class="site-footer">
+    <section class="footer-inner" aria-label="Informations de bas de page">
+      <div class="footer-left-block">
+        <div class="runway-visual" aria-hidden="true">
+          <div class="runway-centerline"></div>
+          <div class="runway-lights">
+            <span class="runway-light"></span>
+            <span class="runway-light"></span>
+            <span class="runway-light"></span>
+            <span class="runway-light"></span>
+            <span class="runway-light"></span>
+          </div>
+          <p class="runway-label">RUNWAY 07L</p>
+          <p class="runway-code">07L</p>
+        </div>
+        <p class="piste-lights">
+          <span>&lt;&lt;&lt; ZONE SÉCURISÉE &gt;&gt;&gt;</span>
+          <span>FIN DE PARCOURS / TERMINAL</span>
+        </p>
+      </div>
+
+      <div class="footer-right-block">
+        <div class="status-row">
+          <span class="status-tag">SYSTEM ONLINE</span>
+          <span class="status-tag secondary">READY FOR TAKEOFF</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/CHRISTOPHEHASCOET" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer"> LinkedIn </a>
+          <span>© 2025 PILOTE DIGITAL — TOUS DROITS RÉSERVÉS</span>
         </div>
       </div>
     </section>
+  </footer>
 
-    <!-- ========== MAIN / TABLEAU DES DÉPARTS ========== -->
-    <main>
-      <section class="departures" aria-labelledby="departures-title">
-        <header class="departures-header">
-          <h1 id="departures-title">Tableau des départs</h1>
-          <p id="departures-intro">
-            Je présente ici les “vols” principaux de mon parcours : mes projets
-            de développement web, mes cahiers des charges et les langages que
-            j’ai appris (même si certains sont à revoir).
-          </p>
-        </header>
+  <script>
+    // =========================================================
+    // DONNÉES DU TABLEAU : PROJETS, CAHIERS DES CHARGES, LANGAGES
+    // =========================================================
 
-        <table class="board" aria-describedby="departures-intro">
-          <caption class="visually-hidden">
-            Tableau des départs présentant mes projets, études de cas et
-            compétences.
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col" class="col-head col-vol">Vol</th>
-              <th scope="col" class="col-head col-dest">Destination</th>
-              <th scope="col" class="col-head col-time">Heure</th>
-              <th scope="col" class="col-head col-gate">Porte</th>
-              <th scope="col" class="col-head col-obs">Observations</th>
-            </tr>
-          </thead>
-          <tbody id="board-body">
-            <!-- Les lignes sont générées en JavaScript -->
-          </tbody>
-        </table>
-      </section>
-    </main>
+    // Ici je liste mes "vols" : projets dev, cahiers des charges, compétences
+    const entries = [
+      // Vol principal : le portfolio
+      {
+        vol: "CH2025",
+        dest: "PORTFOLIO PILOTE WEB",
+        time: "NOW",
+        gate: "A1",
+        obs: "EMBARQUEMENT",
+      },
+      // Projets développeur
+      {
+        vol: "BKI01",
+        dest: "SITE BOOKI - RESA VOYAGE",
+        time: "09:30",
+        gate: "B2",
+        obs: "PROJET DEV",
+      },
+      {
+        vol: "OMF02",
+        dest: "SITE OHMYFOOD - MENUS",
+        time: "10:45",
+        gate: "B3",
+        obs: "PROJET DEV",
+      },
+      {
+        vol: "PAN03",
+        dest: "LA PANTHERE - REFONTE SEO",
+        time: "11:30",
+        gate: "B4",
+        obs: "PROJET DEV",
+      },
+      // Cahiers des charges / études de cas
+      {
+        vol: "CWC01",
+        dest: "COOK'N WAY - PLATS MAISON",
+        time: "12:15",
+        gate: "C1",
+        obs: "CAHIER",
+      },
+      {
+        vol: "CAM02",
+        dest: "CAMI COURSES - EXPRESS",
+        time: "13:00",
+        gate: "C2",
+        obs: "CAHIER",
+      },
+      {
+        vol: "FKM03",
+        dest: "FKM MOBILITE INCLUSIVE",
+        time: "13:45",
+        gate: "C3",
+        obs: "CAHIER",
+      },
+      // Langages / niveau
+      {
+        vol: "SKL01",
+        dest: "HTML & CSS (SOLIDES)",
+        time: "ALL",
+        gate: "D1",
+        obs: "COMPETENCES",
+      },
+      {
+        vol: "SKL02",
+        dest: "JAVASCRIPT (EN COURS)",
+        time: "ALL",
+        gate: "D2",
+        obs: "APPRENTISSAGE",
+      },
+      {
+        vol: "SKL03",
+        dest: "REACT PHP TS SASS",
+        time: "ALL",
+        gate: "D3",
+        obs: "A REVOIR",
+      },
+    ];
 
-    <!-- ========== FOOTER / PISTE DE NUIT ========== -->
-    <footer class="site-footer">
-      <section class="footer-inner" aria-label="Informations de bas de page">
-        <div class="footer-left-block">
-          <div class="runway-visual" aria-hidden="true">
-            <div class="runway-centerline"></div>
-            <div class="runway-lights">
-              <span class="runway-light"></span>
-              <span class="runway-light"></span>
-              <span class="runway-light"></span>
-              <span class="runway-light"></span>
-              <span class="runway-light"></span>
-            </div>
-            <p class="runway-label">RUNWAY 07L</p>
-            <p class="runway-code">07L</p>
-          </div>
-          <p class="piste-lights">
-            <span>&lt;&lt;&lt; ZONE SÉCURISÉE &gt;&gt;&gt;</span>
-            <span>FIN DE PARCOURS / TERMINAL</span>
-          </p>
-        </div>
+    // Nombre de caractères par colonne (pour aligner le split-flap)
+    const SLOTS = { vol: 6, dest: 26, time: 5, gate: 2, obs: 12 };
 
-        <div class="footer-right-block">
-          <div class="status-row">
-            <span class="status-tag">SYSTEM ONLINE</span>
-            <span class="status-tag secondary">READY FOR TAKEOFF</span>
-          </div>
-          <div class="footer-links">
-            <a
-              href="https://github.com/CHRISTOPHEHASCOET"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GitHub
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer"> LinkedIn </a>
-            <span>© 2025 PILOTE DIGITAL — TOUS DROITS RÉSERVÉS</span>
-          </div>
-        </div>
-      </section>
-    </footer>
+    // Alphabet utilisé pour les animations mécaniques
+    const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:'";
 
-    <script>
-      // =========================================================
-      // DONNÉES DU TABLEAU : PROJETS, CAHIERS DES CHARGES, LANGAGES
-      // =========================================================
+    // =========================================================
+    // GÉNÉRATION DU TABLEAU SPLIT‑FLAP
+    // =========================================================
 
-      // Ici je liste mes "vols" : projets dev, cahiers des charges, compétences
-      const entries = [
-        // Vol principal : le portfolio
-        {
-          vol: "CH2025",
-          dest: "PORTFOLIO PILOTE WEB",
-          time: "NOW",
-          gate: "A1",
-          obs: "EMBARQUEMENT",
-        },
-        // Projets développeur
-        {
-          vol: "BKI01",
-          dest: "SITE BOOKI - RESA VOYAGE",
-          time: "09:30",
-          gate: "B2",
-          obs: "PROJET DEV",
-        },
-        {
-          vol: "OMF02",
-          dest: "SITE OHMYFOOD - MENUS",
-          time: "10:45",
-          gate: "B3",
-          obs: "PROJET DEV",
-        },
-        {
-          vol: "PAN03",
-          dest: "LA PANTHERE - REFONTE SEO",
-          time: "11:30",
-          gate: "B4",
-          obs: "PROJET DEV",
-        },
-        // Cahiers des charges / études de cas
-        {
-          vol: "CWC01",
-          dest: "COOK'N WAY - PLATS MAISON",
-          time: "12:15",
-          gate: "C1",
-          obs: "CAHIER",
-        },
-        {
-          vol: "CAM02",
-          dest: "CAMI COURSES - EXPRESS",
-          time: "13:00",
-          gate: "C2",
-          obs: "CAHIER",
-        },
-        {
-          vol: "FKM03",
-          dest: "FKM MOBILITE INCLUSIVE",
-          time: "13:45",
-          gate: "C3",
-          obs: "CAHIER",
-        },
-        // Langages / niveau
-        {
-          vol: "SKL01",
-          dest: "HTML & CSS (SOLIDES)",
-          time: "ALL",
-          gate: "D1",
-          obs: "COMPETENCES",
-        },
-        {
-          vol: "SKL02",
-          dest: "JAVASCRIPT (EN COURS)",
-          time: "ALL",
-          gate: "D2",
-          obs: "APPRENTISSAGE",
-        },
-        {
-          vol: "SKL03",
-          dest: "REACT PHP TS SASS",
-          time: "ALL",
-          gate: "D3",
-          obs: "A REVOIR",
-        },
-      ];
+    // Je crée un "mot" composé de plusieurs clapets (une cellule du tableau)
+    function createWord(text, count, extraClass) {
+      const str = (text || "").toUpperCase().padEnd(count, " ");
+      const span = document.createElement("span");
+      span.className = `word ${extraClass}`;
 
-      // Nombre de caractères par colonne (pour aligner le split-flap)
-      const SLOTS = { vol: 6, dest: 26, time: 5, gate: 2, obs: 12 };
-
-      // Alphabet utilisé pour les animations mécaniques
-      const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:'";
-
-      // =========================================================
-      // GÉNÉRATION DU TABLEAU SPLIT‑FLAP
-      // =========================================================
-
-      // Je crée un "mot" composé de plusieurs clapets (une cellule du tableau)
-      function createWord(text, count, extraClass) {
-        const str = (text || "").toUpperCase().padEnd(count, " ");
-        const span = document.createElement("span");
-        span.className = `word ${extraClass}`;
-
-        for (let i = 0; i < count; i++) {
-          const flap = document.createElement("span");
-          flap.className = "flap";
-          flap.dataset.char = str[i]; // Je garde la lettre cible
-          flap.textContent = " "; // Je laisse vide, ce sera animé
-          span.appendChild(flap);
-        }
-
-        return span;
+      for (let i = 0; i < count; i++) {
+        const flap = document.createElement("span");
+        flap.className = "flap";
+        flap.dataset.char = str[i]; // Je garde la lettre cible
+        flap.textContent = " "; // Je laisse vide, ce sera animé
+        span.appendChild(flap);
       }
 
-      // Je construis dynamiquement les lignes du tableau à partir de mes données
-      function buildBoard() {
-        const tbody = document.getElementById("board-body");
-        if (!tbody) return;
+      return span;
+    }
 
-        entries.forEach((item) => {
-          const row = document.createElement("tr");
+    // Je construis dynamiquement les lignes du tableau à partir de mes données
+    function buildBoard() {
+      const tbody = document.getElementById("board-body");
+      if (!tbody) return;
 
-          const cellVol = document.createElement("td");
-          cellVol.appendChild(createWord(item.vol, SLOTS.vol, "c-vol"));
+      entries.forEach((item) => {
+        const row = document.createElement("tr");
 
-          const cellDest = document.createElement("td");
-          cellDest.appendChild(createWord(item.dest, SLOTS.dest, "c-dest"));
+        const cellVol = document.createElement("td");
+        cellVol.appendChild(createWord(item.vol, SLOTS.vol, "c-vol"));
 
-          const cellTime = document.createElement("td");
-          cellTime.appendChild(createWord(item.time, SLOTS.time, "c-time"));
+        const cellDest = document.createElement("td");
+        cellDest.appendChild(createWord(item.dest, SLOTS.dest, "c-dest"));
 
-          const cellGate = document.createElement("td");
-          cellGate.appendChild(createWord(item.gate, SLOTS.gate, "c-gate"));
+        const cellTime = document.createElement("td");
+        cellTime.appendChild(createWord(item.time, SLOTS.time, "c-time"));
 
-          const cellObs = document.createElement("td");
-          cellObs.appendChild(createWord(item.obs, SLOTS.obs, "c-obs"));
+        const cellGate = document.createElement("td");
+        cellGate.appendChild(createWord(item.gate, SLOTS.gate, "c-gate"));
 
-          row.appendChild(cellVol);
-          row.appendChild(cellDest);
-          row.appendChild(cellTime);
-          row.appendChild(cellGate);
-          row.appendChild(cellObs);
+        const cellObs = document.createElement("td");
+        cellObs.appendChild(createWord(item.obs, SLOTS.obs, "c-obs"));
 
-          tbody.appendChild(row);
-        });
-      }
+        row.appendChild(cellVol);
+        row.appendChild(cellDest);
+        row.appendChild(cellTime);
+        row.appendChild(cellGate);
+        row.appendChild(cellObs);
 
-      // =========================================================
-      // ANIMATION SPLIT‑FLAP (COMME UN VRAI TABLEAU D'AÉROPORT)
-      // =========================================================
+        tbody.appendChild(row);
+      });
+    }
 
-      // J'anime UN clapet (une lettre)
-      function animateSingleFlap(flap) {
-        const targetChar = flap.dataset.char || " ";
-        const flips = 6 + Math.floor(Math.random() * 6); // nombre de flips pour ce clapet
-        let currentFlip = 0;
+    // =========================================================
+    // ANIMATION SPLIT‑FLAP (COMME UN VRAI TABLEAU D'AÉROPORT)
+    // =========================================================
 
-        gsap.to(flap, {
-          rotationX: -90,
-          duration: 0.06,
-          ease: "power2.in",
-          yoyo: true,
-          repeat: flips,
-          onRepeat: () => {
-            // À chaque aller-retour, je fais défiler un caractère différent
-            currentFlip++;
-            if (currentFlip >= flips) {
-              flap.textContent = targetChar;
-            } else {
-              const randIndex = Math.floor(Math.random() * CHARS.length);
-              flap.textContent = CHARS[randIndex];
-            }
-          },
-          onComplete: () => {
-            // Je fixe bien la lettre cible à la fin de l'animation
-            flap.style.transform = "rotateX(0deg)";
+    // J'anime UN clapet (une lettre)
+    function animateSingleFlap(flap) {
+      const targetChar = flap.dataset.char || " ";
+      const flips = 6 + Math.floor(Math.random() * 6); // nombre de flips pour ce clapet
+      let currentFlip = 0;
+
+      gsap.to(flap, {
+        rotationX: -90,
+        duration: 0.06,
+        ease: "power2.in",
+        yoyo: true,
+        repeat: flips,
+        onRepeat: () => {
+          // À chaque aller-retour, je fais défiler un caractère différent
+          currentFlip++;
+          if (currentFlip >= flips) {
             flap.textContent = targetChar;
+          } else {
+            const randIndex = Math.floor(Math.random() * CHARS.length);
+            flap.textContent = CHARS[randIndex];
+          }
+        },
+        onComplete: () => {
+          // Je fixe bien la lettre cible à la fin de l'animation
+          flap.style.transform = "rotateX(0deg)";
+          flap.textContent = targetChar;
+        },
+      });
+    }
+
+    // J'anime tous les clapets du tableau, avec un léger décalage pour l'effet cascade
+    function animateBoardFlaps() {
+      const flaps = document.querySelectorAll(".flap");
+      flaps.forEach((flap, index) => {
+        const delay = (index % 10) * 0.02;
+        gsap.delayedCall(delay, () => animateSingleFlap(flap));
+      });
+    }
+
+    // =========================================================
+    // ANIMATION DE LA PORTE D'EMBARQUEMENT + DÉCLENCHEMENT DU TABLEAU
+    // =========================================================
+
+    function animateDoorsAndBoard() {
+      const tl = gsap.timeline();
+
+      // Je lance d'abord les clapets, en même temps que l'ouverture de la porte
+      tl.call(animateBoardFlaps, null, 0.1)
+        .to(
+          ".door.left",
+          {
+            x: "-100%",
+            duration: 1.3,
+            ease: "power4.inOut",
+          },
+          0
+        )
+        .to(
+          ".door.right",
+          {
+            x: "100%",
+            duration: 1.3,
+            ease: "power4.inOut",
+          },
+          0
+        )
+        .to(
+          ".doors-overlay",
+          {
+            opacity: 0,
+            duration: 0.6,
+            ease: "power2.out",
+          },
+          1.0
+        )
+        .set(".doors-overlay", { display: "none" });
+    }
+
+    // =========================================================
+    // ANIMATION DE L'AVION DANS LA NAVIGATION
+    // =========================================================
+
+    function initPlaneNavAnimation() {
+      const plane = document.getElementById("plane");
+      const navContainer = document.getElementById("nav-container");
+      if (!plane || !navContainer) return;
+
+      // Mouvement doux gauche/droite quand l'avion est au repos
+      let idleTween = gsap.to(plane, {
+        x: 15,
+        duration: 2.5,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+
+      // Je crée un petit sillage lumineux derrière l'avion
+      function createTrail() {
+        const trail = document.createElement("span");
+        trail.className = "trail";
+        navContainer.appendChild(trail);
+        const rect = plane.getBoundingClientRect();
+        const parent = navContainer.getBoundingClientRect();
+        gsap.set(trail, {
+          left: rect.left - parent.left + 10,
+          top: rect.top - parent.top + 10,
+        });
+        gsap.to(trail, {
+          opacity: 0,
+          scale: 3,
+          x: -15,
+          duration: 0.6,
+          onComplete: () => trail.remove(),
+        });
+      }
+
+      let trailInt;
+
+      // Je déplace l'avion vers la porte survolée
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("mouseenter", () => {
+          const lRect = link.getBoundingClientRect();
+          const pRect = navContainer.getBoundingClientRect();
+          const targetX = lRect.left - pRect.left + lRect.width / 2 - 10;
+
+          idleTween.pause();
+
+          trailInt = setInterval(createTrail, 40);
+          gsap.to(plane, {
+            left: targetX,
+            rotation: 15,
+            scale: 1.4,
+            duration: 0.5,
+            ease: "power2.out",
+            onComplete: () => {
+              gsap.to(plane, { rotation: 0, duration: 0.2 });
+            },
+          });
+
+          gsap.to(link, {
+            opacity: 0.5,
+            repeat: -1,
+            yoyo: true,
+            duration: 0.15,
+          });
+        });
+
+        link.addEventListener("mouseleave", () => {
+          clearInterval(trailInt);
+          gsap.killTweensOf(link);
+          gsap.to(link, { opacity: 1, duration: 0.2 });
+        });
+      });
+
+      // Quand la souris quitte la nav, je ramène l'avion à sa position initiale
+      navContainer.addEventListener("mouseleave", () => {
+        clearInterval(trailInt);
+        gsap.to(plane, {
+          left: 175,
+          scale: 1,
+          duration: 0.8,
+          ease: "power2.inOut",
+          onComplete: () => {
+            idleTween.restart();
           },
         });
-      }
-
-      // J'anime tous les clapets du tableau, avec un léger décalage pour l'effet cascade
-      function animateBoardFlaps() {
-        const flaps = document.querySelectorAll(".flap");
-        flaps.forEach((flap, index) => {
-          const delay = (index % 10) * 0.02;
-          gsap.delayedCall(delay, () => animateSingleFlap(flap));
-        });
-      }
-
-      // =========================================================
-      // ANIMATION DE LA PORTE D'EMBARQUEMENT + DÉCLENCHEMENT DU TABLEAU
-      // =========================================================
-
-      function animateDoorsAndBoard() {
-        const tl = gsap.timeline();
-
-        // Je lance d'abord les clapets, en même temps que l'ouverture de la porte
-        tl.call(animateBoardFlaps, null, 0.1)
-          .to(
-            ".door.left",
-            {
-              x: "-100%",
-              duration: 1.3,
-              ease: "power4.inOut",
-            },
-            0
-          )
-          .to(
-            ".door.right",
-            {
-              x: "100%",
-              duration: 1.3,
-              ease: "power4.inOut",
-            },
-            0
-          )
-          .to(
-            ".doors-overlay",
-            {
-              opacity: 0,
-              duration: 0.6,
-              ease: "power2.out",
-            },
-            1.0
-          )
-          .set(".doors-overlay", { display: "none" });
-      }
-
-      // =========================================================
-      // ANIMATION DE L'AVION DANS LA NAVIGATION
-      // =========================================================
-
-      function initPlaneNavAnimation() {
-        const plane = document.getElementById("plane");
-        const navContainer = document.getElementById("nav-container");
-        if (!plane || !navContainer) return;
-
-        // Mouvement doux gauche/droite quand l'avion est au repos
-        let idleTween = gsap.to(plane, {
-          x: 15,
-          duration: 2.5,
-          yoyo: true,
-          repeat: -1,
-          ease: "sine.inOut",
-        });
-
-        // Je crée un petit sillage lumineux derrière l'avion
-        function createTrail() {
-          const trail = document.createElement("span");
-          trail.className = "trail";
-          navContainer.appendChild(trail);
-          const rect = plane.getBoundingClientRect();
-          const parent = navContainer.getBoundingClientRect();
-          gsap.set(trail, {
-            left: rect.left - parent.left + 10,
-            top: rect.top - parent.top + 10,
-          });
-          gsap.to(trail, {
-            opacity: 0,
-            scale: 3,
-            x: -15,
-            duration: 0.6,
-            onComplete: () => trail.remove(),
-          });
-        }
-
-        let trailInt;
-
-        // Je déplace l'avion vers la porte survolée
-        document.querySelectorAll(".nav-link").forEach((link) => {
-          link.addEventListener("mouseenter", () => {
-            const lRect = link.getBoundingClientRect();
-            const pRect = navContainer.getBoundingClientRect();
-            const targetX = lRect.left - pRect.left + lRect.width / 2 - 10;
-
-            idleTween.pause();
-
-            trailInt = setInterval(createTrail, 40);
-            gsap.to(plane, {
-              left: targetX,
-              rotation: 15,
-              scale: 1.4,
-              duration: 0.5,
-              ease: "power2.out",
-              onComplete: () => {
-                gsap.to(plane, { rotation: 0, duration: 0.2 });
-              },
-            });
-
-            gsap.to(link, {
-              opacity: 0.5,
-              repeat: -1,
-              yoyo: true,
-              duration: 0.15,
-            });
-          });
-
-          link.addEventListener("mouseleave", () => {
-            clearInterval(trailInt);
-            gsap.killTweensOf(link);
-            gsap.to(link, { opacity: 1, duration: 0.2 });
-          });
-        });
-
-        // Quand la souris quitte la nav, je ramène l'avion à sa position initiale
-        navContainer.addEventListener("mouseleave", () => {
-          clearInterval(trailInt);
-          gsap.to(plane, {
-            left: 175,
-            scale: 1,
-            duration: 0.8,
-            ease: "power2.inOut",
-            onComplete: () => {
-              idleTween.restart();
-            },
-          });
-        });
-      }
-
-      // =========================================================
-      // INITIALISATION GLOBALE
-      // =========================================================
-
-      document.addEventListener("DOMContentLoaded", () => {
-        // Je construis le tableau à partir de mes données
-        buildBoard();
-        // Je prépare l'animation de l'avion
-        initPlaneNavAnimation();
       });
+    }
 
-      window.addEventListener("load", () => {
-        // Une fois tout chargé, je lance la porte + le split-flap
-        animateDoorsAndBoard();
-      });
-    </script>
-  </body>
+    // =========================================================
+    // INITIALISATION GLOBALE
+    // =========================================================
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Je construis le tableau à partir de mes données
+      buildBoard();
+      // Je prépare l'animation de l'avion
+      initPlaneNavAnimation();
+    });
+
+    window.addEventListener("load", () => {
+      // Une fois tout chargé, je lance la porte + le split-flap
+      animateDoorsAndBoard();
+    });
+  </script>
+</body>
+
 </html>
 s

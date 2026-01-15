@@ -1263,30 +1263,6 @@
                     gate: "E12",
                     obs: "ZONE D’EMBARQUEMENT"
                 },
-                {
-                    vol: "CHPF25",
-                    dest: "PORTFOLIO 2025",
-                    type: "PROJET",
-                    stat: "EN VOL",
-                    gate: "E15",
-                    obs: "ZONE D’EMBARQUEMENT"
-                },
-                {
-                    vol: "CHCAS1",
-                    dest: "REFONTE SITE VITRINE",
-                    type: "ÉTUDE DE CAS",
-                    stat: "EN PRÉPARATION",
-                    gate: "V03",
-                    obs: "PLAN DE VOL"
-                },
-                {
-                    vol: "CHCAS2",
-                    dest: "APP MOBILE RÉSERVATION",
-                    type: "ÉTUDE DE CAS",
-                    stat: "EN PRÉPARATION",
-                    gate: "V05",
-                    obs: "PLAN DE VOL"
-                }
             ];
             function truncate(text, max) {
                 const t = text.toUpperCase();
@@ -1362,6 +1338,57 @@
                 setInterval(updateTime, 30000);
             }
         });
+
+          // =========================================================
+      // ANIMATION DE LA PORTE D'EMBARQUEMENT + DÉCLENCHEMENT DU TABLEAU
+      // =========================================================
+
+      function animateDoorsAndBoard() {
+        const tl = gsap.timeline();
+
+        // Je lance d'abord les clapets, en même temps que l'ouverture de la porte
+        tl.call(animateBoardFlaps, null, 0.1)
+          .to(
+            ".door.left",
+            {
+              x: "-100%",
+              duration: 1.3,
+              ease: "power4.inOut",
+            },
+            0
+          )
+          .to(
+            ".door.right",
+            {
+              x: "100%",
+              duration: 1.3,
+              ease: "power4.inOut",
+            },
+            0
+          )
+          .to(
+            ".doors-overlay",
+            {
+              opacity: 0,
+              duration: 0.6,
+              ease: "power2.out",
+            },
+            1.0
+          )
+          .set(".doors-overlay", { display: "none" });
+      }
+
+       document.addEventListener("DOMContentLoaded", () => {
+        // Je construis le tableau à partir de mes données
+        buildBoard();
+        // Je prépare l'animation de l'avion
+        initPlaneNavAnimation();
+      });
+
+      window.addEventListener("load", () => {
+        // Une fois tout chargé, je lance la porte + le split-flap
+        animateDoorsAndBoard();
+      });
     </script>
 
 
