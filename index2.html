@@ -2,400 +2,1220 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLIGHT LOG // FINAL FIDELITY</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #0a0d14;
-            /* Fond global */
-            --bg-petrol: #111820;
-            /* Bleu pétrole (Nav et Footer) */
-            --bg-black: #05070a;
-            /* Noir profond (Boîte com) */
-            --primary-blue: #1f6fea;
-            /* Bleu des icônes et bordures */
-            --text-main: #e6edf3;
-            --text-muted: #909aa7;
-            --status-green: #40b950;
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-heading: 'Rajdhani', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLIGHT LOG // PORTFOLIO DEV</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <!-- Polices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: var(--font-heading);
-            padding: 2rem;
-        }
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-        /* --- NAVIGATION HAUTE (STYLE COCKPIT DÉMARQUÉ) --- */
-        .cockpit-header {
-            background-color: var(--bg-petrol);
-            display: grid;
-            grid-template-columns: 300px 1fr 200px;
-            border: 1px solid #1a222d;
-            margin-bottom: 4rem;
-        }
+  <style>
+    :root {
+      /* Fonds */
+      --bg-page: #0a0d14;
+      /* fond général */
+      --bg-panel: #111820;
+      /* nav + footer (bleu pétrole) */
+      --bg-card: #101e38;
+      /* cartes / panneaux internes */
+      --bg-tab: #1a222d;
+      /* Couleurs */
+      --primary-blue: #1f6fea;
+      --accent-cyan: #00d2ff;
+      --status-green: #40b950;
+      --text-main: #e6edf3;
+      --text-muted: #909aa7;
 
-        /* Partie Gauche : Pilote */
-        .pilot-badge {
-            padding: 1.5rem;
-            border-right: 1px solid #1a222d;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            border-left: 4px solid var(--primary-blue);
-            /* Barre de côté */
-        }
+      /* --bg: #050b10;
+      --panel: #0c1622;
+      --accent: #1f6fea;
+      --accent-soft: #8ec5ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --green: #3fb950; */
 
-        .pilot-img {
-            width: 50px;
-            height: 50px;
-            border: 1px solid var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
-        /* Partie Centrale : Tableau de bord */
-        .fids-nav {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-        }
+      /* Polices */
+      --font-heading: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
 
-        .fids-header {
-            display: grid;
-            grid-template-columns: 80px 1fr 60px 120px;
-            padding: 0.5rem 1rem;
-            color: #2d3748;
-            border-bottom: 1px solid #1a222d;
-        }
+      --bg-main: radial-gradient(circle at top, #12314f 0%, #050b10 65%);
+      --panel-bg: rgba(6, 14, 22, 0.92);
+      --border-green: rgba(63, 185, 80, 0.75);
+      --text-main: #e6eef6;
+      --text-muted: #9fb3c8;
+      --accent: #3fb950;
+      --clr-accent: #3b82f6;
+    }
 
-        .fids-row {
-            display: grid;
-            grid-template-columns: 80px 1fr 60px 120px;
-            padding: 0.6rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-        }
 
-        .fids-row .code {
-            color: #fff;
-            font-weight: bold;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .fids-row .dest {
-            color: var(--text-muted);
-        }
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-heading);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
 
-        .fids-row .stat {
-            text-align: right;
-            font-weight: bold;
-        }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.25;
+      background-size: 120px 120px;
+      mix-blend-mode: screen;
+      z-index: 1;
+    }
 
-        /* Partie Droite : Heure */
-        .time-nav {
-            padding: 1rem;
-            text-align: right;
-            border-left: 1px solid #1a222d;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-        .time-nav #clock {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1;
-        }
+    img {
+      max-width: 100%;
+      display: block;
+    }
 
-        .time-nav #date {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* --- LIGNE DÉMARCATION PISTE (AVANT FOOTER) --- */
-        .runway-boundary {
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-            margin: 4rem 0 0.5rem 0;
-            display: flex;
-            justify-content: space-between;
-        }
+    .wrapper {
+      width: min(1180px, 100% - 32px);
+      margin-inline: auto;
+    }
 
-        .runway-boundary i {
-            width: 4px;
-            height: 4px;
-            background: var(--primary-blue);
-            box-shadow: 0 0 10px var(--primary-blue);
-            transform: translateY(-2px);
-        }
+    /* Effet scanlines */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
 
-        /* --- FOOTER TOUR DE CONTRÔLE --- */
-        .control-tower-block {
-            background-color: var(--bg-petrol);
-            padding: 2.5rem;
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            align-items: center;
-            gap: 2rem;
-        }
+    }
 
-        /* Gauche : Fréquence */
-        .tower-tower {
-            font-family: var(--font-mono);
-        }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
 
-        .tower-tower .label {
-            font-size: 0.6rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
+    }
 
-        .tower-tower .freq-val {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: #fff;
-            margin: 5px 0;
-        }
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.5rem;
 
-        .tower-tower .status {
-            color: var(--status-green);
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    }
 
-        /* Milieu : Boîte Noire Communication */
-        .comm-black-box {
-            background-color: var(--bg-black);
-            border: 1px solid #1a222d;
-            padding: 1.5rem;
-        }
+    /* ======================= NAV / HEADER ======================= */
 
-        .comm-black-box .box-label {
-            display: block;
-            text-align: center;
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
 
-        .comm-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
 
-        .comm-item {
-            background: var(--bg-petrol);
-            border: 1px solid var(--primary-blue);
-            padding: 1.2rem 0.5rem;
-            text-align: center;
-            text-decoration: none;
-            transition: 0.3s;
-        }
+    header.site-header {
+      background-color: #111820;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+      padding: 1.5rem 0;
+      margin-bottom: 4rem;
+      z-index: 1;
+      position: relative;
+    }
 
-        /* Animation de rotation demandée */
-        .comm-item svg {
-            width: 22px;
-            height: 22px;
-            color: var(--primary-blue);
-            display: block;
-            margin: 0 auto 8px;
-            transition: transform 0.6s ease-in-out;
-        }
+    .nav-inner::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      width: 20%;
+      height: 5px;
+      background: var(--primary-blue);
 
-        .comm-item:hover svg {
-            transform: rotate(360deg);
-            color: #fff;
-        }
+    }
 
-        .comm-item span {
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
-            color: var(--text-muted);
-        }
+    .nav-inner::after {
+      content: "";
+      position: absolute;
+      left: 25%;
+      right: 0;
+      top: 0;
+      width: 10%;
+      height: 5px;
+      background: var(--status-green);
 
-        /* Droite : Clearance */
-        .clearance-side {
-            text-align: right;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
+    }
 
-        .clearance-side .label {
-            font-size: 0.55rem;
-            margin-bottom: 5px;
-        }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: grid;
+      gap: 2rem;
+      align-items: stretch;
+      grid-template-columns: 220px 1fr 150px;
+      /* colonne pilote plus petite que le tableau */
+      gap: 1.75rem;
+      align-items: center;
 
-        /* --- BAS DE PAGE (TRAIT ET REC) --- */
-        .footer-divider {
-            width: 100%;
-            height: 1px;
-            background: #1a222d;
-            margin-top: 2rem;
-        }
+    }
 
-        .bottom-bar {
-            padding: 1rem 0;
-            display: flex;
-            justify-content: space-between;
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            color: var(--text-muted);
-        }
+    /* PILOTE */
+    .pilot-panel {
+      position: relative;
+      background: #1a222d;
+      /* fond du badge */
+      border-radius: 5px;
+      padding: 0.7rem 1.1rem 0.8rem;
+      /* plus compact */
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
 
-        .rec-point {
-            color: #ef4444;
-            font-weight: bold;
-            animation: pulse 1s infinite;
-        }
 
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
+    }
 
-            50% {
-                opacity: 0.3;
-            }
+    /* Trait bleu vertical à gauche du badge */
+    .pilot-panel::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 1%;
+      bottom: 1%;
+      width: 3px;
+      background: #1f6fea;
+      border-radius: 3px;
+    }
 
-            100% {
-                opacity: 1;
-            }
-        }
-    </style>
+    /* Ligne "COMMANDANT DE BORD" en haut, bien horizontale */
+    .pilot-role {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #1f6fea;
+      /* bleu */
+      text-align: center;
+    }
+
+    /* Ligne principale : avatar + textes côte à côte */
+    .pilot-main {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    /* Avatar avec photo */
+    .pilot-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      border: 1px solid #2f588b;
+      background: #0a0d14;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pilot-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+
+    /* Icône par-dessus si pas de photo */
+    .pilot-avatar svg {
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      color: var(--text-muted);
+    }
+
+    /* Textes à droite de l'avatar */
+    .pilot-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .pilot-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffffff;
+      /* blanc */
+    }
+
+    .pilot-id {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #909aa7;
+      /* gris */
+    }
+
+    .pilot-status {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #40b950;
+      /* EN SERVICE en vert */
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Petit point vert */
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #40b950;
+    }
+
+    .dot.pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(64, 185, 80, 0.5);
+      }
+
+      70% {
+        box-shadow: 0 0 0 6px rgba(64, 185, 80, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(64, 185, 80, 0);
+      }
+    }
+
+    /* TABLEAU DES VOLS (NAV) */
+    nav.flight-board {
+      border-radius: 9px;
+      overflow: hidden;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    table.flight-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .flight-table thead {
+      background: var(--bg-tab);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .flight-table th,
+    .flight-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    .flight-table thead th {
+      font-weight: 500;
+      border-bottom: 1px solid #154287;
+    }
+
+    /* lignes */
+    .flight-row {
+      background: #111820;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+
+    .flight-row:hover .f-code {
+      color: var(--primary-blue);
+      border: 1px solid rgba(31, 111, 234, 0.7);
+      background: #0b1422;
+    }
+
+    .flight-row:last-child {
+      border-bottom: none;
+    }
+
+    .flight-row:hover {
+      background: rgba(31, 111, 234, 0.18);
+      transform: translateX(2px);
+      /* glissement léger, effet “vol sélectionné” */
+    }
+
+    .flight-row.active {
+      background: radial-gradient(circle at left, rgba(31, 111, 234, 0.35) 0, #111820 40%);
+    }
+
+    /* code vol */
+    .f-code {
+      font-weight: 600;
+      letter-spacing: 1px;
+      background: #0a0d14;
+      border-radius: 2px;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .flight-row.active .f-code {
+      color: #1f6fea;
+      box-shadow: 0 0 0 1px rgba(31, 111, 234, 0.7) inset;
+    }
+
+    /* lien de destination */
+    .flight-link {
+      color: inherit;
+      text-decoration: none;
+      display: inline-block;
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .flight-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 1px;
+      width: 0;
+      background: var(--primary-blue);
+      transition: width 0.3s ease;
+    }
+
+    .flight-row:hover .flight-link::after,
+    .flight-row.active .flight-link::after {
+      width: 100%;
+    }
+
+    /* statut */
+    .f-stat.blink {
+      color: var(--primary-blue);
+      animation: blink 1.5s infinite;
+    }
+
+    .f-stat.text-green {
+      color: var(--status-green);
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* HEURE / DATE */
+    aside.time-module {
+      font-family: var(--font-mono);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+
+    }
+
+    .digital-clock {
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 2px;
+      margin-bottom: 0.4rem;
+    }
+
+    .digital-date {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .timezone {
+      display: inline-block;
+      background: #0a0d14;
+      border-radius: 999px;
+      border: 1px solid #154287;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* ======================= MAIN / MISSIONS ======================= */
+
+    .terminal-wrapper {
+      max-width: 1300px;
+      margin: 6rem auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
+    /* ===== PANELS ===== */
+    .terminal-panel {
+      border: 3px solid var(--border-green);
+      border-radius: 18px;
+      padding: 2.2rem;
+      display: flex;
+      flex-direction: column;
+
+    }
+
+    /* force la colonne droite à occuper toute la hauteur */
+    .terminal-panel-full {
+      justify-content: space-between;
+    }
+
+    /* ===== HEADER ===== */
+    .panel-header .label {
+      font-size: .7rem;
+      letter-spacing: .2em;
+      color: var(--text-muted);
+      background: radial-gradient(circle at top, #1b3957, #050b10 60%) ;
+    }
+
+    h1 {
+      margin: .8rem 0 1.2rem;
+      line-height: 1.25;
+      font-size: 2rem;
+    }
+
+    /* ===== TEXT ===== */
+    .intro,
+    .long-text {
+      color: var(--accent);
+      line-height: 1.55;
+    }
+
+    span {
+      color: var(--clr-accent);
+
+    }
+
+    /* ===== INFO ===== */
+    .flight-info {
+      margin: 1.5rem 0 .8rem;
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .badge {
+      background: rgba(63, 185, 80, 0.15);
+      border: 1px solid var(--border-green);
+      padding: .4rem .8rem;
+      border-radius: 999px;
+      font-size: .75rem;
+    }
+
+    .meta,
+    .destination span {
+      font-size: .7rem;
+      letter-spacing: .15em;
+      color: var(--text-muted);
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+      margin: 1.8rem 0;
+      align-self: flex-start;
+      background: linear-gradient(180deg, #46c768, #2e9e4f);
+      border: none;
+      color: #06210f;
+      font-weight: 600;
+      padding: .9rem 1.6rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    /* ===== FOOTER ===== */
+    .panel-footer {
+      display: flex;
+      gap: 1rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+    }
+
+    /* ===== RIGHT PANEL CONTENT ===== */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .block h3 {
+      margin: 0;
+      letter-spacing: .15em;
+    }
+
+    .block span {
+      font-size: .7rem;
+      color: var(--text-muted);
+    }
+
+    .checklist {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+
+    .chip {
+      border: 1px solid rgba(255, 255, 255, .15);
+      padding: .4rem .8rem;
+      border-radius: 999px;
+      font-size: .7rem;
+    }
+
+    /* ===== SEATBELT ===== */
+    .seatbelt {
+      display: flex;
+      justify-content: space-between;
+      font-size: .75rem;
+      color: var(--text-muted);
+    }
+
+
+    /* ======================= FIN DE PISTE ======================= */
+
+    .runway-lights {
+      position: relative;
+      width: 100%;
+      height: 12px;
+      margin-top: 16px;
+
+      background-image: repeating-linear-gradient(to right,
+          #1e90ff 0px,
+          #1e90ff 4px,
+          transparent 4px,
+          transparent 24px);
+
+      opacity: 0.9;
+    }
+
+    @keyframes runwayBlink {
+      0% {
+        opacity: 0.4;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.4;
+      }
+    }
+
+    .runway-lights {
+      animation: runwayBlink 1.5s infinite ease-in-out;
+    }
+
+    /* ======================= FOOTER ======================= */
+
+    footer.site-footer {
+      background: var(--bg-panel);
+      /* même bleu pétrole que la nav */
+      padding: 2rem 0 1.5rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .control-tower {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Tour de contrôle */
+    .tower-freq h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .tower-freq .frequency {
+      font-size: 2.5rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 0.4rem;
+      color: var(--text-main);
+      /* 118.700 en blanc */
+    }
+
+    .status-text {
+      font-size: 0.8rem;
+      color: var(--status-green);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-text .dot-static {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--status-green);
+      box-shadow: 0 0 10px rgba(64, 185, 80, 0.8);
+    }
+
+    /* Canaux de communication : rectangle noir */
+    .comm-channels {
+      background: #050a12;
+      border-radius: 6px;
+      border: 1px solid #11171f;
+      padding: 1.25rem 1.5rem 1.5rem;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+      background: radial-gradient(circle at center, #1a222d 0%, #05070a 100%);
+      border-radius: 15px;
+    }
+
+    .comm-channels h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: var(--font-mono);
+      color: var(--primary-blue);
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      list-style: none;
+    }
+
+    .channel-btn {
+      background: #1c2533;
+      border: 1px solid #11171f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.4rem 0.5rem;
+      text-decoration: none;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+
+    .channel-btn svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+      transition: transform 0.6s ease, color 0.3s ease;
+    }
+
+    .channel-btn span {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: #2f588b;
+      /* texte bleu pétrole */
+    }
+
+    /* au survol : contour bleu + rotation de l'icône */
+    .channel-btn:hover {
+      border-color: var(--primary-blue);
+      background: #0b121e;
+      transform: translateY(-2px);
+    }
+
+    .channel-btn:hover svg {
+      transform: rotate(360deg);
+      color: var(--text-main);
+    }
+
+    .channel-btn:hover span {
+      color: var(--text-main);
+    }
+
+    /* Clearance */
+    .clearance {
+      text-align: right;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .clearance h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Ligne + REC en bas */
+    .footer-bottom {
+      border-top: 1px solid #154287;
+      /* grand trait sur toute la largeur interne */
+      padding-top: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #606a78;
+    }
+
+    .rec-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #e5533d;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    /* ======================= Responsive ======================= */
+    @media (max-width: 1024px) {
+      .nav-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .missions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .control-tower {
+        grid-template-columns: 1fr;
+      }
+
+      .channel-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="overlay"></div>
 
-    <!-- NAVIGATION STYLE COCKPIT -->
-    <header class="cockpit-header">
-        <div class="pilot-badge">
-            <div class="pilot-img">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
+  <!-- ======================= NAV / HEADER ======================= -->
+  <header class="site-header">
+    <div class="nav-inner">
+      <!-- Pilote -->
+      <section class="pilot-panel" aria-labelledby="pilot-name">
+        <!-- Ligne du haut : texte bleu centré -->
+        <p class="pilot-role">COMMANDANT DE BORD</p>
+
+        <!-- Ligne du bas : avatar + infos, en HORIZONTAL -->
+        <div class="pilot-main">
+          <figure class="pilot-avatar">
+            <!-- Mets ici ta vraie photo -->
+            <img src="pilote christophehascoet3.png" alt="Votre nom" class="pilot-photo">
+            <!-- Icône de secours (visible si tu enlèves la photo ou si elle ne charge pas) -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </figure>
+
+          <div class="pilot-text">
+            <h1 id="pilot-name" class="pilot-name">VOTRE NOM</h1>
+            <p class="pilot-id">ID : CPT-2024-001</p>
+            <p class="pilot-status">
+              <span class="dot pulse" aria-hidden="true"></span>
+              EN SERVICE
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tableau des vols (nav) -->
+      <nav class="flight-board" aria-label="Navigation principale">
+        <table class="flight-table">
+          <thead>
+            <tr>
+              <th scope="col">Vol</th>
+              <th scope="col">Destination</th>
+              <th scope="col">Porte</th>
+              <th scope="col">Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- PF‑001 : Check‑in / Profil -->
+            <tr class="flight-row">
+              <th scope="row" class="f-code">PF-001</th>
+              <td class="f-dest">
+                <a class="flight-link" href="accueil1.html">
+                  Check‑in · Profil
+                </a>
+              </td>
+              <td class="f-gate">A1</td>
+              <td class="f-stat blink">● EMBARQ.</td>
+            </tr>
+
+            <!-- PF‑002 : Sécurité / Compétences -->
+            <tr class="flight-row">
+              <th scope="row" class="f-code">PF-002</th>
+              <td class="f-dest">
+                <a class="flight-link" href="about.html">
+                  Contrôle sécurité · Compétences
+                </a>
+              </td>
+              <td class="f-gate">B2</td>
+              <td class="f-stat text-green">● À L'HEURE</td>
+            </tr>
+
+            <!-- PF‑003 : Embarquement / Projets -->
+            <tr class="flight-row">
+              <th scope="row" class="f-code">PF-003</th>
+              <td class="f-dest">
+                <a class="flight-link" href="etudedecas1.html">
+                  Porte d’embarquement · Projets
+                </a>
+              </td>
+              <td class="f-gate">C3</td>
+              <td class="f-stat text-green">● À L'HEURE</td>
+            </tr>
+
+            <!-- PF‑004 : Cabine / Méthodes -->
+            <tr class="flight-row">
+              <th scope="row" class="f-code">PF-004</th>
+              <td class="f-dest">
+                <a class="flight-link" href="nav1.html">
+                  Cabine / Briefing · Méthodes
+                </a>
+              </td>
+              <td class="f-gate">D4</td>
+              <td class="f-stat text-green">● À L'HEURE</td>
+            </tr>
+
+            <!-- PF‑005 : Journal de vol / CV -->
+            <tr class="flight-row">
+              <th scope="row" class="f-code">PF-005</th>
+              <td class="f-dest">
+                <a class="flight-link" href="#journal">
+                  Journal de vol · CV
+                </a>
+              </td>
+              <td class="f-gate">E5</td>
+              <td class="f-stat text-green">● À L'HEURE</td>
+            </tr>
+
+            <!-- PF‑006 : Arrivée / Contact -->
+            <tr class="flight-row">
+              <th scope="row" class="f-code">PF-006</th>
+              <td class="f-dest">
+                <a class="flight-link" href="#contact">
+                  Arrivée · Tour de contrôle / Contact
+                </a>
+              </td>
+              <td class="f-gate">F6</td>
+              <td class="f-stat text-green">● À L'HEURE</td>
+            </tr>
+          </tbody>
+        </table>
+      </nav>
+
+      <!-- Heure / date -->
+      <aside class="time-module">
+        <p id="clock" class="digital-clock">00:00</p>
+        <p id="date" class="digital-date">01 JAN 2024</p>
+        <p class="timezone">UTC+1 / CDG</p>
+      </aside>
+    </div>
+  </header>
+
+  <!-- ======================= MAIN ======================= -->
+  <main>
+    <section class="terminal-wrapper">
+
+      <!-- PANNEAU GAUCHE -->
+      <article class="terminal-panel">
+        <header class="panel-header">
+          <span class="label">BOARDING PASS · PRÉPARATION AU DÉCOLLAGE</span>
+          <h1>
+            Chef de projet & Développeur Web Junior<br>
+            Commandant de bord de vos expériences digitales
+          </h1>
+        </header>
+
+        <p class="intro">
+          Je pilote vos projets comme un véritable plan de vol : du briefing initial
+          jusqu’à l’atterrissage en production, avec une navigation précise, une
+          communication claire et une attention constante portée à la performance et
+          à l’expérience utilisateur.<br> <span>Rôles à bord : gestion de projet, développement
+            front-end, intégration web.</span>
+        </p>
+
+        <div class="flight-info">
+          <span class="badge">FLIGHT DEV-320 · ON TIME</span>
+          <span class="meta">ORIGINE · OBJECTIFS</span>
+        </div>
+
+        <div class="destination">
+          <span>DESTINATION · PRODUITS UTILISABLES</span>
+        </div>
+
+        <button class="cta">
+          PASSER LES CONTRÔLES TECHNIQUES
+        </button>
+
+        <footer class="panel-footer">
+          <span>UX/UI comme tour de contrôle.</span>
+          <span><strong>Code</strong> comme plan de vol.</span>
+        </footer>
+      </article>
+
+      <!-- PANNEAU DROIT -->
+      <article class="terminal-panel terminal-panel-full">
+        <header class="panel-header">
+          <span class="label">FLIGHT PLAN · PORTFOLIO · NON-STOP</span>
+        </header>
+
+        <div class="content-grid">
+          <div class="block">
+            <h3>CVL</h3>
+            <span>ORIGINE</span>
+            <p>Curriculum</p>
+          </div>
+
+          <div class="block">
+            <h3>PRD</h3>
+            <span>DESTINATION</span>
+            <p>Produit</p>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <span class="chip">CHECK-IN · PRÉSENTATION</span>
+          <span class="chip">CONTRÔLES · TECH & STACK</span>
+          <span class="chip">BOARDING · PROJETS</span>
+        </div>
+
+        <p class="long-text">
+          Altitude de détail. De synthétique à très concret selon la porte choisie.
+          Interfaces inspirées des vrais terminaux : rien de décoratif, tout est
+          guidage.
+        </p>
+
+        <div class="seatbelt">
+          <span>Seatbelt sign · On</span>
+          <span>Veuillez attacher vos ceintures.</span>
+        </div>
+      </article>
+
+    </section>
+
+
+  </main>
+
+  <!-- ======================= FOOTER ======================= -->
+  <!-- Fin de piste -->
+  <div class=" runway-lights" id="runwayLights">
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <section class="control-tower">
+        <!-- Tour de contrôle -->
+        <section class="tower-freq">
+          <h2>Tour de contrôle</h2>
+          <p class="frequency">118.700</p>
+          <p class="status-text">
+            <span class="dot-static"></span>
+            Fréquence active
+          </p>
+        </section>
+
+        <!-- Canaux de communication -->
+        <section class="comm-channels">
+          <h2>Canaux de communication</h2>
+          <ul class="channel-grid">
+            <li>
+              <a href="#" class="channel-btn">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                  </path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
-            </div>
-            <div>
-                <div style="font-size: 0.6rem; color: var(--primary-blue); letter-spacing: 1px; font-weight: bold;">
-                    COMMANDANT DE BORD</div>
-                <div style="font-size: 1.1rem; font-weight: bold; text-transform: uppercase;">VOTRE NOM</div>
-                <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted);">ID:
-                    CPT-2024-001</div>
-                <div class="status"
-                    style="color: var(--status-green); font-size: 0.6rem; font-family: var(--font-mono); margin-top: 2px;">
-                    ● EN SERVICE</div>
-            </div>
-        </div>
+                <span>EMAIL</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="channel-btn">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                  </path>
+                  <rect x="2" y="9" width="4" height="12"></rect>
+                  <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+                <span>LINKEDIN</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="channel-btn">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                  <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                  </path>
+                </svg>
+                <span>GITHUB</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="channel-btn">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                  </path>
+                </svg>
+                <span>RADIO</span>
+              </a>
+            </li>
+          </ul>
+        </section>
 
-        <div class="fids-nav">
-            <div class="fids-header"><span>VOL</span><span>DESTINATION</span><span>GATE</span><span
-                    style="text-align:right">STATUT</span></div>
-            <div class="fids-row"><span class="code">PF-001</span><span class="dest">Accueil</span><span>A1</span><span
-                    class="stat" style="color: var(--primary-blue)">● EMBARQ.</span></div>
-            <div class="fids-row"><span class="code">PF-002</span><span class="dest">Parcours</span><span>B3</span><span
-                    class="stat" style="color: var(--status-green)">● À L'HEURE</span></div>
-            <div class="fids-row"><span class="code">PF-003</span><span class="dest">Projets</span><span>C7</span><span
-                    class="stat" style="color: var(--status-green)">● À L'HEURE</span></div>
-        </div>
+        <!-- Clearance -->
+        <section class="clearance">
+          <h2>Clearance</h2>
+          <p>CLR TO CAREER VIA<br>PORTFOLIO DIRECT</p>
+        </section>
+      </section>
 
-        <div class="time-nav">
-            <div id="clock">20:50</div>
-            <div id="date">05 JAN 2026</div>
-        </div>
-    </header>
-
-    <!-- CONTENU PROJETS (ZONE VIDE POUR L'INSTANT) -->
-    <main style="min-height: 200px;">
-        <h2 style="letter-spacing: 4px; font-weight: 500; margin-bottom: 2rem;">MISSIONS ACCOMPLIES</h2>
-        <!-- Tes cartes iront ici -->
-    </main>
-
-    <!-- LIGNE DE DÉMARCATION STYLE PISTE -->
-    <div class="runway-boundary">
-        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <div class="footer-bottom">
+        <p><span class="rec-dot"></span>REC · Enregistreur de données de vol actif</p>
+        <p>© 2025 — Cleared for Takeoff</p>
+      </div>
     </div>
+  </footer>
 
-    <!-- FOOTER TOUR DE CONTRÔLE -->
-    <footer class="control-tower-block">
-        <div class="tower-tower">
-            <div class="label">TOUR DE CONTRÔLE</div>
-            <div class="freq-val">118.700</div>
-            <div class="status">● Fréquence active</div>
-        </div>
+  <!-- ======================= Script ======================= -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Horloge
+      const updateTime = () => {
+        const now = new Date();
+        document.getElementById('clock').innerText =
+          now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('date').innerText =
+          now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      };
+      updateTime();
+      setInterval(updateTime, 1000);
 
-        <div class="comm-black-box">
-            <span class="box-label">CANAUX DE COMMUNICATION</span>
-            <div class="comm-grid">
-                <a href="#" class="comm-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                        <polyline points="22,6 12,13 2,6" />
-                    </svg>
-                    <span>EMAIL</span>
-                </a>
-                <a href="#" class="comm-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                        <rect x="2" y="9" width="4" height="12" />
-                        <circle cx="4" cy="4" r="2" />
-                    </svg>
-                    <span>LINKEDIN</span>
-                </a>
-                <a href="#" class="comm-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-                    </svg>
-                    <span>GITHUB</span>
-                </a>
-                <a href="#" class="comm-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
-                    <span>RADIO</span>
-                </a>
-            </div>
-        </div>
+      // Effet "tableau aéroport" sur les destinations
+      // 1. Horloge (tu peux garder exactement ce que tu avais)
 
-        <div class="clearance-side">
-            <div class="label">CLEARANCE</div>
-            CLR TO CAREER VIA<br>PORTFOLIO DIRECT
-        </div>
-    </footer>
+      // 2. Effet "scramble" sur les destinations au chargement
+      const scrambleText = (element) => {
+        const originalText = element.innerText;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let iterations = 0;
 
-    <!-- BARRE FINALE -->
-    <div class="footer-divider"></div>
-    <div class="bottom-bar">
-        <div><span class="rec-point">●</span> REC . flight data recorder active</div>
-        <div>© 2025 — PORTFOLIO DIRECT</div>
-    </div>
+        const interval = setInterval(() => {
+          element.innerText = originalText
+            .split('')
+            .map((letter, index) => {
+              if (index < iterations) return originalText[index];
+              return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join('');
 
-    <script>
-        function clock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('date').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-        }
-        setInterval(clock, 1000); clock();
-    </script>
+          if (iterations >= originalText.length) clearInterval(interval);
+          iterations += 1 / 3; // vitesse
+        }, 30);
+      };
+
+      // applique sur le texte à l’intérieur des liens de destination
+      document.querySelectorAll('.f-dest .flight-link').forEach(el => scrambleText(el));
+
+      // 3. Animation GSAP du tableau (apparition des lignes)
+      gsap.from(".flight-row", {
+        y: -10,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.05,
+        ease: "power2.out",
+        delay: 0.2
+      });
+
+      // 4. Nav interactive : change la ligne active + scroll doux vers la section
+      document.querySelectorAll(".flight-table tbody tr").forEach(row => {
+        row.addEventListener("click", (e) => {
+          const link = row.querySelector(".flight-link");
+          if (!link) return;
+
+          const href = link.getAttribute("href") || "";
+
+          // 1) Met à jour la ligne active pour TOUTES les lignes
+          document.querySelectorAll(".flight-row").forEach(r => r.classList.remove("active"));
+          row.classList.add("active");
+
+          // 2) Si c'est un ancre interne (#...), on empêche la navigation
+          //    et on fait un scroll doux. Sinon, on laisse charger la page .html.
+          if (href.startsWith("#")) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }
+        });
+      });
+
+      // Animations GSAP
+      gsap.from(".site-header", {
+        y: -50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out"
+      });
+      gsap.from(".mission-card", {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+        delay: 0.5
+      });
+
+      // Génération des lumières de piste
+      const runway = document.querySelector('.runway-lights');
+      for (let i = 0; i < 50; i++) {
+        const light = document.createElement('span');
+        runway.appendChild(light);
+      }
+    });
+  </script>
 </body>
 
 </html>

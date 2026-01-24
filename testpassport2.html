@@ -1,233 +1,570 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Passeport professionnel — Développement web</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passeport Professionnel - Votre À Propos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Variables CSS pour un style clair et professionnel */
+        :root {
+            --bg-light: #ffffff; /* Fond clair des pages */
+            --text-dark: #333333; /* Texte principal */
+            --header-color: #003366; /* Bleu foncé pour les titres */
+            --accent-green: #28a745; /* Vert pour les accents (validé, etc.) */
+            --accent-red: #dc3545; /* Rouge pour les tampons */
+            --border-light: #e0e0e0; /* Bordures subtiles */
+            --font-main: 'Roboto', sans-serif;
+            --font-secondary: 'Open Sans', sans-serif;
+            --page-width: 500px; /* Largeur d'une page */
+            --page-height: 700px; /* Hauteur d'une page */
+            --spread-gap: 30px; /* Espace entre les pages d'une spread */
+        }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+        body {
+            font-family: var(--font-main);
+            background-color: #f0f2f5; /* Fond gris léger du corps */
+            color: var(--text-dark);
+            margin: 0;
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
 
-<style>
-:root {
-  --bg: #050b10;
-  --panel: #0c1622;
-  --blue: #1f6fea;
-  --blue-soft: #8ec5ff;
-  --text: #e6edf3;
-  --muted: #8b949e;
-  --green: #3fb950;
-  --border: rgba(63,185,80,.9);
+        /* --- Conteneur du Livret (simule les spreads de deux pages) --- */
+        .booklet-spread {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px; /* Espacement entre les doubles pages */
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: #fdfdfd; /* Fond légèrement plus clair pour le conteneur */
+            padding: 15px;
+            gap: var(--spread-gap);
+            transition: all 0.3s ease-in-out;
+            max-width: calc((var(--page-width) * 2) + var(--spread-gap) + 30px); /* Max width pour le conteneur du spread */
+            width: 100%;
+        }
 
-  --mono: 'JetBrains Mono', monospace;
-  --display: 'Rajdhani', sans-serif;
-}
+        /* --- Style des Pages --- */
+        .page {
+            width: var(--page-width);
+            height: var(--page-height);
+            background-color: var(--bg-light);
+            padding: 30px;
+            box-sizing: border-box;
+            position: relative; /* Pour les filigranes et tampons */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden; /* Empêche le contenu de déborder */
+            border-radius: 4px; /* Coins arrondis pour les pages */
+        }
+        
+        .page-content {
+            flex-grow: 1;
+            position: relative; /* Pour que le contenu soit au-dessus des filigranes */
+            z-index: 2;
+        }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+        .page-footer {
+            text-align: right;
+            font-size: 0.8em;
+            color: #aaaaaa;
+            margin-top: 20px;
+        }
 
-body {
-  min-height: 100vh;
-  background: radial-gradient(circle at top, #1b3957, var(--bg) 65%);
-  font-family: var(--display);
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        /* --- En-têtes de section dans les pages --- */
+        .section-header {
+            font-family: var(--font-main);
+            font-size: 1.3em;
+            color: var(--header-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-light);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .section-header:first-child {
+            margin-top: 0;
+        }
 
-/* ================= PASSEPORT ================= */
+        /* --- Blocs d'informations --- */
+        .info-block p, .info-block ul {
+            font-family: var(--font-secondary);
+            font-size: 0.95em;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+        .info-block ul {
+            padding-left: 20px;
+        }
+        .info-block ul li {
+            margin-bottom: 4px;
+        }
+        .info-block strong {
+            color: var(--header-color);
+            font-weight: 500;
+        }
+        .info-block .value {
+            font-weight: 400;
+        }
 
-.passport {
-  width: 960px;
-  max-width: 95%;
-  perspective: 2200px;
-}
+        /* --- Spécifiques à la première page (Page 1) --- */
+        .page-intro-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .page-intro-header .republic-text {
+            font-family: var(--font-main);
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--header-color);
+            margin-bottom: 5px;
+        }
+        .page-intro-header .motto {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .page-intro-header .blason {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 10px;
+            /* Simple SVG pour le blason RF, ou une image si disponible */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23f0f0f0" stroke="%23aaa" stroke-width="2"/><text x="50" y="60" font-family="serif" font-size="40" text-anchor="middle" dominant-baseline="middle" fill="%23003399">RF</text></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        .page-intro-header .doc-title {
+            font-family: var(--font-main);
+            font-size: 1.5em;
+            color: var(--header-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .page-intro-header .authority-name {
+            font-family: var(--font-secondary);
+            font-size: 1.1em;
+            color: #555;
+            font-weight: 600;
+        }
 
-.booklet {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: radial-gradient(circle at top, #1b3957, var(--bg) 60%);
-  border: 5px solid var(--border);
-  border-radius: 18px;
-  transform-style: preserve-3d;
-  transform: rotateY(-18deg) scale(.96);
-  transition: transform .6s ease;
-}
+        .doc-metadata {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.85em;
+            margin-top: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--border-light);
+        }
+        .doc-metadata div {
+            margin-bottom: 5px;
+        }
+        .doc-metadata strong {
+            color: var(--header-color);
+        }
 
-.passport:hover .booklet {
-  transform: rotateY(-6deg) scale(1);
-}
+        .identification-grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 20px;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        .identification-grid .photo-area {
+            width: 140px;
+            height: 180px;
+            border: 1px solid var(--border-light);
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .identification-grid .profile-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Légère désaturation pour un look 'officiel' */
+            filter: grayscale(10%) brightness(98%);
+        }
+        .identification-grid .photo-mentions {
+            font-size: 0.7em;
+            text-align: center;
+            margin-top: 8px;
+            color: #777;
+        }
+        .identification-grid .info-details p {
+            margin: 0 0 5px 0;
+        }
+        .identification-grid .info-details strong {
+            display: inline-block;
+            width: 110px;
+            color: var(--header-color);
+        }
 
-/* ================= PAGES ================= */
+        /* MRZ (Machine Readable Zone) */
+        .mrz-section {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85em;
+            letter-spacing: 1.2px;
+            background-color: #f5f5f5;
+            border: 1px solid var(--border-light);
+            padding: 8px 10px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #000;
+        }
 
-.page {
-  min-height: 620px;
-  padding: 2.6rem;
-  border-right: 1px solid rgba(63,185,80,.2);
-}
+        /* --- Page 4 : Validation & Visa --- */
+        .visa-stamp-area {
+            text-align: center;
+            margin-top: 40px;
+            position: relative;
+        }
+        .visa-stamp {
+            display: inline-block;
+            border: 2px solid var(--accent-red);
+            border-radius: 50%;
+            padding: 15px 25px;
+            font-family: var(--font-main);
+            font-size: 1.3em;
+            color: var(--accent-red);
+            font-weight: 700;
+            transform: rotate(-7deg);
+            background-color: rgba(220, 53, 69, 0.05);
+            box-shadow: 0 0 5px rgba(220, 53, 69, 0.1);
+            position: relative;
+            z-index: 3; /* Au-dessus du filigrane */
+        }
+        .visa-stamp::after {
+            content: '07 MAR 2024';
+            display: block;
+            font-size: 0.6em;
+            margin-top: 5px;
+            color: var(--accent-red);
+            font-weight: normal;
+        }
+        .visa-final-mention {
+            margin-top: 25px;
+            font-size: 0.85em;
+            color: #666;
+        }
 
-.page:last-child {
-  border-right: none;
-}
+        /* --- Page 5 : Visas de Projet --- */
+        .project-visa-entry {
+            border: 1px dashed var(--border-light);
+            padding: 12px;
+            margin-bottom: 15px;
+            position: relative;
+            border-radius: 4px;
+        }
+        .project-visa-entry h3 {
+            font-family: var(--font-main);
+            font-size: 1.05em;
+            color: var(--header-color);
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }
+        .project-visa-entry p {
+            font-size: 0.8em;
+            margin: 0 0 3px 0;
+            color: #555;
+        }
+        .project-stamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 60px;
+            border: 1px solid var(--accent-green);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 1.1;
+            font-size: 0.65em;
+            color: var(--accent-green);
+            font-family: var(--font-main);
+            padding-top: 12px;
+            box-sizing: border-box;
+            background-color: rgba(40, 167, 69, 0.05);
+            transform: rotate(3deg);
+            font-weight: 600;
+        }
+        .project-stamp strong {
+            display: block;
+            font-size: 1.1em;
+        }
+        .project-stamp::after {
+            content: 'COMPLÉTÉ';
+            font-size: 0.7em;
+            display: block;
+            margin-top: 2px;
+            font-weight: normal;
+        }
 
-/* ================= HEADERS ================= */
+        /* --- Filigranes discrets --- */
+        .watermark-fa::before {
+            content: 'FLIGHT AUTHORITY';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-family: var(--font-main);
+            font-size: 3em;
+            color: rgba(0, 0, 0, 0.04); /* Très léger */
+            white-space: nowrap;
+            z-index: 1; /* Derrière le contenu */
+            pointer-events: none; /* Non cliquable */
+        }
+        .watermark-rf-page::after {
+            content: '';
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="55" font-family="serif" font-size="40" text-anchor="middle" dominant-baseline="middle" fill="%23cccccc" opacity="0.4">RF</text></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-.header {
-  font-family: var(--mono);
-  font-size: .75rem;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: var(--muted);
-}
-
-/* ================= COVER ================= */
-
-.cover {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.cover h1 {
-  text-align: center;
-  font-size: 1.6rem;
-  letter-spacing: .18em;
-}
-
-.cover .type {
-  text-align: center;
-  font-family: var(--mono);
-  font-size: .8rem;
-  color: var(--muted);
-}
-
-.cover .seal {
-  margin: 3rem auto;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  border: 2px solid var(--green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  letter-spacing: .2em;
-  color: var(--green);
-}
-
-.cover footer {
-  font-family: var(--mono);
-  font-size: .75rem;
-  text-align: center;
-  line-height: 1.6;
-}
-
-/* ================= CONTENT ================= */
-
-.section {
-  margin-bottom: 2rem;
-}
-
-.section h2 {
-  font-size: .9rem;
-  text-transform: uppercase;
-  letter-spacing: .18em;
-  color: var(--blue);
-  margin-bottom: .6rem;
-}
-
-.list {
-  font-family: var(--mono);
-  font-size: .85rem;
-  line-height: 1.7;
-}
-
-.list div {
-  margin-bottom: .4rem;
-}
-
-/* ================= VISA ================= */
-
-.visa {
-  margin-top: 2rem;
-  display: inline-block;
-  padding: .6rem 1.4rem;
-  border: 1px dashed var(--green);
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: .75rem;
-  letter-spacing: .18em;
-  color: var(--green);
-}
-
-/* ================= MRZ ================= */
-
-.mrz {
-  margin-top: 2rem;
-  font-family: var(--mono);
-  font-size: .7rem;
-  letter-spacing: .12em;
-  opacity: .6;
-}
-</style>
+        /* --- Responsive Design --- */
+        @media (max-width: 1100px) {
+            .booklet-spread {
+                flex-direction: column;
+                gap: 15px; /* Moins d'espace entre les pages */
+                width: var(--page-width); /* Une seule colonne de pages */
+                box-shadow: none; /* Pas d'ombre de spread, seulement de page */
+                padding: 0;
+            }
+            .page {
+                height: auto; /* Hauteur adaptative */
+                margin: 0 auto 30px auto; /* Centrer et espacer les pages */
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre sur chaque page */
+                border: 1px solid var(--border-light);
+            }
+        }
+        @media (max-width: 550px) {
+            .page {
+                width: 95vw; /* Occuper presque toute la largeur de l'écran */
+                padding: 20px;
+            }
+            .page-intro-header .doc-title {
+                font-size: 1.2em;
+            }
+            .identification-grid {
+                grid-template-columns: 1fr; /* Photo au-dessus des infos */
+                justify-items: center;
+            }
+            .identification-grid .photo-area {
+                margin-bottom: 15px;
+            }
+            .identification-grid .info-details strong {
+                width: auto;
+                display: block;
+            }
+            .visa-stamp {
+                font-size: 1.1em;
+                padding: 10px 20px;
+            }
+            .watermark-fa::before {
+                font-size: 2em;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="passport">
-  <div class="booklet">
+    <!-- Spread 1 (Pages 1 & 2) -->
+    <div class="booklet-spread">
+        <!-- Page 1 (Gauche) -->
+        <div class="page page-intro watermark-fa">
+            <div class="page-content watermark-rf-page">
+                <div class="page-intro-header">
+                    <div class="republic-text">RÉPUBLIQUE FRANÇAISE</div>
+                    <div class="motto">LIBERTÉ • ÉGALITÉ • FRATERNITÉ</div>
+                    <div class="blason"></div>
+                    <div class="doc-title">PASSEPORT PROFESSIONNEL</div>
+                    <div class="authority-name">PORTFOLIO DE DÉVELOPPEMENT — FLIGHT AUTHORITY</div>
+                </div>
 
-    <!-- PAGE 1 : COUVERTURE -->
-    <section class="page cover">
-      <div>
-        <h1>PORTFOLIO DE DÉVELOPPEMENT</h1>
-        <p class="type">Passeport professionnel — Développement web</p>
-      </div>
+                <div class="doc-metadata">
+                    <div><strong>Type de document :</strong> <span class="value">Passeport professionnel — Développement web</span></div>
+                    <div><strong>Numéro de document :</strong> <span class="value">ID-PASS-DEV-XXXX</span></div>
+                    <div><strong>Date d’émission :</strong> <span class="value">07 / 03 / 2024</span></div>
+                    <div><strong>Statut :</strong> <span class="value">Valide — Autorisé au vol</span></div>
+                </div>
 
-      <div class="seal">DEV</div>
-
-      <footer>
-        ID-PASS-DEV-XXXX<br>
-        Valide — Autorisé au vol
-      </footer>
-    </section>
-
-    <!-- PAGE 2 : IDENTITÉ -->
-    <section class="page">
-      <p class="header">Identification du titulaire</p>
-
-      <div class="section">
-        <h2>Données certifiées</h2>
-        <div class="list">
-          <div>Nom de code : HASCOËT</div>
-          <div>Prénom : Christophe</div>
-          <div>Rôle : Chef de projet & développeur web junior</div>
-          <div>Statut : Actif — Autorisé au vol</div>
-          <div>Base : Région parisienne — CET</div>
+                <div class="section-header">IDENTIFICATION DU TITULAIRE</div>
+                <div class="identification-grid info-block">
+                    <div class="photo-area">
+                        <img src="https://i.imgur.com/n6t3q23.png" alt="Photo du titulaire" class="profile-photo">
+                    </div>
+                    <div class="info-details">
+                        <p><strong>Nom :</strong> <span class="value">DUCHEMIN</span></p>
+                        <p><strong>Prénom :</strong> <span class="value">Christophe</span></p>
+                        <p><strong>Nom de code :</strong> <span class="value">HASCOËT</span></p>
+                        <p><strong>Rôle certifié :</strong> <span class="value">Chef de projet & Développeur web junior</span></p>
+                        <p><strong>Niveau :</strong> <span class="value">Junior / En progression</span></p>
+                        <p><strong>Statut opérationnel :</strong> <span class="value">Actif — Autorisé au vol</span></p>
+                        <p><strong>Base principale :</strong> <span class="value">Région parisienne</span></p>
+                        <p><strong>Fuseau horaire :</strong> <span class="value">CET (GMT+1)</span></p>
+                    </div>
+                </div>
+                <p class="identification-grid photo-mentions">Document valide sans signature manuscrite<br>Authentification numérique interne</p>
+            </div>
+            <div class="page-footer">Page 1</div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Compétences déclarées</h2>
-        <div class="list">
-          HTML sémantique · CSS / SASS · JavaScript · TypeScript · React · PHP · Laravel
+        <!-- Page 2 (Droite) -->
+        <div class="page watermark-fa">
+            <div class="page-content watermark-rf-page">
+                <div class="section-header">RÔLE & AUTORISATIONS</div>
+                <div class="info-block">
+                    <p><strong>Fonction principale autorisée :</strong> <span class="value">Chef de projet & Développeur web junior</span></p>
+                    <p><strong>Périmètre d’intervention :</strong></p>
+                    <ul>
+                        <li>Gestion de projet</li>
+                        <li>Développement front-end</li>
+                        <li>Intégration web</li>
+                    </ul>
+                </div>
+
+                <div class="section-header">COMPÉTENCES CERTIFIÉES</div>
+                <div class="info-block">
+                    <ul>
+                        <li>HTML sémantique</li>
+                        <li>CSS / SASS</li>
+                        <li>JavaScript</li>
+                        <li>TypeScript</li>
+                        <li>React</li>
+                        <li>PHP</li>
+                        <li>Laravel</li>
+                        <li>Outils collaboratifs (GitHub, Trello, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="page-footer">Page 2</div>
         </div>
-      </div>
+    </div>
 
-      <div class="visa">Visa technique — Apte au vol</div>
+    <!-- Spread 2 (Pages 3 & 4) -->
+    <div class="booklet-spread">
+        <!-- Page 3 (Gauche) -->
+        <div class="page watermark-fa">
+            <div class="page-content watermark-rf-page">
+                <div class="section-header">PROCÉDURES OPÉRATIONNELLES STANDARD</div>
+                <div class="info-block">
+                    <p>Procédures appliquées lors des missions :</p>
+                    <ul>
+                        <li>Analyse du besoin</li>
+                        <li>Clarification des objectifs</li>
+                        <li>Coordination UX / UI / développement</li>
+                        <li>Implémentation technique</li>
+                        <li>Tests et validation</li>
+                        <li>Livraison</li>
+                    </ul>
+                </div>
 
-      <div class="mrz">
-        DEV&lt;HASCOET&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
-        FRA&lt;WEB&lt;JUNIOR&lt;2026&lt;&lt;&lt;&lt;<br>
-        PASS&lt;PORTFOLIO&lt;VALID&lt;&lt;&lt;
-      </div>
-    </section>
+                <div class="section-header">EXPÉRIENCE CONSIGNÉE</div>
+                <div class="info-block">
+                    <ul>
+                        <li>Expérience en conditions réelles</li>
+                        <li>Participation à des projets clients</li>
+                        <li>Rédaction de cahiers des charges</li>
+                        <li>Interventions front-end et backend SQL</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="page-footer">Page 3</div>
+        </div>
 
-  </div>
-</div>
+        <!-- Page 4 (Droite) -->
+        <div class="page watermark-fa">
+            <div class="page-content watermark-rf-page">
+                <div class="section-header">OBSERVATIONS OFFICIELLES</div>
+                <div class="info-block">
+                    <p>Profil en montée de compétences, rigoureux, orienté apprentissage continu et amélioration progressive.</p>
+                </div>
+
+                <div class="section-header">VALIDATION & VISA</div>
+                <div class="visa-stamp-area">
+                    <div class="visa-stamp">VISA TECHNIQUE<br>APTE AU VOL</div>
+                    <p class="visa-final-mention">Document consultable à des fins professionnelles.<br>Reproduction partielle autorisée.</p>
+                </div>
+
+                <div class="section-header">ZONE TECHNIQUE (MRZ SYMBOLIQUE)</div>
+                <div class="mrz-section">
+                    DEV&lt;DUCHEMIN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+                    FRA&lt;WEB&lt;JUNIOR&lt;2026&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+                    PASS&lt;PORTFOLIO&lt;VALID&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+                </div>
+            </div>
+            <div class="page-footer">Page 4</div>
+        </div>
+    </div>
+
+    <!-- Spread 3 (Page 5 et une page vide ou autre) -->
+    <div class="booklet-spread">
+        <!-- Page 5 (Gauche) -->
+        <div class="page watermark-fa">
+            <div class="page-content watermark-rf-page">
+                <div class="section-header">VISAS DE PROJET</div>
+                <div class="info-block">
+                    <p>Missions accomplies et validées :</p>
+                    <div class="project-visa-entry">
+                        <h3>Projet Alpha - Site Vitrine E-commerce</h3>
+                        <p>Client : SARL BoutiquePlus</p>
+                        <p>Durée : 01/2023 - 04/2023</p>
+                        <p>Compétences : React, SASS, PHP, MySQL</p>
+                        <div class="project-stamp"><strong>P.ALPHA</strong></div>
+                    </div>
+                    <div class="project-visa-entry">
+                        <h3>Projet Beta - Application Interne</h3>
+                        <p>Client : Groupe InnovTech</p>
+                        <p>Durée : 05/2023 - 08/2023</p>
+                        <p>Compétences : Laravel, Vue.js, APIs REST</p>
+                        <div class="project-stamp"><strong>P.BETA</strong></div>
+                    </div>
+                    <div class="project-visa-entry">
+                        <h3>Projet Gamma - Refonte UX/UI</h3>
+                        <p>Client : Agence CréaNum</p>
+                        <p>Durée : 09/2023 - 11/2023</p>
+                        <p>Compétences : HTML sémantique, CSS, JavaScript, UX/UI</p>
+                        <div class="project-stamp"><strong>P.GAMMA</strong></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-footer">Page 5</div>
+        </div>
+
+        <!-- Page 6 (Droite - exemple de page libre ou future) -->
+        <div class="page watermark-fa">
+            <div class="page-content watermark-rf-page">
+                <div class="section-header">NOTES ET FUTURES MISSIONS</div>
+                <div class="info-block">
+                    <p>Cette page est réservée aux observations supplémentaires ou aux futurs agréments de mission. Le Passeport Professionnel du titulaire est conçu pour évoluer avec son expérience et ses qualifications.</p>
+                    <br>
+                    <p><em>En attente de nouvelles certifications...</em></p>
+                </div>
+            </div>
+            <div class="page-footer">Page 6</div>
+        </div>
+    </div>
 
 </body>
 </html>

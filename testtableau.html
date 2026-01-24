@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hall des départs — Accueil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+
+  <style>
+    :root {
+      --bg: #050b10;
+      --panel: #0c1622;
+      --accent: #1f6fea;
+      --accent-soft: #8ec5ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --green: #3fb950;
+
+      --mono: "JetBrains Mono", monospace;
+      --display: "Rajdhani", sans-serif;
+
+      --flap-border: rgba(142, 197, 255, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1b3957 0, #050b10 55%, #020407 100%);
+      color: var(--text);
+      font-family: var(--display);
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 2rem 2rem 1rem;
+      text-align: center;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 2;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto 3rem;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitle {
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 1.5rem;
+    }
+
+    /* PORTES D’EMBARQUEMENT */
+    .doors {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .door {
+      flex: 1;
+      background: radial-gradient(circle at center, #1b3957 0, #050b10 60%, #000 100%);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .door.right {
+      border-right: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* CONTROLS DÉPARTS / ARRIVÉES */
+    .controls {
+      display: inline-flex;
+      border: 1px solid #2f588b;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .controls button {
+      background: transparent;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      color: var(--muted);
+      font-family: var(--mono);
+      cursor: pointer;
+      border-right: 1px solid #2f588b;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.75rem;
+    }
+
+    .controls button:last-child {
+      border-right: none;
+    }
+
+    .controls button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .controls button:focus-visible {
+      outline: 2px solid var(--accent-soft);
+      outline-offset: 3px;
+    }
+
+    /* TERMINAL / TABLEAU */
+    .terminal {
+      border: 1px solid rgba(142, 197, 255, 0.25);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      padding: 1rem;
+      overflow-x: auto;
+      background: rgba(5, 11, 16, 0.55);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    caption {
+      caption-side: top;
+      text-align: left;
+      padding: 0.5rem 0.25rem 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.16em;
+    }
+
+    thead tr {
+      border-bottom: 2px solid var(--flap-border);
+    }
+
+    th {
+      text-align: left;
+      color: var(--accent);
+      padding: 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    td {
+      padding: 0.9rem 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+    }
+
+    th + th,
+    td + td {
+      border-left: 1px solid rgba(142, 197, 255, 0.12);
+    }
+
+    tbody tr:hover {
+      background: rgba(31, 111, 234, 0.08);
+      cursor: pointer;
+    }
+
+    /* SPLIT-FLAP */
+    .flap-group {
+      display: flex;
+      gap: 2px;
+    }
+
+    .flap {
+      width: clamp(12px, 1.6vw, 18px);
+      height: 34px;
+      perspective: 800px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--panel);
+      border: 1px solid var(--flap-border);
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      color: var(--accent-soft);
+    }
+
+    .flap.space {
+      background: transparent;
+      border: none;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding: 1.5rem 1rem 2rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 0 1.5rem;
+      }
+
+      header {
+        padding: 1.5rem 1.5rem 0.75rem;
+      }
+
+      header h1 {
+        font-size: 1.4rem;
+      }
+
+      .subtitle {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Portes d’embarquement -->
+  <div class="doors">
+    <div class="door left"></div>
+    <div class="door right"></div>
+  </div>
+
+  <header>
+    <h1>Hall des départs</h1>
+    <p>Compétences en vol — Stack piloté comme un cockpit</p>
+  </header>
+
+  <main>
+    <p class="subtitle">
+      Tableau des vols numériques — compétences en montée & maîtrisées
+    </p>
+
+    <div class="controls" aria-label="Vue des compétences">
+      <button id="btn-departs" class="active" type="button">Départs</button>
+      <button id="btn-arrivees" type="button">Arrivées</button>
+    </div>
+
+    <!-- PANEL DÉPARTS -->
+    <section id="panel-departs" class="terminal" aria-label="Compétences en montée">
+      <table>
+        <caption>Compétences en montée — vols en préparation / ascension</caption>
+        <thead>
+          <tr>
+            <th>Vol</th>
+            <th>Destination</th>
+            <th>ETD</th>
+            <th>Gate</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-departs"></tbody>
+      </table>
+    </section>
+
+    <!-- PANEL ARRIVÉES -->
+    <section id="panel-arrivees" class="terminal hidden" aria-label="Compétences maîtrisées">
+      <table>
+        <caption>Compétences maîtrisées — vols arrivés et opérationnels</caption>
+        <thead>
+          <tr>
+            <th>Vol</th>
+            <th>Destination</th>
+            <th>ATA</th>
+            <th>Gate</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-arrivees"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    ZONE SÉCURISÉE — HALL DES DÉPARTS — FIN DE PARCOURS
+  </footer>
+
+  <script>
+    // CONFIG SPLIT-FLAP
+    const CONFIG = {
+      chars: " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/",
+      slots: { vol: 6, dest: 18, etd: 5, gate: 3, stat: 14 }
+    };
+
+    // DONNÉES DÉPARTS
+    const DATA_DEPARTS = [
+      { vol: "DEV01", dest: "JAVASCRIPT AVANCE", etd: "13:45", gate: "A01", stat: "EN PREPARATION" },
+      { vol: "DEV02", dest: "ARCHITECTURE FRONT", etd: "19:00", gate: "A02", stat: "EN MONTEE" },
+      { vol: "DEV03", dest: "GSAP ANIMATIONS", etd: "10:00", gate: "B01", stat: "EN COURS" },
+      { vol: "DEV04", dest: "PERFORMANCE WEB", etd: "16:30", gate: "B02", stat: "EN APPROCHE" }
+    ];
+
+    // DONNÉES ARRIVÉES
+    const DATA_ARRIVEES = [
+      { vol: "OPS01", dest: "HTML5 SEMANTIQUE", etd: "--:--", gate: "A", stat: "OPERATIONNEL" },
+      { vol: "OPS02", dest: "CSS / SASS", etd: "--:--", gate: "A", stat: "MAITRISE" },
+      { vol: "OPS03", dest: "JAVASCRIPT ES6", etd: "--:--", gate: "B", stat: "VALIDE" },
+      { vol: "OPS04", dest: "BOOKI PROJECT", etd: "--:--", gate: "C", stat: "EN SERVICE" }
+    ];
+
+    const createFlaps = (text, size) => {
+      const target = (text || "").toUpperCase().padEnd(size, " ").slice(0, size);
+      let html = `<div class="flap-group">`;
+      for (const char of target) {
+        html += `<div class="flap ${char === " " ? "space" : ""}" data-char="${char}"> </div>`;
+      }
+      html += `</div>`;
+      return html;
+    };
+
+    const renderTable = (tbody, data, isArrivals = false) => {
+      tbody.innerHTML = "";
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${createFlaps(row.vol,  CONFIG.slots.vol)}</td>
+          <td>${createFlaps(row.dest, CONFIG.slots.dest)}</td>
+          <td>${createFlaps(row.etd,  CONFIG.slots.etd)}</td>
+          <td>${createFlaps(row.gate, CONFIG.slots.gate)}</td>
+          <td>${createFlaps(row.stat, CONFIG.slots.stat)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      animateFlaps();
+    };
+
+    const animateFlaps = () => {
+      document.querySelectorAll(".flap").forEach((flap, i) => {
+        const target = flap.dataset.char;
+        const delay = Math.random() * 800;
+        let cycles = 0;
+        const maxCycles = 8 + (i % 5);
+
+        setTimeout(() => {
+          const interval = setInterval(() => {
+            flap.textContent = CONFIG.chars[Math.floor(Math.random() * CONFIG.chars.length)];
+            if (++cycles > maxCycles) {
+              clearInterval(interval);
+              flap.textContent = target;
+            }
+          }, 50);
+        }, delay);
+      });
+    };
+
+    const showPanel = (panelIdToShow) => {
+      const depPanel = document.getElementById("panel-departs");
+      const arrPanel = document.getElementById("panel-arrivees");
+      const btnDep = document.getElementById("btn-departs");
+      const btnArr = document.getElementById("btn-arrivees");
+
+      if (panelIdToShow === "departs") {
+        depPanel.classList.remove("hidden");
+        arrPanel.classList.add("hidden");
+        btnDep.classList.add("active");
+        btnArr.classList.remove("active");
+        renderTable(document.getElementById("tbody-departs"), DATA_DEPARTS);
+      } else {
+        arrPanel.classList.remove("hidden");
+        depPanel.classList.add("hidden");
+        btnArr.classList.add("active");
+        btnDep.classList.remove("active");
+        renderTable(document.getElementById("tbody-arrivees"), DATA_ARRIVEES, true);
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const doors = document.querySelector(".doors");
+      const terminalDep = document.getElementById("panel-departs");
+      const terminalArr = document.getElementById("panel-arrivees");
+
+      // Timeline : portes → apparition tableau → split-flap
+      const tl = gsap.timeline();
+
+      tl.to(".door.left", { x: "-120%", duration: 1, ease: "power2.inOut" })
+        .to(".door.right", { x: "120%", duration: 1, ease: "power2.inOut" }, "<")
+        .add(() => {
+          doors.style.display = "none";
+        })
+        .to([terminalDep, terminalArr], {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out"
+        })
+        .add(() => {
+          renderTable(document.getElementById("tbody-departs"), DATA_DEPARTS);
+        });
+
+      document.getElementById("btn-departs").addEventListener("click", () => {
+        showPanel("departs");
+      });
+
+      document.getElementById("btn-arrivees").addEventListener("click", () => {
+        showPanel("arrivees");
+      });
+    });
+  </script>
+</body>
+</html>
