@@ -2,29 +2,31 @@
 <html lang="fr">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FLIGHT LOG // PORTFOLIO DEV</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flight Log · Portfolio Développeur Web</title>
+
+  <!-- SEO de base -->
+  <meta name="description"
+    content="Portfolio cockpit d’un chef de projet & développeur web junior. Expériences digitales pilotées comme un véritable plan de vol." />
 
   <!-- Polices -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" />
 
   <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
 
   <style>
     :root {
       /* Fonds */
       --bg-page: #0a0d14;
-      /* fond général */
       --bg-panel: #111820;
-      /* nav + footer (bleu pétrole) */
       --bg-card: #101e38;
-      /* cartes / panneaux internes */
       --bg-tab: #1a222d;
+
       /* Couleurs */
       --primary-blue: #1f6fea;
       --accent-cyan: #00d2ff;
@@ -32,33 +34,39 @@
       --text-main: #e6edf3;
       --text-muted: #909aa7;
 
-      /* --bg: #050b10;
-      --panel: #0c1622;
-      --accent: #1f6fea;
-      --accent-soft: #8ec5ff;
-      --text: #e6edf3;
-      --muted: #8b949e;
-      --green: #3fb950; */
-
-
       /* Polices */
       --font-heading: 'Rajdhani', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
 
-      --bg-main: radial-gradient(circle at top, #12314f 0%, #050b10 65%);
-      --panel-bg: rgba(6, 14, 22, 0.92);
+      /* Ambiance */
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      /* --panel-bg: rgba(6, 14, 22, 0.92); */
       --border-green: rgba(63, 185, 80, 0.75);
-      --text-main: #e6eef6;
-      --text-muted: #9fb3c8;
-      --accent: #3fb950;
       --clr-accent: #3b82f6;
+      --panel-bg: rgba(10, 22, 38, 0.92);
+
+
+      /* NAV FLIGHT BOARD */
+      --nav-line-height: 1.25;
+      --nav-row-height: 1.65rem;
+      --nav-font-size: 0.68rem;
+
+      --nav-bg: #050a12;
+      --nav-border: rgba(255, 255, 255, 0.06);
+      --nav-hover: rgba(31, 111, 234, 0.18);
+
     }
 
-
-    * {
+    *,
+    *::before,
+    *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -69,17 +77,8 @@
       overflow-x: hidden;
       min-height: 100vh;
       position: relative;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.25;
-      background-size: 120px 120px;
-      mix-blend-mode: screen;
-      z-index: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     a {
@@ -98,25 +97,10 @@
       flex-direction: column;
     }
 
-    .wrapper {
-      width: min(1180px, 100% - 32px);
-      margin-inline: auto;
-    }
-
-    /* Effet scanlines */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 999;
-
-    }
-
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 1.5rem;
-
     }
 
     .label {
@@ -127,19 +111,27 @@
       text-transform: uppercase;
       display: block;
       margin-bottom: 0.5rem;
-
     }
 
     /* ======================= NAV / HEADER ======================= */
 
-
-
     header.site-header {
-      background-color: #111820;
+      background-color: var(--bg-panel);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
       padding: 1.5rem 0;
       margin-bottom: 4rem;
       z-index: 1;
+      position: relative;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 220px 1fr 150px;
+      gap: 1.75rem;
+      align-items: center;
       position: relative;
     }
 
@@ -167,67 +159,45 @@
 
     }
 
-    .nav-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-      display: grid;
-      gap: 2rem;
-      align-items: stretch;
-      grid-template-columns: 220px 1fr 150px;
-      /* colonne pilote plus petite que le tableau */
-      gap: 1.75rem;
-      align-items: center;
-
-    }
-
     /* PILOTE */
+
     .pilot-panel {
       position: relative;
       background: #1a222d;
-      /* fond du badge */
       border-radius: 5px;
       padding: 0.7rem 1.1rem 0.8rem;
-      /* plus compact */
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
-
-
     }
 
-    /* Trait bleu vertical à gauche du badge */
     .pilot-panel::before {
       content: "";
       position: absolute;
       left: 0;
-      top: 1%;
-      bottom: 1%;
+      top: 6px;
+      bottom: 6px;
       width: 3px;
-      background: #1f6fea;
+      background: var(--primary-blue);
       border-radius: 3px;
     }
 
-    /* Ligne "COMMANDANT DE BORD" en haut, bien horizontale */
     .pilot-role {
       font-family: var(--font-mono);
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      color: #1f6fea;
-      /* bleu */
+      color: var(--primary-blue);
       text-align: center;
     }
 
-    /* Ligne principale : avatar + textes côte à côte */
     .pilot-main {
       display: flex;
       align-items: center;
       gap: 0.8rem;
     }
 
-    /* Avatar avec photo */
     .pilot-avatar {
       width: 52px;
       height: 52px;
@@ -248,7 +218,6 @@
       border-radius: inherit;
     }
 
-    /* Icône par-dessus si pas de photo */
     .pilot-avatar svg {
       width: 30px;
       height: 30px;
@@ -258,7 +227,6 @@
       color: var(--text-muted);
     }
 
-    /* Textes à droite de l'avatar */
     .pilot-text {
       display: flex;
       flex-direction: column;
@@ -271,32 +239,28 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #ffffff;
-      /* blanc */
     }
 
     .pilot-id {
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: #909aa7;
-      /* gris */
+      color: var(--text-muted);
     }
 
     .pilot-status {
       font-family: var(--font-mono);
       font-size: 0.7rem;
-      color: #40b950;
-      /* EN SERVICE en vert */
+      color: var(--status-green);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    /* Petit point vert */
     .dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #40b950;
+      background: var(--status-green);
     }
 
     .dot.pulse {
@@ -318,17 +282,24 @@
     }
 
     /* TABLEAU DES VOLS (NAV) */
-    nav.flight-board {
+
+    /* nav.flight-board {
       border-radius: 9px;
       overflow: hidden;
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+      background: #050a12;
     }
 
     table.flight-table {
       width: 100%;
       border-collapse: collapse;
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: var(--nav-font-size);
+      line-height: var(--nav-line-height);
+    }
+
+    .flight-table tr {
+      height: var(--nav-row-height);
     }
 
     .flight-table thead {
@@ -339,8 +310,13 @@
 
     .flight-table th,
     .flight-table td {
-      padding: 0.75rem 1rem;
+      padding: 0.35rem 0.6rem;
       text-align: left;
+      white-space: nowrap;
+    }
+
+    .flight-table td {
+      height: 2.4rem;
     }
 
     .flight-table thead th {
@@ -348,18 +324,77 @@
       border-bottom: 1px solid #154287;
     }
 
-    /* lignes */
+
+    .flight-table thead * {
+      transform: none;
+      animation: none;
+    }
+
+
+    .word {
+      display: inline-flex;
+      gap: 2px;
+    }
+
+    .flap {
+      display: inline-block;
+      width: 0.65em;
+      height: 1em;
+      text-align: center;
+      transform-origin: center bottom;
+      transform: rotateX(90deg);
+      background: linear-gradient(to bottom, #0a0d14 0%, #1a222d 100%);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      text-align: center;
+      line-height: 1.6em;
+      position: relative;
+      border-radius: 2px;
+      box-shadow:
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 6px rgba(0, 0, 0, 0.6);
+      transform-origin: center bottom;
+      transform-style: preserve-3d;
+      transition: background 0.3s ease;
+      line-height: 1em;
+      backface-visibility: hidden;
+      will-change: transform;
+
+    }
+
+    .flap::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .f-stat.text-green {
+      color: var(--status-green);
+      text-shadow: 0 0 6px rgba(64, 185, 80, 0.6);
+    }
+
+    .f-stat.blink {
+      color: var(--primary-blue);
+      text-shadow: 0 0 6px rgba(31, 111, 234, 0.6);
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.5;
+      }
+    }
+
     .flight-row {
       background: #111820;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       color: var(--text-main);
       transition: background 0.25s ease, transform 0.25s ease;
-    }
-
-    .flight-row:hover .f-code {
-      color: var(--primary-blue);
-      border: 1px solid rgba(31, 111, 234, 0.7);
-      background: #0b1422;
+      cursor: pointer;
     }
 
     .flight-row:last-child {
@@ -368,29 +403,55 @@
 
     .flight-row:hover {
       background: rgba(31, 111, 234, 0.18);
-      transform: translateX(2px);
-      /* glissement léger, effet “vol sélectionné” */
     }
 
     .flight-row.active {
       background: radial-gradient(circle at left, rgba(31, 111, 234, 0.35) 0, #111820 40%);
     }
 
-    /* code vol */
+    .flight-row[data-main="true"] {
+      background: radial-gradient(circle at left, rgba(255, 59, 59, 0.2) 0%, #111820 40%);
+      border-left: 3px solid #ff3b3b;
+    }
+
+    .flight-row[data-main="true"] .f-code {
+      color: #ff3b3b;
+      font-weight: bold;
+      box-shadow: 0 0 0 1px rgba(255, 59, 59, 0.6) inset;
+    }
+
     .f-code {
       font-weight: 600;
       letter-spacing: 1px;
       background: #0a0d14;
       border-radius: 2px;
-      padding: 0.25rem 0.5rem;
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.45rem;
+
+    }
+
+    .f-gate,
+    .f-stat {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .f-dest {
+      padding-right: 1.2rem;
+    }
+
+    .flight-row:hover .f-code {
+      color: var(--primary-blue);
+      border: 1px solid rgba(31, 111, 234, 0.7);
+      background: #0b1422;
     }
 
     .flight-row.active .f-code {
-      color: #1f6fea;
+      color: var(--primary-blue);
       box-shadow: 0 0 0 1px rgba(31, 111, 234, 0.7) inset;
     }
 
-    /* lien de destination */
     .flight-link {
       color: inherit;
       text-decoration: none;
@@ -413,32 +474,122 @@
     .flight-row:hover .flight-link::after,
     .flight-row.active .flight-link::after {
       width: 100%;
+    }  */
+
+    .flight-board {
+      background: #05070b;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, .65);
     }
 
-    /* statut */
-    .f-stat.blink {
-      color: var(--primary-blue);
-      animation: blink 1.5s infinite;
+    .flight-table {
+      width: 100%;
+      /* border-collapse: collapse; */
+      font-family: "JetBrains Mono", monospace;
+      table-layout: fixed;
+      border: 10px solid var(--bg-main);
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg,
+          rgba(255, 255, 255, 0.04),
+          rgba(0, 0, 0, 0.2));
+      box-shadow:
+        0 20px 40px rgba(30, 194, 139, 0.397),
+        inset 0 1px 0 rgba(43, 175, 114, 0.08);
     }
 
-    .f-stat.text-green {
-      color: var(--status-green);
+    /* HEADER */
+    .flight-table thead {
+      background: #111827;
     }
 
-    @keyframes blink {
-      50% {
-        opacity: 0.5;
-      }
+    .flight-table th {
+      padding: 14px;
+      font-size: 11px;
+      letter-spacing: .25em;
+      color: #9ca3af;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    /* LIGNES */
+    .flight-row {
+      background: #05070b;
+      transition: background .25s ease;
+    }
+
+    .flight-row:hover {
+      background: rgba(59, 130, 246, .12);
+    }
+
+    .flight-row.active {
+      background: linear-gradient(90deg,
+          rgba(59, 130, 246, .35),
+          rgba(5, 7, 11, .95) 65%);
+    }
+
+    /* CELLULES */
+    .flight-table td {
+      padding: 16px 14px;
+      font-size: 13px;
+      color: #e5e7eb;
+      height: 2.6rem;
+      /* ANTI TREMBLEMENT */
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* CODES / STATUT */
+    .f-code {
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    .f-gate {
+      color: #9ca3af;
+    }
+
+    .f-stat.open {
+      color: #4ade80;
+    }
+
+    .f-stat.boarding {
+      color: #60a5fa;
+    }
+
+    .f-stat.ontime {
+      color: #a3e635;
+    }
+
+    /* SPLIT FLAP */
+    .word {
+      display: inline-flex;
+      gap: 1px;
+    }
+
+    .flap {
+      display: inline-block;
+      width: .65em;
+      height: 1em;
+      line-height: 1em;
+      text-align: center;
+      background: linear-gradient(#0b1220, #020409);
+      border-radius: 2px;
+      transform-origin: center bottom;
+      backface-visibility: hidden;
+      will-change: transform;
     }
 
     /* HEURE / DATE */
+
     aside.time-module {
       font-family: var(--font-mono);
       display: flex;
       flex-direction: column;
       align-items: flex-end;
       justify-content: center;
-
     }
 
     .digital-clock {
@@ -465,6 +616,21 @@
       color: var(--text-muted);
     }
 
+    @media (max-width: 768px) {
+      nav.flight-board {
+        overflow-x: auto;
+      }
+
+      table.flight-table {
+        font-size: 0.68rem;
+      }
+
+      .flight-table th,
+      .flight-table td {
+        padding: 0.3rem 0.45rem;
+      }
+    }
+
     /* ======================= MAIN / MISSIONS ======================= */
 
     .terminal-wrapper {
@@ -473,73 +639,77 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 3rem;
+      padding: 0 1.5rem;
     }
 
-    /* ===== PANELS ===== */
     .terminal-panel {
       border: 3px solid var(--border-green);
       border-radius: 18px;
       padding: 2.2rem;
       display: flex;
       flex-direction: column;
-
+      background: var(--bg-main);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
     }
 
-    /* force la colonne droite à occuper toute la hauteur */
     .terminal-panel-full {
       justify-content: space-between;
     }
 
-    /* ===== HEADER ===== */
     .panel-header .label {
-      font-size: .7rem;
-      letter-spacing: .2em;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
       color: var(--text-muted);
-      background: radial-gradient(circle at top, #1b3957, #050b10 60%) ;
     }
 
     h1 {
-      margin: .8rem 0 1.2rem;
+      margin: 0.8rem 0 1.2rem;
       line-height: 1.25;
       font-size: 2rem;
     }
 
-    /* ===== TEXT ===== */
     .intro,
     .long-text {
-      color: var(--accent);
+      color: var(--accent-cyan);
       line-height: 1.55;
+      font-size: 0.95rem;
     }
 
-    span {
+    .intro span,
+    .long-text span {
       color: var(--clr-accent);
-
     }
 
-    /* ===== INFO ===== */
     .flight-info {
-      margin: 1.5rem 0 .8rem;
+      margin: 1.5rem 0 0.8rem;
       display: flex;
       gap: 1.5rem;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .badge {
       background: rgba(63, 185, 80, 0.15);
       border: 1px solid var(--border-green);
-      padding: .4rem .8rem;
+      padding: 0.4rem 0.8rem;
       border-radius: 999px;
-      font-size: .75rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
     }
 
     .meta,
     .destination span {
-      font-size: .7rem;
-      letter-spacing: .15em;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
       color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
     }
 
-    /* ===== CTA ===== */
+    .destination {
+      margin-bottom: 1rem;
+    }
+
     .cta {
       margin: 1.8rem 0;
       align-self: flex-start;
@@ -547,20 +717,30 @@
       border: none;
       color: #06210f;
       font-weight: 600;
-      padding: .9rem 1.6rem;
+      padding: 0.9rem 1.6rem;
       border-radius: 999px;
       cursor: pointer;
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* ===== FOOTER ===== */
+    .cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(46, 158, 79, 0.5);
+    }
+
     .panel-footer {
       display: flex;
       gap: 1rem;
-      font-size: .8rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
+      margin-top: auto;
+      flex-wrap: wrap;
     }
 
-    /* ===== RIGHT PANEL CONTENT ===== */
     .content-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -570,36 +750,48 @@
 
     .block h3 {
       margin: 0;
-      letter-spacing: .15em;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-size: 0.9rem;
     }
 
     .block span {
-      font-size: .7rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .block p {
+      margin-top: 0.4rem;
+      font-size: 0.9rem;
     }
 
     .checklist {
       display: flex;
-      gap: .7rem;
+      gap: 0.7rem;
       flex-wrap: wrap;
       margin-bottom: 1.2rem;
     }
 
     .chip {
-      border: 1px solid rgba(255, 255, 255, .15);
-      padding: .4rem .8rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 0.8rem;
       border-radius: 999px;
-      font-size: .7rem;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
     }
 
-    /* ===== SEATBELT ===== */
     .seatbelt {
       display: flex;
       justify-content: space-between;
-      font-size: .75rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
+      margin-top: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-
 
     /* ======================= FIN DE PISTE ======================= */
 
@@ -607,15 +799,13 @@
       position: relative;
       width: 100%;
       height: 12px;
-      margin-top: 16px;
-
       background-image: repeating-linear-gradient(to right,
           #1e90ff 0px,
           #1e90ff 4px,
           transparent 4px,
           transparent 24px);
-
       opacity: 0.9;
+      animation: runwayBlink 1.5s infinite ease-in-out;
     }
 
     @keyframes runwayBlink {
@@ -632,22 +822,18 @@
       }
     }
 
-    .runway-lights {
-      animation: runwayBlink 1.5s infinite ease-in-out;
-    }
-
     /* ======================= FOOTER ======================= */
 
     footer.site-footer {
       background: var(--bg-panel);
-      /* même bleu pétrole que la nav */
       padding: 2rem 0 1.5rem;
+
     }
 
     .footer-inner {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 0 2.5rem;
     }
 
     .control-tower {
@@ -657,7 +843,6 @@
       margin-bottom: 1.5rem;
     }
 
-    /* Tour de contrôle */
     .tower-freq h2 {
       font-size: 0.85rem;
       text-transform: uppercase;
@@ -674,7 +859,6 @@
       letter-spacing: -1px;
       margin-bottom: 0.4rem;
       color: var(--text-main);
-      /* 118.700 en blanc */
     }
 
     .status-text {
@@ -694,15 +878,12 @@
       box-shadow: 0 0 10px rgba(64, 185, 80, 0.8);
     }
 
-    /* Canaux de communication : rectangle noir */
     .comm-channels {
-      background: #050a12;
-      border-radius: 6px;
+      background: radial-gradient(circle at center, #1a222d 0%, #05070a 100%);
+      border-radius: 15px;
       border: 1px solid #11171f;
       padding: 1.25rem 1.5rem 1.5rem;
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
-      background: radial-gradient(circle at center, #1a222d 0%, #05070a 100%);
-      border-radius: 15px;
     }
 
     .comm-channels h2 {
@@ -748,10 +929,8 @@
       font-size: 0.7rem;
       font-family: var(--font-mono);
       color: #2f588b;
-      /* texte bleu pétrole */
     }
 
-    /* au survol : contour bleu + rotation de l'icône */
     .channel-btn:hover {
       border-color: var(--primary-blue);
       background: #0b121e;
@@ -767,7 +946,6 @@
       color: var(--text-main);
     }
 
-    /* Clearance */
     .clearance {
       text-align: right;
       font-family: var(--font-mono);
@@ -783,16 +961,16 @@
       margin-bottom: 0.4rem;
     }
 
-    /* Ligne + REC en bas */
     .footer-bottom {
       border-top: 1px solid #154287;
-      /* grand trait sur toute la largeur interne */
       padding-top: 0.8rem;
       display: flex;
       justify-content: space-between;
       font-family: var(--font-mono);
       font-size: 0.7rem;
       color: #606a78;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
     .rec-dot {
@@ -805,13 +983,20 @@
     }
 
     /* ======================= Responsive ======================= */
+
     @media (max-width: 1024px) {
       .nav-inner {
         grid-template-columns: 1fr;
+        row-gap: 1.5rem;
       }
 
-      .missions-grid {
+      aside.time-module {
+        align-items: flex-start;
+      }
+
+      .terminal-wrapper {
         grid-template-columns: 1fr;
+        margin: 3.5rem auto;
       }
 
       .control-tower {
@@ -822,45 +1007,53 @@
         grid-template-columns: repeat(2, 1fr);
       }
     }
+
+    @media (max-width: 640px) {
+      .digital-clock {
+        font-size: 2rem;
+      }
+
+      .terminal-panel {
+        padding: 1.6rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div class="overlay"></div>
-
   <!-- ======================= NAV / HEADER ======================= -->
-  <header class="site-header">
-    <div class="nav-inner">
+  <header class="site-header" role="banner">
+    <div class="nav-inner" aria-label="En-tête cockpit">
       <!-- Pilote -->
       <section class="pilot-panel" aria-labelledby="pilot-name">
-        <!-- Ligne du haut : texte bleu centré -->
-        <p class="pilot-role">COMMANDANT DE BORD</p>
+        <p class="pilot-role">Commandant de bord</p>
 
-        <!-- Ligne du bas : avatar + infos, en HORIZONTAL -->
         <div class="pilot-main">
           <figure class="pilot-avatar">
-            <!-- Mets ici ta vraie photo -->
-            <img src="pilote christophehascoet3.png" alt="Votre nom" class="pilot-photo">
-            <!-- Icône de secours (visible si tu enlèves la photo ou si elle ne charge pas) -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <img src="pilote christophehascoet3.png" alt="Portrait du pilote" class="pilot-photo" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
           </figure>
 
           <div class="pilot-text">
-            <h1 id="pilot-name" class="pilot-name">VOTRE NOM</h1>
+            <p id="pilot-name" class="pilot-name">Votre nom</p>
             <p class="pilot-id">ID : CPT-2024-001</p>
             <p class="pilot-status">
               <span class="dot pulse" aria-hidden="true"></span>
-              EN SERVICE
+              En service
             </p>
           </div>
         </div>
       </section>
 
       <!-- Tableau des vols (nav) -->
-      <nav class="flight-board" aria-label="Navigation principale">
+      <!-- <nav class="flight-board" aria-label="Navigation principale">
         <table class="flight-table">
           <thead>
             <tr>
@@ -871,84 +1064,139 @@
             </tr>
           </thead>
           <tbody>
-            <!-- PF‑001 : Check‑in / Profil -->
+            <tr class="flight-row" data-main="true">
+              <th scope="row" class="f-code">PF-000</th>
+              <td class="f-dest">
+                <a class="flight-link" href="accueil.html">Accueil</a>
+              </td>
+              <td class="f-gate">T0</td>
+              <td class="f-stat text-green">● OUVERT</td>
+            </tr>
+
             <tr class="flight-row">
               <th scope="row" class="f-code">PF-001</th>
               <td class="f-dest">
-                <a class="flight-link" href="accueil1.html">
-                  Check‑in · Profil
-                </a>
+                <a class="flight-link" href="accueil1.html">Hall des Départs</a>
               </td>
               <td class="f-gate">A1</td>
               <td class="f-stat blink">● EMBARQ.</td>
             </tr>
 
-            <!-- PF‑002 : Sécurité / Compétences -->
             <tr class="flight-row">
               <th scope="row" class="f-code">PF-002</th>
               <td class="f-dest">
-                <a class="flight-link" href="about.html">
-                  Contrôle sécurité · Compétences
-                </a>
+                <a class="flight-link" href="about.html">Passeport du pilote</a>
               </td>
               <td class="f-gate">B2</td>
               <td class="f-stat text-green">● À L'HEURE</td>
             </tr>
 
-            <!-- PF‑003 : Embarquement / Projets -->
             <tr class="flight-row">
               <th scope="row" class="f-code">PF-003</th>
               <td class="f-dest">
-                <a class="flight-link" href="etudedecas1.html">
-                  Porte d’embarquement · Projets
-                </a>
+                <a class="flight-link" href="etudedecas1.html">Porte d’embarquement</a>
               </td>
               <td class="f-gate">C3</td>
               <td class="f-stat text-green">● À L'HEURE</td>
             </tr>
 
-            <!-- PF‑004 : Cabine / Méthodes -->
             <tr class="flight-row">
               <th scope="row" class="f-code">PF-004</th>
               <td class="f-dest">
-                <a class="flight-link" href="nav1.html">
-                  Cabine / Briefing · Méthodes
-                </a>
+                <a class="flight-link" href="nav1.html">Plan de Vol</a>
               </td>
               <td class="f-gate">D4</td>
               <td class="f-stat text-green">● À L'HEURE</td>
             </tr>
 
-            <!-- PF‑005 : Journal de vol / CV -->
             <tr class="flight-row">
               <th scope="row" class="f-code">PF-005</th>
               <td class="f-dest">
-                <a class="flight-link" href="#journal">
-                  Journal de vol · CV
-                </a>
+                <a class="flight-link" href="#journal">Poste de pilotage</a>
               </td>
               <td class="f-gate">E5</td>
               <td class="f-stat text-green">● À L'HEURE</td>
             </tr>
 
-            <!-- PF‑006 : Arrivée / Contact -->
             <tr class="flight-row">
               <th scope="row" class="f-code">PF-006</th>
               <td class="f-dest">
-                <a class="flight-link" href="#contact">
-                  Arrivée · Tour de contrôle / Contact
-                </a>
+                <a class="flight-link" href="#contact">Tour de contrôle</a>
               </td>
               <td class="f-gate">F6</td>
               <td class="f-stat text-green">● À L'HEURE</td>
             </tr>
           </tbody>
         </table>
+      </nav> -->
+
+      <nav class="flight-board" aria-label="Tableau des vols">
+        <table class="flight-table">
+          <thead>
+            <tr>
+              <th>VOL</th>
+              <th>DESTINATION</th>
+              <th>PORTE</th>
+              <th>STATUT</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr class="flight-row active">
+              <td class="f-code">PF-000</td>
+              <td class="f-dest">ACCUEIL</td>
+              <td class="f-gate">T0</td>
+              <td class="f-stat open">OUVERT</td>
+            </tr>
+
+            <tr class="flight-row">
+              <td class="f-code">PF-001</td>
+              <td class="f-dest">HALL DES DÉPARTS</td>
+              <td class="f-gate">A1</td>
+              <td class="f-stat boarding">EMBARQ.</td>
+            </tr>
+
+            <tr class="flight-row">
+              <td class="f-code">PF-002</td>
+              <td class="f-dest">PASSEPORT PILOTE</td>
+              <td class="f-gate">B2</td>
+              <td class="f-stat ontime">À L’HEURE</td>
+            </tr>
+
+            <tr class="flight-row">
+              <td class="f-code">PF-003</td>
+              <td class="f-dest">PLAN DE VOL</td>
+              <td class="f-gate">C3</td>
+              <td class="f-stat ontime">À L’HEURE</td>
+            </tr>
+
+            <tr class="flight-row">
+              <td class="f-code">PF-003</td>
+              <td class="f-dest">PORTE D'EMBARQUEMENT</td>
+              <td class="f-gate">C3</td>
+              <td class="f-stat ontime">À L’HEURE</td>
+            </tr>
+
+            <tr class="flight-row">
+              <td class="f-code">PF-003</td>
+              <td class="f-dest">POSTE DE PILOTAGE</td>
+              <td class="f-gate">C3</td>
+              <td class="f-stat ontime">À L’HEURE</td>
+            </tr>
+
+            <tr class="flight-row">
+              <td class="f-code">PF-003</td>
+              <td class="f-dest">TOUR DE CONTRÔLE</td>
+              <td class="f-gate">C3</td>
+              <td class="f-stat ontime">À L’HEURE</td>
+            </tr>
+          </tbody>
+        </table>
       </nav>
 
       <!-- Heure / date -->
-      <aside class="time-module">
-        <p id="clock" class="digital-clock">00:00</p>
+      <aside class="time-module" aria-label="Heure locale">
+        <p id="clock" class="digital-clock" aria-live="polite">00:00</p>
         <p id="date" class="digital-date">01 JAN 2024</p>
         <p class="timezone">UTC+1 / CDG</p>
       </aside>
@@ -956,38 +1204,37 @@
   </header>
 
   <!-- ======================= MAIN ======================= -->
-  <main>
-    <section class="terminal-wrapper">
-
+  <main role="main">
+    <section class="terminal-wrapper" aria-label="Présentation du commandant de bord">
       <!-- PANNEAU GAUCHE -->
-      <article class="terminal-panel">
+      <article class="terminal-panel" aria-labelledby="panel-intro-title">
         <header class="panel-header">
-          <span class="label">BOARDING PASS · PRÉPARATION AU DÉCOLLAGE</span>
-          <h1>
-            Chef de projet & Développeur Web Junior<br>
+          <span class="label">Boarding pass · Préparation au décollage</span>
+          <h2 id="panel-intro-title">
+            Chef de projet &amp; Développeur Web Junior<br />
             Commandant de bord de vos expériences digitales
-          </h1>
+          </h2>
         </header>
 
         <p class="intro">
           Je pilote vos projets comme un véritable plan de vol : du briefing initial
           jusqu’à l’atterrissage en production, avec une navigation précise, une
           communication claire et une attention constante portée à la performance et
-          à l’expérience utilisateur.<br> <span>Rôles à bord : gestion de projet, développement
-            front-end, intégration web.</span>
+          à l’expérience utilisateur.<br />
+          <span>Rôles à bord : gestion de projet, développement front-end, intégration web.</span>
         </p>
 
         <div class="flight-info">
-          <span class="badge">FLIGHT DEV-320 · ON TIME</span>
-          <span class="meta">ORIGINE · OBJECTIFS</span>
+          <span class="badge" aria-label="Vol en cours, à l'heure">FLIGHT DEV-320 · ON TIME</span>
+          <span class="meta">Origine · Objectifs</span>
         </div>
 
         <div class="destination">
-          <span>DESTINATION · PRODUITS UTILISABLES</span>
+          <span>Destination · Produits utilisables</span>
         </div>
 
-        <button class="cta">
-          PASSER LES CONTRÔLES TECHNIQUES
+        <button class="cta" type="button">
+          Passer les contrôles techniques
         </button>
 
         <footer class="panel-footer">
@@ -997,29 +1244,30 @@
       </article>
 
       <!-- PANNEAU DROIT -->
-      <article class="terminal-panel terminal-panel-full">
+      <article class="terminal-panel terminal-panel-full" aria-labelledby="panel-flightplan-title">
         <header class="panel-header">
-          <span class="label">FLIGHT PLAN · PORTFOLIO · NON-STOP</span>
+          <span class="label">Flight plan · Portfolio · Non-stop</span>
+          <h2 id="panel-flightplan-title" class="sr-only">Plan de vol du portfolio</h2>
         </header>
 
         <div class="content-grid">
           <div class="block">
             <h3>CVL</h3>
-            <span>ORIGINE</span>
+            <span>Origine</span>
             <p>Curriculum</p>
           </div>
 
           <div class="block">
             <h3>PRD</h3>
-            <span>DESTINATION</span>
+            <span>Destination</span>
             <p>Produit</p>
           </div>
         </div>
 
         <div class="checklist">
-          <span class="chip">CHECK-IN · PRÉSENTATION</span>
-          <span class="chip">CONTRÔLES · TECH & STACK</span>
-          <span class="chip">BOARDING · PROJETS</span>
+          <span class="chip">Check-in · Présentation</span>
+          <span class="chip">Contrôles · Tech &amp; Stack</span>
+          <span class="chip">Boarding · Projets</span>
         </div>
 
         <p class="long-text">
@@ -1033,36 +1281,37 @@
           <span>Veuillez attacher vos ceintures.</span>
         </div>
       </article>
-
     </section>
 
-
+    <!-- Ancre pour le CV / journal -->
+    <section id="journal" aria-label="Journal de vol"></section>
+    <!-- Ancre pour le contact -->
+    <section id="contact" aria-label="Tour de contrôle / Contact"></section>
   </main>
 
   <!-- ======================= FOOTER ======================= -->
-  <!-- Fin de piste -->
-  <div class=" runway-lights" id="runwayLights">
-  </div>
-  <footer class="site-footer">
+  <div class="runway-lights" id="runwayLights" aria-hidden="true"></div>
+
+  <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
-      <section class="control-tower">
+      <section class="control-tower" aria-label="Zone de contrôle et communication">
         <!-- Tour de contrôle -->
-        <section class="tower-freq">
+        <section class="tower-freq" aria-label="Fréquence tour de contrôle">
           <h2>Tour de contrôle</h2>
           <p class="frequency">118.700</p>
           <p class="status-text">
-            <span class="dot-static"></span>
+            <span class="dot-static" aria-hidden="true"></span>
             Fréquence active
           </p>
         </section>
 
         <!-- Canaux de communication -->
-        <section class="comm-channels">
+        <section class="comm-channels" aria-label="Canaux de communication">
           <h2>Canaux de communication</h2>
           <ul class="channel-grid">
             <li>
-              <a href="#" class="channel-btn">
-                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <a href="#" class="channel-btn" aria-label="Contact par email">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
                   </path>
                   <polyline points="22,6 12,13 2,6"></polyline>
@@ -1071,8 +1320,8 @@
               </a>
             </li>
             <li>
-              <a href="#" class="channel-btn">
-                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <a href="#" class="channel-btn" aria-label="Profil LinkedIn">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
                   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
                   </path>
                   <rect x="2" y="9" width="4" height="12"></rect>
@@ -1082,8 +1331,8 @@
               </a>
             </li>
             <li>
-              <a href="#" class="channel-btn">
-                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <a href="#" class="channel-btn" aria-label="Profil GitHub">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
                   <path
                     d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
                   </path>
@@ -1092,8 +1341,8 @@
               </a>
             </li>
             <li>
-              <a href="#" class="channel-btn">
-                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <a href="#" class="channel-btn" aria-label="Contact radio">
+                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
                   <path
                     d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
                   </path>
@@ -1105,9 +1354,9 @@
         </section>
 
         <!-- Clearance -->
-        <section class="clearance">
+        <section class="clearance" aria-label="Autorisation de carrière">
           <h2>Clearance</h2>
-          <p>CLR TO CAREER VIA<br>PORTFOLIO DIRECT</p>
+          <p>CLR TO CAREER VIA<br />PORTFOLIO DIRECT</p>
         </section>
       </section>
 
@@ -1119,103 +1368,104 @@
   </footer>
 
   <!-- ======================= Script ======================= -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Horloge
-      const updateTime = () => {
-        const now = new Date();
-        document.getElementById('clock').innerText =
-          now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('date').innerText =
-          now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-      };
-      updateTime();
-      setInterval(updateTime, 1000);
+  <script type="module">
+    /* =========================
+       HORLOGE (OK)
+    ========================= */
+    function updateTime() {
+      const now = new Date();
 
-      // Effet "tableau aéroport" sur les destinations
-      // 1. Horloge (tu peux garder exactement ce que tu avais)
+      document.getElementById("clock").textContent =
+        now.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
 
-      // 2. Effet "scramble" sur les destinations au chargement
-      const scrambleText = (element) => {
-        const originalText = element.innerText;
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let iterations = 0;
+      document.getElementById("date").textContent =
+        now.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }).toUpperCase();
+    }
 
-        const interval = setInterval(() => {
-          element.innerText = originalText
-            .split('')
-            .map((letter, index) => {
-              if (index < iterations) return originalText[index];
-              return chars[Math.floor(Math.random() * chars.length)];
-            })
-            .join('');
+    updateTime();
+    setInterval(updateTime, 1000);
 
-          if (iterations >= originalText.length) clearInterval(interval);
-          iterations += 1 / 3; // vitesse
-        }, 30);
-      };
+    /* =========================
+       SPLIT-FLAP RÉALISTE
+    ========================= */
+    const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.'-";
 
-      // applique sur le texte à l’intérieur des liens de destination
-      document.querySelectorAll('.f-dest .flight-link').forEach(el => scrambleText(el));
+    function splitCell(cell) {
+      const text = cell.textContent.trim().toUpperCase();
+      cell.textContent = "";
 
-      // 3. Animation GSAP du tableau (apparition des lignes)
-      gsap.from(".flight-row", {
-        y: -10,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: "power2.out",
-        delay: 0.2
+      const word = document.createElement("span");
+      word.className = "word";
+
+      [...text].forEach(char => {
+        const flap = document.createElement("span");
+        flap.className = "flap";
+        flap.dataset.char = char;
+        flap.textContent = " ";
+        word.appendChild(flap);
       });
 
-      // 4. Nav interactive : change la ligne active + scroll doux vers la section
-      document.querySelectorAll(".flight-table tbody tr").forEach(row => {
-        row.addEventListener("click", (e) => {
-          const link = row.querySelector(".flight-link");
-          if (!link) return;
+      cell.appendChild(word);
+    }
 
-          const href = link.getAttribute("href") || "";
+    function flipFlap(flap) {
+      const target = flap.dataset.char;
+      const flips = 6 + Math.floor(Math.random() * 5);
+      let count = 0;
 
-          // 1) Met à jour la ligne active pour TOUTES les lignes
-          document.querySelectorAll(".flight-row").forEach(r => r.classList.remove("active"));
-          row.classList.add("active");
+      gsap.to(flap, {
+        rotationX: -90,
+        duration: 0.07,
+        repeat: flips,
+        yoyo: true,
+        ease: "power1.inOut",
+        onRepeat: () => {
+          count++;
+          flap.textContent =
+            count < flips
+              ? CHARS[Math.floor(Math.random() * CHARS.length)]
+              : target;
+        },
+        onComplete: () => {
+          flap.textContent = target;
+          gsap.set(flap, { rotationX: 0 });
+        }
+      });
+    }
 
-          // 2) Si c'est un ancre interne (#...), on empêche la navigation
-          //    et on fait un scroll doux. Sinon, on laisse charger la page .html.
-          if (href.startsWith("#")) {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-              target.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-          }
+    /* =========================
+       INIT TABLEAU
+    ========================= */
+    document.querySelectorAll(".flight-table td").forEach(splitCell);
+
+    /* RÉVÉLATION LIGNE PAR LIGNE */
+    document.querySelectorAll(".flight-row").forEach((row, rowIndex) => {
+      row.querySelectorAll(".flap").forEach((flap, i) => {
+        gsap.delayedCall(
+          rowIndex * 0.35 + i * 0.05,
+          () => flipFlap(flap)
+        );
+      });
+    });
+
+    /* RE-ANIMATION AU CLIC */
+    document.querySelectorAll(".flight-row").forEach(row => {
+      row.addEventListener("click", () => {
+        row.querySelectorAll(".flap").forEach((flap, i) => {
+          gsap.delayedCall(i * 0.03, () => flipFlap(flap));
         });
       });
-
-      // Animations GSAP
-      gsap.from(".site-header", {
-        y: -50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out"
-      });
-      gsap.from(".mission-card", {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power2.out",
-        delay: 0.5
-      });
-
-      // Génération des lumières de piste
-      const runway = document.querySelector('.runway-lights');
-      for (let i = 0; i < 50; i++) {
-        const light = document.createElement('span');
-        runway.appendChild(light);
-      }
     });
   </script>
+
+
 </body>
 
 </html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flight Log · Portfolio Développeur Web</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+
+  <style>
+    :root {
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --primary-blue: #1f6fea;
+      --status-green: #40b950;
+      --text-main: #e6edf3;
+      --text-muted: #909aa7;
+      --font-mono: 'JetBrains Mono', monospace;
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+    }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Rajdhani', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header.site-header {
+      background-color: var(--bg-panel);
+      padding: 1.5rem 0;
+      margin-bottom: 2rem;
+      position: relative;
+      border-top: 5px solid var(--primary-blue);
+    }
+
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 240px 1fr 180px;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    /* PILOTE */
+    .pilot-panel {
+      background: #1a222d;
+      padding: 1rem;
+      border-radius: 5px;
+      border-left: 3px solid var(--primary-blue);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .pilot-avatar { width: 50px; height: 50px; background: #000; border-radius: 4px; overflow: hidden; }
+    .pilot-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .pilot-name { font-weight: 700; font-size: 0.95rem; display: block; }
+
+    /* LE TABLEAU (FLIGHT BOARD) */
+    nav.flight-board {
+      background: #050a12;
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    table.flight-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 4px; /* Espace entre les lignes */
+      table-layout: fixed; /* FORCE l'alignement strict des colonnes */
+    }
+
+    /* Largeurs fixes des colonnes pour éviter tout mouvement */
+    .col-vol { width: 100px; }
+    .col-dest { width: auto; }
+    .col-gate { width: 80px; }
+    .col-stat { width: 140px; }
+
+    .flight-table th {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 0 10px 10px;
+      letter-spacing: 2px;
+    }
+
+    /* CONTENEUR DE MOT (SANS TREMBLEMENT) */
+    .word {
+      display: flex;
+      gap: 2px;
+      perspective: 400px;
+    }
+
+    /* CHAQUE CARACTÈRE (FLAP) */
+    .flap {
+      display: inline-block;
+      width: 1.1rem; /* Largeur FIXE pour stopper le tremblement */
+      height: 1.6rem;
+      background: linear-gradient(180deg, #111 50%, #000 50%);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.6rem;
+      border-radius: 3px;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Ligne médiane sur chaque lettre */
+    .flap::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0,0,0,0.6);
+      z-index: 2;
+    }
+
+    /* Statuts en couleur avec lueur */
+    .text-green .flap { color: var(--status-green); text-shadow: 0 0 8px rgba(64, 185, 80, 0.6); }
+    .text-blue .flap { color: var(--primary-blue); text-shadow: 0 0 8px rgba(31, 111, 234, 0.6); }
+
+    /* HORLOGE */
+    .time-module { text-align: right; font-family: var(--font-mono); }
+    .digital-clock { font-size: 2.2rem; font-weight: 700; color: #fff; line-height: 1; }
+    .digital-date { color: var(--text-muted); font-size: 0.8rem; margin-top: 5px; }
+
+    /* RESTE DU SITE */
+    .terminal-wrapper {
+      max-width: 1200px;
+      margin: 4rem auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      padding: 0 1.5rem;
+    }
+    .terminal-panel {
+      border: 2px solid var(--status-green);
+      background: rgba(16, 30, 56, 0.4);
+      padding: 2rem;
+      border-radius: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="nav-inner">
+      <section class="pilot-panel">
+        <div class="pilot-avatar">
+          <img src="pilote christophehascoet3.png" alt="Pilote" />
+        </div>
+        <div class="pilot-text">
+          <span style="font-size: 0.6rem; color: var(--primary-blue); font-family: var(--font-mono);">COMMANDANT</span>
+          <span class="pilot-name">VOTRE NOM</span>
+          <span style="font-size: 0.6rem; color: var(--text-muted);">CPT-2025-001</span>
+        </div>
+      </section>
+
+      <nav class="flight-board">
+        <table class="flight-table">
+          <thead>
+            <tr>
+              <th class="col-vol">VOL</th>
+              <th class="col-dest">DESTINATION</th>
+              <th class="col-gate">PORTE</th>
+              <th class="col-stat">STATUT</th>
+            </tr>
+          </thead>
+          <tbody id="flight-body">
+            <!-- Injecté par JavaScript -->
+          </tbody>
+        </table>
+      </nav>
+
+      <aside class="time-module">
+        <div id="clock" class="digital-clock">00:00</div>
+        <div id="date" class="digital-date">26 JAN 2025</div>
+      </aside>
+    </div>
+  </header>
+
+  <main class="terminal-wrapper">
+    <article class="terminal-panel">
+      <h2>Chef de projet & Développeur Web</h2>
+      <p>Prêt pour le décollage de vos projets digitaux.</p>
+    </article>
+    <article class="terminal-panel" style="border-color: var(--primary-blue);">
+      <h2>Plan de vol</h2>
+      <p>Explorez les destinations techniques.</p>
+    </article>
+  </main>
+
+  <script type="module">
+    const FLIGHTS = [
+      { id: 'PF-000', dest: 'ACCUEIL', gate: 'T0', stat: 'OUVERT', class: 'text-green' },
+      { id: 'PF-001', dest: 'HALL DES DEPARTS', gate: 'A1', stat: 'EMBARQ.', class: 'text-blue' },
+      { id: 'PF-002', dest: 'PORTE PILOTE', gate: 'B2', stat: 'A L\'HEURE', class: 'text-green' },
+      { id: 'PF-003', dest: 'PLAN DE VOL', gate: 'C3', stat: 'A L\'HEURE', class: 'text-green' }
+    ];
+
+    const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.'-·";
+
+    // Création du HTML du tableau
+    const initBoard = () => {
+      const tbody = document.getElementById('flight-body');
+      FLIGHTS.forEach(f => {
+        const tr = document.createElement('tr');
+        tr.className = 'flight-row';
+        tr.innerHTML = `
+          <td>${createWord(f.id)}</td>
+          <td>${createWord(f.dest)}</td>
+          <td>${createWord(f.gate)}</td>
+          <td class="${f.class}">${createWord(f.stat)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    };
+
+    const createWord = (text) => {
+      return `<div class="word">${text.split('').map(char => 
+        `<span class="flap" data-target="${char.toUpperCase()}"> </span>`
+      ).join('')}</div>`;
+    };
+
+    // Animation Split-Flap réaliste
+    const animateFlap = (el) => {
+      const target = el.dataset.target;
+      let iterations = 8 + Math.floor(Math.random() * 10);
+      
+      const tl = gsap.timeline();
+
+      tl.to(el, {
+        rotationX: -90,
+        duration: 0.05,
+        repeat: iterations,
+        ease: "none",
+        onRepeat: () => {
+          el.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+        },
+        onComplete: () => {
+          el.textContent = target;
+          gsap.set(el, { rotationX: 0 });
+        }
+      });
+    };
+
+    const startGlobalAnimation = () => {
+      const allFlaps = document.querySelectorAll('.flap');
+      allFlaps.forEach((flap, i) => {
+        gsap.delayedCall(i * 0.02, () => animateFlap(flap));
+      });
+    };
+
+    const updateTime = () => {
+      const n = new Date();
+      document.getElementById('clock').textContent = n.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+      document.getElementById('date').textContent = n.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initBoard();
+      updateTime();
+      setInterval(updateTime, 1000);
+      startGlobalAnimation();
+    });
+  </script>
+</body>
+</html>
