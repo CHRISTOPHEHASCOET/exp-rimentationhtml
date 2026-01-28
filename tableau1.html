@@ -17,6 +17,8 @@
       --primary-blue: #1f6fea;
       --status-green: #40b950;
       --text-main: #e6edf3;
+      --text-muted: #6b7280;
+      /* ✅ Ajoutée pour la date */
       --font-mono: 'JetBrains Mono', monospace;
       --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
     }
@@ -104,6 +106,16 @@
       color: #fff;
     }
 
+    .pilot-text>div span:first-child {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: var(--status-green);
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 6px var(--status-green);
+    }
+
     /* TABLEAU DES VOLS */
     .flight-board {
       background: #050a12;
@@ -114,7 +126,7 @@
     }
 
     .flight-table {
-      width: 100%;
+      width: auto;
       border-collapse: collapse;
       table-layout: fixed;
       /* EMPÊCHE LE TREMBLEMENT */
@@ -134,35 +146,104 @@
       padding: 6px 4px;
       vertical-align: middle;
       overflow: hidden;
+      text-align: left;
+    }
+
+
+    /* VOL : petit contenu */
+    .flight-table th:nth-child(1),
+    .flight-table td:nth-child(1) {
+      width: 12%;
+    }
+
+    /* DESTINATION : contenu le plus long */
+    .flight-table th:nth-child(2),
+    .flight-table td:nth-child(2) {
+      width: 48%;
+    }
+
+    /* PORTE : très petit contenu */
+    .flight-table th:nth-child(3),
+    .flight-table td:nth-child(3) {
+      width: 10%;
+    }
+
+    /* STATUT : contenu long */
+    .flight-table th:nth-child(4),
+    .flight-table td:nth-child(4) {
+      width: 30%;
+    }
+
+
+    .flight-table th {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #4a5568;
+      text-align: left;
+      padding-bottom: 10px;
+      letter-spacing: 2px;
+    }
+
+    .flight-table tbody tr {
+      cursor: pointer;
+    }
+
+    .flight-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
     }
 
     /* EFFET MECANIQUE DES LETTRES (FLAPS) */
     .word {
       display: inline-flex;
-      gap: 2px;
-      align-items: center;
+      gap: 1px;
       white-space: nowrap;
     }
 
-    .flap {
+
+
+    /* .flap {
       display: inline-block;
       width: 1.2rem;
       height: 1.7rem;
+      line-height: 1.7rem;
       background: linear-gradient(180deg, #151a22 50%, #0a0d14 50%);
       color: #fff;
       font-family: var(--font-mono);
       font-size: 1rem;
       text-align: center;
-      line-height: 1.7rem;
       border-radius: 3px;
       position: relative;
       border: 1px solid rgba(0, 0, 0, 0.5);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
       font-variant-numeric: tabular-nums;
       letter-spacing: 0;
+
+    } */
+    .flap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 1.2rem;
+      height: 1.85rem;
+
+      background: linear-gradient(180deg, #151a22 50%, #0a0d14 50%);
+      color: #fff;
+
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      line-height: 1;
+
+      border-radius: 3px;
+      position: relative;
+      border: 1px solid rgba(0, 0, 0, 0.5);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+      font-variant-numeric: tabular-nums;
     }
 
-    /* Ligne de séparation au milieu du volet */
+
+
     .flap::after {
       content: "";
       position: absolute;
@@ -244,11 +325,10 @@
           <img src="pilote christophehascoet3.png" alt="Pilote" />
         </div>
         <div class="pilot-text">
-          <span style="font-size:0.6rem; color:var(--primary-blue); font-family:var(--font-mono)">CMD BORD</span>
+          <span>CMD BORD</span>
           <span class="pilot-name">VOTRE NOM</span>
-          <div
-            style="font-size:0.7rem; color:var(--status-green); display:flex; align-items:center; gap:5px; margin-top:5px;">
-            <span style="width:6px; height:6px; background:currentColor; border-radius:50%"></span> En service
+          <div>
+            <span></span> En service
           </div>
         </div>
       </section>
@@ -258,10 +338,10 @@
         <table class="flight-table">
           <thead>
             <tr>
-              <th style="width:100px">VOL</th>
+              <th>VOL</th>
               <th>DESTINATION</th>
-              <th style="width:80px">PORTE</th>
-              <th style="width:150px">STATUT</th>
+              <th>PORTE</th>
+              <th>STATUT</th>
             </tr>
           </thead>
           <tbody id="flight-body">
@@ -281,12 +361,12 @@
 
   <main class="terminal-wrapper">
     <article class="terminal-panel">
-      <h2 style="font-size:2rem; margin-bottom:1rem;">Chef de projet & Développeur Web</h2>
-      <p style="color:var(--accent-cyan); line-height:1.6;">Pilotage de vos expériences digitales de A à Z.</p>
+      <h2>Chef de projet & Développeur Web</h2>
+      <p>Pilotage de vos expériences digitales de A à Z.</p>
     </article>
-    <article class="terminal-panel" style="border-color: var(--primary-blue);">
-      <h2 style="font-size:2rem; margin-bottom:1rem;">Plan de vol</h2>
-      <p style="color:var(--accent-cyan); line-height:1.6;">Navigation précise et code haute performance.</p>
+    <article class="terminal-panel">
+      <h2>Plan de vol</h2>
+      <p>Navigation précise et code haute performance.</p>
     </article>
   </main>
 
@@ -294,11 +374,11 @@
     const DATA = [
       { v: 'PT-987', d: 'ACCUEIL', g: 'T0', s: 'OUVERT', c: 'row-green', href: 'accueil.html' },
       { v: 'PJ-251', d: 'HALL DEPARTS', g: 'H1', s: 'EMBARQUEMENT', c: 'row-blue', href: 'depart.html' },
-      { v: 'PK-365', d: 'PASSEPORT PILOTE', g: 'J2', s: 'A L\'HEURE', c: 'row-green', href: 'passeport.html' },
-      { v: 'PM-451', d: 'PORTE D\'EMBARQUEMENT', g: 'K1', s: 'A L\'HEURE', c: 'row-blue', href: 'accueil1.html' },
-      { v: 'PN-658', d: 'PLAN DE VOL', g: 'L3', s: 'A L\'HEURE', c: 'row-green', href: 'banav3.html' },
+      { v: 'PK-365', d: 'PASSEPORT PILOTE', g: 'J2', s: "A L'HEURE", c: 'row-green', href: 'passeport.html' },
+      { v: 'PM-451', d: "PORTE D'EMBARQUEMENT", g: 'K1', s: "A L'HEURE", c: 'row-blue', href: 'accueil1.html' },
+      { v: 'PN-658', d: 'PLAN DE VOL', g: 'L3', s: "A L'HEURE", c: 'row-green', href: 'banav3.html' },
       { v: 'PR-854', d: 'POSTE DE PILOTAGE', g: 'P4', s: 'EMBARQUEMENT', c: 'row-blue', href: 'index1.html' },
-      { v: 'PV-000', d: 'TOUR DE CONTRÔLE', g: 'G5', s: 'A L\'HEURE', c: 'row-green', href: 'etudedecas1.html' }
+      { v: 'PV-000', d: 'TOUR DE CONTRÔLE', g: 'G5', s: "A L'HEURE", c: 'row-green', href: 'etudedecas1.html' }
     ];
 
     const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.'-";
@@ -306,70 +386,76 @@
     function createWord(text, length = 15) {
       const padded = text.padEnd(length, " ");
       return `
-    <div class="word">
-      ${padded.split('').map(char => {
-        const displayChar = char === " " ? "\u00A0" : char;
+      <div class="word">
+        ${padded.split('').map(char => {
+        const displayChar = char === " " ? "&nbsp;" : char;
         return `<span class="flap" data-char="${char}">${displayChar}</span>`;
       }).join('')}
-    </div>
-  `;
+      </div>
+    `;
     }
 
-
-
     const tbody = document.getElementById('flight-body');
+
     DATA.forEach(row => {
       const tr = document.createElement('tr');
       tr.className = row.c;
+      tr.dataset.href = row.href;
+
       tr.innerHTML = `
-    <td>${createWord(row.v, 6)}</td>
+      <td class="col-vol">${createWord(row.v, 6)}</td>
+      <td class="col-destination">${createWord(row.d, 22)}</td>
+      <td class="col-porte">${createWord(row.g, 3)}</td>
+      <td class="col-statut">${createWord(row.s, 14)}</td>
 
-    <td>
-      <a href="${row.href}" class="row-link">
-        ${createWord(row.d, 15)}
-      </a>
-    </td>
+    `;
 
-    <td>${createWord(row.g, 2)}</td>
-    <td>${createWord(row.s, 10)}</td>
-  `;
+
       tbody.appendChild(tr);
     });
 
-    // ANIMATION MECANIQUE
+    // clic sur toute la ligne
+    tbody.addEventListener('click', e => {
+      const row = e.target.closest('tr[data-href]');
+      if (row) window.location.href = row.dataset.href;
+    });
+
     function animateFlaps() {
-      const flaps = document.querySelectorAll('.flap');
-      flaps.forEach((flap, i) => {
-        const finalChar = flap.getAttribute('data-char');
+      document.querySelectorAll('.flap').forEach(flap => {
+        const finalChar = flap.dataset.char;
         if (finalChar === " ") return;
 
         let count = 0;
-        let max = 10 + Math.floor(Math.random() * 10);
+        const max = 10 + Math.floor(Math.random() * 10);
 
         const interval = setInterval(() => {
-          flap.innerText = CHARS[Math.floor(Math.random() * CHARS.length)];
-          count++;
-          if (count >= max) {
+          flap.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+          if (++count >= max) {
             clearInterval(interval);
-            flap.innerText = finalChar;
-            // Petit effet GSAP de bascule à l'arrêt
+            flap.textContent = finalChar;
             gsap.from(flap, { rotationX: -90, duration: 0.3, ease: "back.out(2)" });
           }
-        }, 50);
+        }, 40);
       });
     }
 
     function updateTime() {
       const n = new Date();
-      document.getElementById('clock').innerText = n.getHours().toString().padStart(2, '0') + ":" + n.getMinutes().toString().padStart(2, '0');
-      document.getElementById('date').innerText = n.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      document.getElementById('clock').textContent =
+        n.getHours().toString().padStart(2, '0') + ":" +
+        n.getMinutes().toString().padStart(2, '0');
+
+      document.getElementById('date').textContent =
+        n.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
     }
 
-    window.onload = () => {
+    window.addEventListener('load', () => {
       updateTime();
       setInterval(updateTime, 1000);
       animateFlaps();
-    };
+    });
+
+
   </script>
 </body>
 

@@ -5,7 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Christophe Hascoët — Terminal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <style>
@@ -17,14 +18,18 @@
             --text: #E6EEF8;
             --text-dim: #9FA8B3;
             --container-width: 1200px;
-            
+
             --tile-w: 22px;
             --tile-h: 36px;
             --gap-char: 2px;
             --col-gap: 5px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
@@ -38,7 +43,11 @@
 
         /* --- HEADER --- */
         .site-header {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1001;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
             padding: 15px 20px;
         }
 
@@ -60,12 +69,26 @@
         }
 
         .header-inner::after {
-            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
             background: linear-gradient(90deg, transparent, var(--accent-bright), transparent);
-            animation: scan-line 6s linear infinite; opacity: 0.2;
+            animation: scan-line 6s linear infinite;
+            opacity: 0.2;
         }
 
-        @keyframes scan-line { 0% { left: -100%; } 100% { left: 100%; } }
+        @keyframes scan-line {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
 
         /* LOGO : Photo à gauche */
         .logo {
@@ -77,15 +100,33 @@
         }
 
         .logo img {
-            width: 45px; height: 45px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             border: 2px solid var(--accent-bright);
             object-fit: cover;
         }
 
-        .logo-text-group { display: flex; flex-direction: column; }
-        .logo-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--text); line-height: 1; }
-        .flight-id { font-family: monospace; font-size: 0.6rem; color: var(--accent-bright); letter-spacing: 2px; margin-top: 4px; }
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .flight-id {
+            font-family: monospace;
+            font-size: 0.6rem;
+            color: var(--accent-bright);
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
 
         /* L'AVION QUI VA BOUGER */
         .plane-animated {
@@ -95,77 +136,250 @@
             color: var(--accent-bright);
             font-size: 1.2rem;
             filter: drop-shadow(0 0 0px var(--accent-bright));
-            pointer-events: none; /* L'avion ne bloque pas la souris */
+            pointer-events: none;
+            /* L'avion ne bloque pas la souris */
             display: inline-block;
         }
 
         /* NAVIGATION */
-        .nav-desktop { display: flex; gap: 15px; }
+        .nav-desktop {
+            display: flex;
+            gap: 15px;
+        }
+
         .nav-link {
-            color: var(--text-dim); text-decoration: none; padding: 10px 15px;
-            text-transform: uppercase; font-size: 0.9rem; font-family: 'Oswald', sans-serif;
-            letter-spacing: 1px; position: relative; transition: 0.3s ease;
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 10px 15px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 1px;
+            position: relative;
+            transition: 0.3s ease;
         }
 
         .nav-link::before {
             content: "GATE " attr(data-gate);
-            position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
-            font-family: monospace; font-size: 0.55rem; color: var(--accent-bright);
-            opacity: 0; transition: 0.3s ease;
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: monospace;
+            font-size: 0.55rem;
+            color: var(--accent-bright);
+            opacity: 0;
+            transition: 0.3s ease;
         }
 
-        .nav-link:hover::before, .nav-link.active::before { opacity: 1; top: -2px; }
-        .nav-link:hover, .nav-link.active { color: #fff; }
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            opacity: 1;
+            top: -2px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff;
+        }
 
         .nav-link::after {
-            content: ''; position: absolute; bottom: 0; left: 50%;
-            width: 0; height: 2px; background: var(--accent-bright);
-            transform: translateX(-50%); transition: width 0.3s ease;
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent-bright);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
             box-shadow: 0 0 10px var(--accent-bright);
         }
-        .nav-link:hover::after, .nav-link.active::after { width: 80%; }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 80%;
+        }
 
         /* --- PORTES --- */
         .doors-overlay {
-            position: fixed; inset: 0; z-index: 1000;
-            display: flex; pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            pointer-events: none;
         }
+
         .door {
-            flex: 1; height: 100%;
+            flex: 1;
+            height: 100%;
             background: linear-gradient(135deg, #080a10 0%, #121624 100%);
-            display: flex; align-items: center; position: relative;
+            display: flex;
+            align-items: center;
+            position: relative;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
-        .door.left { justify-content: flex-end; border-right: 1px solid #1e293b; }
-        .door.right { justify-content: flex-start; border-left: 1px solid #000; }
-        .handle {
-            width: 20px; height: 140px;
-            background: linear-gradient(to bottom, #ff3b3b, var(--accent));
-            border-radius: 10px; margin: 0 2px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 15px 0; align-items: center;
+
+        .door.left {
+            justify-content: flex-end;
+            border-right: 1px solid #1e293b;
         }
-        .dot { width: 8px; height: 8px; background-color: white; border-radius: 50%; }
+
+        .door.right {
+            justify-content: flex-start;
+            border-left: 1px solid #000;
+        }
+
+        .handle {
+            width: 20px;
+            height: 140px;
+            background: linear-gradient(to bottom, #ff3b3b, var(--accent));
+            border-radius: 10px;
+            margin: 0 2px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px 0;
+            align-items: center;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+        }
 
         /* --- TABLEAU --- */
-        main.container { flex: 1; display: flex; align-items: center; justify-content: center; padding-top: 120px; }
-        .board-wrapper { width: 100%; max-width: var(--container-width); padding: 10px; }
-        .board { background: #020308; border: 6px solid #1e293b; border-radius: 10px; padding: 20px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9); }
-        .header-row { display: flex; gap: var(--col-gap); padding-bottom: 15px; border-bottom: 2px solid var(--accent); margin-bottom: 15px; }
-        .col-head { font-family: 'Oswald'; font-size: 14px; letter-spacing: 2px; color: var(--accent); font-weight: 600; text-transform: uppercase; }
-        .row { display: flex; gap: var(--col-gap); padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        main.container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 120px;
+        }
 
-        .c-vol { width: 140px; } .c-dest { width: 500px; } .c-emb { width: 120px; } .c-gate { width: 80px; } .c-obs { flex: 1; text-align: right; }
-        .split-word { display: flex; gap: var(--gap-char); }
-        .flap { width: var(--tile-w); height: var(--tile-h); background-color: var(--primary); border-radius: 2px; color: #fff; font-family: 'Oswald'; font-size: 20px; text-align: center; line-height: var(--tile-h); position: relative; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7); }
-        .flap::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%); border-bottom: 1px solid rgba(0, 0, 0, 0.5); }
-        .c-obs .flap { color: var(--accent-bright); }
+        .board-wrapper {
+            width: 100%;
+            max-width: var(--container-width);
+            padding: 10px;
+        }
+
+        .board {
+            background: #020308;
+            border: 6px solid #1e293b;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+        }
+
+        .header-row {
+            display: flex;
+            gap: var(--col-gap);
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .col-head {
+            font-family: 'Oswald';
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .row {
+            display: flex;
+            gap: var(--col-gap);
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .c-vol {
+            width: 140px;
+        }
+
+        .c-dest {
+            width: 500px;
+        }
+
+        .c-emb {
+            width: 120px;
+        }
+
+        .c-gate {
+            width: 80px;
+        }
+
+        .c-obs {
+            flex: 1;
+            text-align: right;
+        }
+
+        .split-word {
+            display: flex;
+            gap: var(--gap-char);
+        }
+
+        .flap {
+            width: var(--tile-w);
+            height: var(--tile-h);
+            background-color: var(--primary);
+            border-radius: 2px;
+            color: #fff;
+            font-family: 'Oswald';
+            font-size: 20px;
+            text-align: center;
+            line-height: var(--tile-h);
+            position: relative;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .flap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+        }
+
+        .c-obs .flap {
+            color: var(--accent-bright);
+        }
 
         /* --- FOOTER --- */
-        .footer { background: var(--primary); border-top: 2px solid var(--accent); padding: 25px 0; color: var(--text-dim); text-align: center; }
-        .footer-inner { max-width: var(--container-width); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
-        .footer a { color: var(--text); text-decoration: none; margin: 0 10px; transition: 0.3s; }
-        .footer a:hover { color: var(--accent-bright); }
+        .footer {
+            background: var(--primary);
+            border-top: 2px solid var(--accent);
+            padding: 25px 0;
+            color: var(--text-dim);
+            text-align: center;
+        }
+
+        .footer-inner {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .footer a {
+            color: var(--text);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--accent-bright);
+        }
     </style>
 </head>
 
@@ -173,8 +387,18 @@
 
     <header class="site-header">
         <div class="doors-overlay">
-            <div class="door left"><div class="handle"><div class="dot"></div><div class="dot"></div></div></div>
-            <div class="door right"><div class="handle"><div class="dot"></div><div class="dot"></div></div></div>
+            <div class="door left">
+                <div class="handle">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+            <div class="door right">
+                <div class="handle">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
         </div>
 
         <div class="header-inner">
@@ -262,8 +486,8 @@
         window.onload = () => {
             const tl = gsap.timeline();
             tl.to(".door.left", { x: "-100%", duration: 1.5, ease: "power3.inOut", delay: 0.5 })
-              .to(".door.right", { x: "100%", duration: 1.5, ease: "power3.inOut" }, "<")
-              .call(startBoardAnimation, null, "-=1.0");
+                .to(".door.right", { x: "100%", duration: 1.5, ease: "power3.inOut" }, "<")
+                .call(startBoardAnimation, null, "-=1.0");
 
             // --- ANIMATION DE L'AVION SUR LES LIENS ---
             const navLinks = document.querySelectorAll('.nav-link');
@@ -316,4 +540,5 @@
         }
     </script>
 </body>
+
 </html>
