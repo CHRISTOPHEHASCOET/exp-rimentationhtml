@@ -117,7 +117,7 @@
     }
 
     /* TABLEAU DES VOLS */
-    .flight-board {
+    /* .flight-board {
       background: #050a12;
       border-radius: 8px;
       padding: 1.2rem;
@@ -127,9 +127,9 @@
 
     .flight-table {
       width: auto;
-      border-collapse: collapse;
-      table-layout: fixed;
-      /* EMPÊCHE LE TREMBLEMENT */
+      border-collapse: separate;
+      border-spacing: 0 6px;
+    
     }
 
     .flight-table th {
@@ -147,35 +147,103 @@
       vertical-align: middle;
       overflow: hidden;
       text-align: left;
+    } */
+    /* .flight-table {
+  width: 100%;
+  border-collapse: collapse;
+} */
+
+    /* On empêche le clipping */
+    /* .flight-table td {
+  overflow: visible;
+} */
+
+    /* Largeurs logiques basées sur le nombre de flaps */
+    /* .col-vol       .word { min-width: 8.5rem; }
+.col-destination .word { min-width: 32rem; }
+.col-porte     .word { min-width: 4.5rem; }
+.col-statut    .word { min-width: 18rem; } */
+
+    /* Séparateurs */
+    /* .flight-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.flight-table tbody tr:last-child {
+  border-bottom: none;
+} */
+
+    /* === FLIGHT BOARD === */
+    .flight-board {
+      background: #050a12;
+      border-radius: 10px;
+      padding: 1.2rem;
+      box-shadow:
+        inset 0 0 25px rgba(0, 0, 0, 0.9),
+        0 15px 40px rgba(0, 0, 0, 0.6);
     }
 
+    /* === TABLE === */
+    .flight-table {
+      width: auto;
+      /* ✅ norme W3C */
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      /* séparation visuelle des lignes */
+    }
 
-    /* VOL : petit contenu */
+    /* === HEADERS === */
+    .flight-table th {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #5f6b7a;
+      letter-spacing: 2px;
+      padding: 0 10px 10px;
+      text-align: left;
+    }
+
+    /* === ROWS === */
+    .flight-table tbody tr {
+      background: linear-gradient(180deg,
+          rgba(20, 28, 40, 0.95),
+          rgba(10, 15, 25, 0.95));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.8);
+    }
+
+    .flight-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* === CELLS === */
+    .flight-table td {
+      padding: 6px 10px;
+      white-space: nowrap;
+      /* IMPORTANT pour les flaps */
+    }
+
     .flight-table th:nth-child(1),
     .flight-table td:nth-child(1) {
       width: 12%;
     }
 
-    /* DESTINATION : contenu le plus long */
     .flight-table th:nth-child(2),
     .flight-table td:nth-child(2) {
       width: 48%;
     }
 
-    /* PORTE : très petit contenu */
     .flight-table th:nth-child(3),
     .flight-table td:nth-child(3) {
       width: 10%;
     }
 
-    /* STATUT : contenu long */
     .flight-table th:nth-child(4),
     .flight-table td:nth-child(4) {
       width: 30%;
     }
 
-
-    .flight-table th {
+    /* .flight-table th {
       font-family: var(--font-mono);
       font-size: 0.65rem;
       color: #4a5568;
@@ -190,18 +258,20 @@
 
     .flight-table tbody tr:hover {
       background: rgba(255, 255, 255, 0.04);
-    }
+    } */
 
     /* EFFET MECANIQUE DES LETTRES (FLAPS) */
     .word {
       display: inline-flex;
       gap: 1px;
       white-space: nowrap;
+      justify-content: flex-start;
+      overflow: hidden;
     }
 
 
 
-    /* .flap {
+    .flap {
       display: inline-block;
       width: 1.2rem;
       height: 1.7rem;
@@ -218,30 +288,8 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: 0;
 
-    } */
-    .flap {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      width: 1.2rem;
-      height: 1.85rem;
-
-      background: linear-gradient(180deg, #151a22 50%, #0a0d14 50%);
-      color: #fff;
-
-      font-family: var(--font-mono);
-      font-size: 1rem;
-      line-height: 1;
-
-      border-radius: 3px;
-      position: relative;
-      border: 1px solid rgba(0, 0, 0, 0.5);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-
-      font-variant-numeric: tabular-nums;
     }
-
+ 
 
 
     .flap::after {

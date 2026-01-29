@@ -1,380 +1,241 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Rajdhani:wght@600;700&display=swap"
-        rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <meta charset="utf-8">
+  <title>Flight Board · Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <style>
-        :root {
-            --bg-page: #0a0d14;
-            --bg-panel: #111820;
-            --primary-blue: #1f6fea;
-            --status-green: #40b950;
-            --text-main: #e6edf3;
-            --text-muted: #6b7280;
-            /* ✅ Ajoutée pour la date */
-            --font-mono: 'JetBrains Mono', monospace;
-            --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
-        }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
-        body {
-            background: var(--bg-main);
-            color: var(--text-main);
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
 
-        /* Barre supérieure décorative */
-        .top-strip {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            display: flex;
-            z-index: 10;
-        }
+  <style>
+    /* =====================
+       VARIABLES
+    ====================== */
+    :root {
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --panel-bg: #050a12;
+      --cell-bg: linear-gradient(180deg, #0e1520, #050a12);
+      --blue: #1f6fea;
+      --green: #40b950;
+      --text-main: #e6edf3;
+      --text-muted: #6b7280;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-ui: 'Rajdhani', sans-serif;
+    }
 
-        .strip-blue {
-            width: 20%;
-            background: var(--primary-blue);
-        }
+    /* =====================
+       BASE
+    ====================== */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+    }
 
-        .strip-green {
-            width: 10%;
-            background: var(--status-green);
-            margin-left: 5%;
-        }
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
 
-        header.site-header {
-            background-color: var(--bg-panel);
-            padding: 2rem 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
+    h1 {
+      font-size: 1.2rem;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
 
-        .nav-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: 260px 1fr 180px;
-            gap: 2rem;
-            align-items: center;
-        }
+    /* =====================
+       TABLE WRAPPER (RESPONSIVE)
+    ====================== */
+    .table-wrapper {
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
 
-        /* PILOTE */
-        .pilot-panel {
-            background: #1a222d;
-            padding: 1rem;
-            border-radius: 5px;
-            border-left: 4px solid var(--primary-blue);
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
+    /* =====================
+       TABLE
+    ====================== */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0.5rem;
+      min-width: 720px;
+    }
 
-        .pilot-avatar {
-            width: 55px;
-            height: 55px;
-            background: #000;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid #2f588b;
-        }
+    thead th {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-align: left;
+    }
 
-        .pilot-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    tbody tr {
+      cursor: pointer;
+    }
 
-        .pilot-name {
-            font-weight: 700;
-            font-size: 1rem;
-            display: block;
-            color: #fff;
-        }
+    tbody tr:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 4px;
+    }
 
-        .pilot-text>div span:first-child {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--status-green);
-            border-radius: 50%;
-            margin-right: 6px;
-            box-shadow: 0 0 6px var(--status-green);
-        }
+    td {
+      background: var(--cell-bg);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 6px 8px;
+    }
 
-        /* TABLEAU DES VOLS */
-        .board-wrapper {
-            width: 100%;
-            max-width: var(--container-width);
-            padding: 10px;
-        }
+    /* =====================
+       SPLIT FLAPS
+    ====================== */
+    .word {
+      display: inline-flex;
+      gap: 2px;
+      white-space: nowrap;
+    }
 
-        .board {
-            background: #020308;
-            border: 6px solid #1e293b;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
-        }
+    .flap {
+      width: 1.2rem;
+      height: 1.7rem;
+      line-height: 1.7rem;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      background: linear-gradient(180deg, #151a22 50%, #0a0d14 50%);
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.6);
+      position: relative;
+      user-select: none;
+      font-variant-numeric: tabular-nums;
+    }
 
-        .header-row {
-            display: flex;
-            gap: var(--col-gap);
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--accent);
-            margin-bottom: 15px;
-        }
+    .flap::after {
+      content: "";
+      position: absolute;
+      inset: 50% 0 auto 0;
+      height: 1px;
+      background: rgba(0,0,0,0.6);
+    }
 
-        .col-head {
-            font-family: 'Oswald';
-            font-size: 14px;
-            letter-spacing: 2px;
-            color: var(--accent);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+    .row-green .flap {
+      color: var(--green);
+      text-shadow: 0 0 6px rgba(64,185,80,0.6);
+    }
 
-        .row {
-            display: flex;
-            gap: var(--col-gap);
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
+    .row-blue .flap {
+      color: var(--blue);
+      text-shadow: 0 0 6px rgba(31,111,234,0.6);
+    }
 
-        .c-vol {
-            width: 140px;
-        }
+    /* =====================
+       MEDIA QUERIES
+    ====================== */
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem;
+      }
 
-        .c-dest {
-            width: 500px;
-        }
-
-        .c-emb {
-            width: 120px;
-        }
-
-        .c-gate {
-            width: 80px;
-        }
-
-        .c-obs {
-            flex: 1;
-            text-align: right;
-        }
-
-        .split-word {
-            display: flex;
-            gap: var(--gap-char);
-        }
-
-        .flap {
-            width: var(--tile-w);
-            height: var(--tile-h);
-            background-color: var(--primary);
-            border-radius: 2px;
-            color: #fff;
-            font-family: 'Oswald';
-            font-size: 20px;
-            text-align: center;
-            line-height: var(--tile-h);
-            position: relative;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7);
-        }
-
-        .flap::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 50%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-        }
-
-        .c-obs .flap {
-            color: var(--accent-bright);
-        }
-
-        /* Couleurs de statut */
-        .row-green .flap {
-            color: var(--status-green);
-            text-shadow: 0 0 8px rgba(64, 185, 80, 0.6);
-        }
-
-        .row-blue .flap {
-            color: var(--primary-blue);
-            text-shadow: 0 0 8px rgba(31, 111, 234, 0.6);
-        }
-
-        /* HORLOGE */
-        .time-module {
-            text-align: right;
-            font-family: var(--font-mono);
-        }
-
-        .clock {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #fff;
-            line-height: 1;
-        }
-
-        .date {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-top: 5px;
-        }
-
-        /* CONTENU PRINCIPAL */
-        .terminal-wrapper {
-            max-width: 1300px;
-            margin: 5rem auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            padding: 0 2rem;
-        }
-
-        .terminal-panel {
-            border: 3px solid var(--status-green);
-            background: rgba(16, 30, 56, 0.4);
-            padding: 2.5rem;
-            border-radius: 18px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-        }
-    </style>
+      table {
+        min-width: 640px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="nav-inner">
-            <!-- PILOTE -->
-            <section class="pilot-panel">
-                <div class="pilot-avatar">
-                    <img src="pilote christophehascoet3.png" alt="Pilote" />
-                </div>
-                <div class="pilot-text">
-                    <span>CMD BORD</span>
-                    <span class="pilot-name">VOTRE NOM</span>
-                    <div>
-                        <span></span> En service
-                    </div>
-                </div>
-            </section>
 
-            <!-- TABLEAU DES VOLS -->
-            <nav class="board-wrapper">
-                <table class="board">
-                    <thead class="header-row">
-                        <tr>
-                            <th class="col-head c-vol">VOL</th>
-                            <th class="col-head c-dest">DESTINATION</th>
-                            <th class="col-head c-gate">PORTE</th>
-                            <th class="col-head c-stat">STATUT</th>
-                        </tr>
-                    </thead>
-                    <tbody id="board-content">
-                        <!-- Injecté par le Script -->
-                    </tbody>
+<main>
+  <h1>FLIGHT BOARD</h1>
 
-                </table>
-            </nav>
+  <div class="table-wrapper">
+    <table aria-label="Tableau des sections du portfolio">
+      <thead>
+        <tr>
+          <th scope="col">VOL</th>
+          <th scope="col">DESTINATION</th>
+          <th scope="col">PORTE</th>
+          <th scope="col">STATUT</th>
+        </tr>
+      </thead>
+      <tbody id="flight-body"></tbody>
+    </table>
+  </div>
+</main>
 
-            <!-- HORLOGE -->
-            <aside class="time-module">
-                <div id="clock" class="clock">00:00</div>
-                <div id="date" class="date">01 JAN 2025</div>
-            </aside>
-        </div>
-        <script>
-            /* =========================
-               DONNÉES DU TABLEAU
-            ========================= */
-            const entries = [
-                { vol: "CH2025", dest: "PORTFOLIO DEVELOPPEUR", gate: "A4", stat: "OUVERT", cls: "row-green" },
-                { vol: "APP42", dest: "APPLICATION BANCAIRE", gate: "B2", stat: "EMBARQUEMENT", cls: "row-blue" },
-                { vol: "ECO03", dest: "SITE E-COMMERCE", gate: "C3", stat: "A L'HEURE", cls: "row-green" },
-                { vol: "CKW01", dest: "COOK'N WAY", gate: "D1", stat: "TERMINE", cls: "row-blue" }
-            ];
+<script>
+  const DATA = [
+    { v: 'PT-987', d: 'ACCUEIL', g: 'T0', s: 'OUVERT', c: 'row-green', url: 'accueil.html' },
+    { v: 'PJ-251', d: 'HALL DEPARTS', g: 'H1', s: 'EMBARQUEMENT', c: 'row-blue', url: 'depart.html' },
+    { v: 'PK-365', d: 'PASSEPORT PILOTE', g: 'J2', s: "A L'HEURE", c: 'row-green', url: 'passeport.html' },
+    { v: 'PT-987', d: 'ACCUEIL', g: 'T0', s: 'OUVERT', c: 'row-green', url: 'accueil.html' },
+    { v: 'PJ-251', d: 'HALL DEPARTS', g: 'H1', s: 'EMBARQUEMENT', c: 'row-blue', url: 'depart.html' },
+    { v: 'PK-365', d: 'PASSEPORT PILOTE', g: 'J2', s: "A L'HEURE", c: 'row-green', url: 'passeport.html' },
+    { v: 'PT-987', d: 'ACCUEIL', g: 'T0', s: 'OUVERT', c: 'row-green', url: 'accueil.html' }
+  ];
 
-            const SLOTS = {
-                vol: 6,
-                dest: 22,
-                gate: 3,
-                stat: 12
-            };
+  const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.'-";
+  const tbody = document.getElementById('flight-body');
 
-            const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '";
+  function createWord(text, length) {
+    return `<div class="word">${
+      text.padEnd(length).split('').map(c =>
+        `<span class="flap" data-char="${c}">${c === ' ' ? '&nbsp;' : c}</span>`
+      ).join('')
+    }</div>`;
+  }
 
-            /* =========================
-               GÉNÉRATION DES FLAPS
-            ========================= */
-            function createWord(text, count, colClass) {
-                const safe = (text || "").toUpperCase().padEnd(count, " ");
-                let html = `<div class="split-word ${colClass}">`;
-                for (let i = 0; i < count; i++) {
-                    html += `<div class="flap" data-char="${safe[i]}"></div>`;
-                }
-                html += `</div>`;
-                return html;
-            }
+  DATA.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.className = row.c;
+    tr.tabIndex = 0;
+    tr.setAttribute('role', 'link');
+    tr.dataset.url = row.url;
 
-            /* =========================
-               INJECTION DANS LE TABLEAU
-            ========================= */
-            const tbody = document.getElementById("board-content");
-
-            entries.forEach(item => {
-                const tr = document.createElement("tr");
-                tr.className = item.cls;
-
-                tr.innerHTML = `
-        <td class="c-vol">${createWord(item.vol, SLOTS.vol, "")}</td>
-        <td class="c-dest">${createWord(item.dest, SLOTS.dest, "")}</td>
-        <td class="c-gate">${createWord(item.gate, SLOTS.gate, "")}</td>
-        <td class="c-obs">${createWord(item.stat, SLOTS.stat, "")}</td>
+    tr.innerHTML = `
+      <td>${createWord(row.v, 6)}</td>
+      <td>${createWord(row.d, 22)}</td>
+      <td>${createWord(row.g, 3)}</td>
+      <td>${createWord(row.s, 14)}</td>
     `;
 
-                tbody.appendChild(tr);
-            });
+    tr.addEventListener('click', () => location.href = row.url);
+    tr.addEventListener('keydown', e => {
+      if (e.key === 'Enter') location.href = row.url;
+    });
 
-            /* =========================
-               ANIMATION FLAP
-            ========================= */
-            function startBoardAnimation() {
-                document.querySelectorAll(".flap").forEach(flap => {
-                    const target = flap.dataset.char;
-                    let i = 0;
-                    const max = 6 + Math.random() * 10;
+    tbody.appendChild(tr);
+  });
 
-                    const anim = setInterval(() => {
-                        flap.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
-                        if (++i > max) {
-                            clearInterval(anim);
-                            flap.textContent = target;
-                        }
-                    }, 45);
-                });
-            }
+  function animateFlaps() {
+    document.querySelectorAll('.flap').forEach(flap => {
+      const finalChar = flap.dataset.char;
+      if (finalChar === ' ') return;
 
-            window.addEventListener("load", startBoardAnimation);
-        </script>
+      let count = 0;
+      const max = 12 + Math.random() * 10;
+
+      const interval = setInterval(() => {
+        flap.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+        if (++count >= max) {
+          clearInterval(interval);
+          flap.textContent = finalChar;
+          gsap.from(flap, { rotationX: -90, duration: 0.3 });
+        }
+      }, 40);
+    });
+  }
+
+  window.addEventListener('load', animateFlaps);
+</script>
 
 </body>
-
 </html>
