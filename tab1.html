@@ -6,18 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flight Log · Portfolio Développeur Web</title>
 
-    <!-- SEO de base -->
-    <meta name="description"
-        content="Portfolio cockpit d’un chef de projet & développeur web junior. Expériences digitales pilotées comme un véritable plan de vol." />
+
+
 
     <!-- Polices -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
-        rel="stylesheet" />
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&display=swap"
+        rel="stylesheet">
 
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -70,9 +68,6 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
 
         body {
             background: var(--bg-main);
@@ -84,7 +79,10 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            margin: 0 auto;
+
         }
+
 
         a {
             color: inherit;
@@ -102,26 +100,20 @@
             flex-direction: column;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
+        .wrapper {
+            width: min(1180px, 100% - 32px);
+            margin-inline: auto;
         }
 
-        .label {
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
+
+
+
+
+
 
         /* ======================= NAV / HEADER ======================= */
-
         header.site-header {
-            background-color: var(--bg-panel);
+            background-color: #111820;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
             padding: 1.5rem 0;
             margin-bottom: 4rem;
@@ -130,12 +122,9 @@
         }
 
         .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
             display: grid;
-            grid-template-columns: 220px 1fr 150px;
-            gap: 1.75rem;
+            grid-template-columns: 220px 1fr 190px;
+            column-gap: 2rem;
             align-items: center;
             position: relative;
         }
@@ -145,7 +134,7 @@
             position: absolute;
             left: 0;
             right: 0;
-            top: 0;
+            top: -1.5rem;
             width: 20%;
             height: 5px;
             background: var(--primary-blue);
@@ -157,15 +146,21 @@
             position: absolute;
             left: 25%;
             right: 0;
-            top: 0;
+            top: -1.5rem;
             width: 10%;
             height: 5px;
             background: var(--status-green);
 
         }
 
-        /* PILOTE */
+        .nav-inner,
+        .footer-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
 
+        /* PILOTE */
         .pilot-panel {
             position: relative;
             background: #1a222d;
@@ -175,6 +170,8 @@
             flex-direction: column;
             gap: 0.5rem;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+            flex-shrink: 0;
+            transform: translateY(6px);
         }
 
         .pilot-panel::before {
@@ -223,14 +220,6 @@
             border-radius: inherit;
         }
 
-        .pilot-avatar svg {
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            inset: 0;
-            margin: auto;
-            color: var(--text-muted);
-        }
 
         .pilot-text {
             display: flex;
@@ -269,16 +258,17 @@
         }
 
         .dot.pulse {
-            animation: pulse 2s infinite;
+            animation: pulse 3s infinite;
         }
+
 
         @keyframes pulse {
             0% {
-                box-shadow: 0 0 0 0 rgba(64, 185, 80, 0.5);
+                box-shadow: 0 0 0 0 rgba(64, 185, 80, 0.4);
             }
 
             70% {
-                box-shadow: 0 0 0 6px rgba(64, 185, 80, 0);
+                box-shadow: 0 0 0 8px rgba(64, 185, 80, 0);
             }
 
             100% {
@@ -288,22 +278,36 @@
 
         /* TABLEAU DES VOLS (NAV) */
         .flight-board {
-            background: var(--bg-card);
+
+            justify-self: center;
+            /* centre dans la colonne de la grid */
+            margin: 0;
+            transform: none;
+            font-size: 0.92rem;
+            transform-origin: center;
+            background: linear-gradient(145deg, #101827, #0a101b);
             border-radius: 20px;
-            padding: 1.2rem;
-            border: 5px solid var(--bg-page);
-            /* box-shadow:
-        inset 0 0 25px rgba(0, 0, 0, 0.9),
-        0 15px 40px rgba(0, 0, 0, 0.6); */
-            box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+            padding: 0.8rem 0.9rem;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7), inset 0 0 18px rgba(0, 0, 0, 0.9);
+            position: relative;
         }
 
-        /* === TABLE === */
+
+
+        .flight-board::before {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            border-radius: 12px;
+            border: 1px solid rgba(140, 180, 255, 0.18);
+            pointer-events: none;
+        }
+
         .flight-table {
-            width: auto;
+            width: 100%;
             border-collapse: separate;
-            border-spacing: 0 2x;
-            /* séparation visuelle des lignes */
+            border-spacing: 0 2px;
         }
 
         /* === HEADERS === */
@@ -326,13 +330,14 @@
                 inset 0 -1px 0 rgba(0, 0, 0, 0.8);
         }
 
+
         .flight-table tbody tr:hover {
             background: rgba(255, 255, 255, 0.04);
         }
 
         /* === CELLS === */
         .flight-table td {
-            padding: 6px 10px;
+            padding: 2px 6px;
             white-space: nowrap;
         }
 
@@ -341,7 +346,7 @@
         }
 
         .col-destination .word {
-            min-width: 32rem;
+            min-width: 10rem;
         }
 
         .col-porte .word {
@@ -349,7 +354,7 @@
         }
 
         .col-statut .word {
-            min-width: 18rem;
+            min-width: 12rem;
         }
 
         /* === SEPARATEURS === */
@@ -358,10 +363,9 @@
         }
 
         .flight-table tbody tr:last-child {
-            border-bottom: none;
+            border-bottom: hidden;
         }
 
-        /* CODES / STATUT */
         .f-code {
             color: var(--accent-cyan);
             font-weight: 600;
@@ -369,29 +373,29 @@
 
         .f-gate {
             color: var(--muted);
-             font-weight: 600;
+            font-weight: 600;
         }
 
         .f-stat.open {
             color: var(--accent-soft);
-             font-weight: 600;
+            font-weight: 600;
         }
 
         .f-stat.boarding {
             color: var(--green);
-             font-weight: 600;
+            font-weight: 600;
         }
 
         .f-stat.ontime {
             color: var(--primary-blue);
-             font-weight: 600;
+            font-weight: 600;
         }
 
         /* SPLIT FLAP */
         .word {
-            display: inline-flex;
-            gap: 2px;
-            padding: 3px 4px;
+            display: flex;
+            gap: 0px;
+            padding: 2px 3px;
             background: linear-gradient(180deg,
                     #0c1118,
                     #050a12);
@@ -403,10 +407,10 @@
         }
 
         .flap {
-            display: inline-block;
-            width: 1.2rem;
-            height: 1.7rem;
-            line-height: 1.7rem;
+
+            width: 1rem;
+            height: 1rem;
+            line-height: 1rem;
             text-align: center;
             background: linear-gradient(180deg, #1b2230 0%, #0a0d14 50%, #05070d 100%);
             border: 1px solid rgba(0, 0, 0, 0.8);
@@ -430,41 +434,182 @@
             background: rgba(0, 0, 0, 0.7);
         }
 
-        /* HEURE / DATE */
 
-        aside.time-module {
-            font-family: var(--font-mono);
+        /* ======================= 2. MONTRE CASIO F-91W RÉALISTE ======================= */
+
+        /* CONTENEUR PRINCIPAL AVEC MARGE POUR L'ESPACEMENT */
+        .time-module {
+            margin-left: 0;
+            margin-top: 4px;
+            flex-shrink: 0;
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
             justify-content: center;
+            align-items: center;
+
         }
 
-        .digital-clock {
-            font-size: 2.4rem;
-            font-weight: 700;
+        /* .time-module {
+            margin-left: 0;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(4px);
+        } */
+
+        .casio-watch {
+            box-shadow: 0 0 0 rgba(30, 144, 255, 0.0);
+            animation: watchPulse 6s infinite ease-in-out;
+        }
+
+        @keyframes watchPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(30, 144, 255, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 18px rgba(30, 144, 255, 0.35);
+            }
+        }
+
+        /* BOITIER NOIR */
+        .casio-f91w {
+            background: #181818;
+            padding: 10px 14px;
+            border-radius: 12px;
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.8),
+                inset 0 2px 5px rgba(255, 255, 255, 0.05);
+            border: 1px solid #000;
+            position: relative;
+            width: 150px;
+            font-family: Arial, sans-serif;
+            transform: none;
+            transform-origin: center;
+        }
+
+        /* TEXTES SUR LE BOITIER */
+        .watch-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            padding: 0 4px;
+        }
+
+        .watch-header span {
+            font-size: 9px;
+            color: #ccc;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .watch-header .model {
+            font-style: italic;
+            color: #a49666;
+            /* Or pâle */
+        }
+
+        .watch-footer {
+            text-align: center;
+            margin-top: 4px;
+            font-size: 8px;
+            color: #ccc;
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .wr-box {
+            border: 1px solid #a61c1c;
+            color: #a61c1c;
+            padding: 0 2px;
+            font-weight: bold;
+        }
+
+        /* CADRE ECRAN (LIGNE BLEUE) */
+        .watch-screen-border {
+            border: 2px solid #1e56a0;
+            /* Bleu Casio */
+            border-radius: 6px;
+            padding: 2px;
+            /* Petite marge noire entre bleu et écran */
+            background: #000;
+        }
+
+        /* ECRAN LCD GRIS */
+        .lcd-screen {
+            background: #c2c9b9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            /* au lieu de 'Share Tech Mono' */
+            color: #1a1a1a;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* INFOS ECRAN */
+        .lcd-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin-bottom: 0px;
+        }
+
+        .lcd-mode {
+            font-size: 9px;
+            align-self: flex-start;
+            margin-top: 2px;
+        }
+
+        .lcd-date-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .lcd-main-time {
+            font-size: 28px;
             line-height: 1;
-            letter-spacing: 2px;
-            margin-bottom: 0.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: baseline;
         }
 
-        .digital-date {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-bottom: 0.4rem;
+        #casio-seconds {
+            font-size: 14px;
+            margin-left: 3px;
         }
 
-        .timezone {
-            display: inline-block;
-            background: #0a0d14;
-            border-radius: 999px;
-            border: 1px solid #154287;
-            padding: 2px 8px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
+        /* BOUTONS PHYSIQUES */
+        .button {
+            position: absolute;
+            width: 3px;
+            height: 6px;
+            background: #333;
+            border-radius: 1px;
         }
 
-        @media (max-width: 768px) {
+        .btn-left-top {
+            left: -3px;
+            top: 25%;
+        }
+
+        .btn-left-bottom {
+            left: -3px;
+            bottom: 25%;
+        }
+
+        .btn-right-bottom {
+            right: -3px;
+            bottom: 25%;
+        }
+
+        /* @media (max-width: 768px) {
             nav.flight-board {
                 overflow-x: auto;
             }
@@ -477,239 +622,144 @@
             .flight-table td {
                 padding: 0.3rem 0.45rem;
             }
+        } */
+        @media (max-width: 1100px) {
+            .nav-inner {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .nav-inner::before,
+            .nav-inner::after {
+                display: none;
+            }
         }
 
         /* ======================= MAIN / MISSIONS ======================= */
 
-        .terminal-wrapper {
-            max-width: 1300px;
-            margin: 6rem auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            padding: 0 1.5rem;
-        }
 
-        .terminal-panel {
-            border: 3px solid var(--border-green);
-            border-radius: 18px;
-            padding: 2.2rem;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-main);
-            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
-        }
-
-        .terminal-panel-full {
-            justify-content: space-between;
-        }
-
-        .panel-header .label {
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            color: var(--text-muted);
-        }
-
-        h1 {
-            margin: 0.8rem 0 1.2rem;
-            line-height: 1.25;
-            font-size: 2rem;
-        }
-
-        .intro,
-        .long-text {
-            color: var(--accent-cyan);
-            line-height: 1.55;
-            font-size: 0.95rem;
-        }
-
-        .intro span,
-        .long-text span {
-            color: var(--clr-accent);
-        }
-
-        .flight-info {
-            margin: 1.5rem 0 0.8rem;
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            background: rgba(63, 185, 80, 0.15);
-            border: 1px solid var(--border-green);
-            padding: 0.4rem 0.8rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-family: var(--font-mono);
-        }
-
-        .meta,
-        .destination span {
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-        }
-
-        .destination {
-            margin-bottom: 1rem;
-        }
-
-        .cta {
-            margin: 1.8rem 0;
-            align-self: flex-start;
-            background: linear-gradient(180deg, #46c768, #2e9e4f);
-            border: none;
-            color: #06210f;
-            font-weight: 600;
-            padding: 0.9rem 1.6rem;
-            border-radius: 999px;
-            cursor: pointer;
-            font-family: var(--font-heading);
-            font-size: 0.9rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .cta:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 25px rgba(46, 158, 79, 0.5);
-        }
-
-        .panel-footer {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: auto;
-            flex-wrap: wrap;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin: 1.5rem 0;
-        }
-
-        .block h3 {
-            margin: 0;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-
-        .block span {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-        }
-
-        .block p {
-            margin-top: 0.4rem;
-            font-size: 0.9rem;
-        }
-
-        .checklist {
-            display: flex;
-            gap: 0.7rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.2rem;
-        }
-
-        .chip {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 0.4rem 0.8rem;
-            border-radius: 999px;
-            font-size: 0.7rem;
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-        }
-
-        .seatbelt {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 1.5rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
 
         /* ======================= FIN DE PISTE ======================= */
 
         .runway-lights {
             position: relative;
             width: 100%;
-            height: 12px;
-            background-image: repeating-linear-gradient(to right,
-                    #1e90ff 0px,
-                    #1e90ff 4px,
-                    transparent 4px,
-                    transparent 24px);
-            opacity: 0.9;
-            animation: runwayBlink 1.5s infinite ease-in-out;
+            height: 18px;
+            background: transparent;
+            overflow: hidden;
         }
 
-        @keyframes runwayBlink {
+        /* Ligne de points ronds */
+        .runway-lights::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 4px;
+            transform: translateY(-50%);
+            background-image: radial-gradient(circle, #1e90ff 2px, transparent 3px);
+            background-size: 26px 4px;
+            background-repeat: repeat-x;
+            opacity: 0.9;
+            animation: runwayDotsPulse 1.6s ease-in-out infinite;
+        }
+
+        /* Légère lueur globale */
+        .runway-lights::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.3), transparent 60%);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Animation des points */
+        @keyframes runwayDotsPulse {
             0% {
                 opacity: 0.4;
+                filter: drop-shadow(0 0 0px rgba(56, 189, 248, 0.0));
             }
 
             50% {
                 opacity: 1;
+                filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
             }
 
             100% {
                 opacity: 0.4;
+                filter: drop-shadow(0 0 0px rgba(56, 189, 248, 0.0));
             }
         }
 
         /* ======================= FOOTER ======================= */
-
         footer.site-footer {
             background: var(--bg-panel);
-            padding: 2rem 0 1.5rem;
-
+            padding: 2.2rem 0 1.7rem;
         }
 
         .footer-inner {
-            max-width: 1200px;
+            width: 1300px;
             margin: 0 auto;
-            padding: 0 2.5rem;
+            padding: 0 1.5rem;
         }
 
-        .control-tower {
+        /* Grille principale du footer */
+        .footer-top {
             display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 2rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: minmax(0, 240px) minmax(0, 1.8fr) minmax(0, 240px);
+            column-gap: 2.5rem;
+            row-gap: 0;
+            margin-bottom: 1.8rem;
         }
 
-        .tower-freq h2 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* Bloc générique */
+        .footer-block {
+            background: radial-gradient(circle at top, #111827, #020617);
+            border-radius: 16px;
+            border: 1px solid rgba(15, 23, 42, 0.9);
+            box-shadow:
+                0 14px 35px rgba(0, 0, 0, 0.85),
+                inset 0 0 14px rgba(0, 0, 0, 0.9);
+            padding: 1rem 1.2rem 1.1rem;
+        }
+
+        /* En-tête de bloc */
+        .footer-block-header {
+            margin-bottom: 0.6rem;
+        }
+
+        .footer-label {
             font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
             color: var(--text-muted);
-            margin-bottom: 0.4rem;
         }
 
-        .tower-freq .frequency {
-            font-size: 2.5rem;
+        /* Tour de contrôle */
+        .tower-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .tower-frequency {
+            font-size: 2.4rem;
             font-family: var(--font-mono);
             font-weight: 700;
             letter-spacing: -1px;
-            margin-bottom: 0.4rem;
             color: var(--text-main);
         }
 
-        .status-text {
+        .tower-sub {
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+        }
+
+        .tower-status {
             font-size: 0.8rem;
             color: var(--status-green);
             font-family: var(--font-mono);
@@ -718,97 +768,121 @@
             gap: 6px;
         }
 
-        .status-text .dot-static {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--status-green);
-            box-shadow: 0 0 10px rgba(64, 185, 80, 0.8);
-        }
-
-        .comm-channels {
-            background: radial-gradient(circle at center, #1a222d 0%, #05070a 100%);
-            border-radius: 15px;
-            border: 1px solid #11171f;
-            padding: 1.25rem 1.5rem 1.5rem;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
-        }
-
-        .comm-channels h2 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: var(--font-mono);
-            color: var(--primary-blue);
-            margin-bottom: 0.75rem;
-            text-align: center;
-        }
-
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
+        /* Comms grid */
+        .comms-grid {
             list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.8rem;
         }
 
-        .channel-btn {
-            background: #1c2533;
-            border: 1px solid #11171f;
+        .comms-item {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.7rem;
+            border-radius: 10px;
+            border: 1px solid #11171f;
+            background: #0b1220;
+            text-decoration: none;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s ease;
+        }
+
+        .comms-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.3), #020617);
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.4rem 0.5rem;
-            text-decoration: none;
-            transition: border-color 0.3s, background 0.3s, transform 0.3s;
-            cursor: pointer;
-            border-radius: 10px;
         }
 
-        .channel-btn svg {
-            width: 24px;
-            height: 24px;
+        .comms-icon svg {
+            width: 18px;
+            height: 18px;
             color: var(--primary-blue);
-            margin-bottom: 0.5rem;
-            transition: transform 0.6s ease, color 0.3s ease;
+            transition: transform 0.35s ease, color 0.25s ease;
         }
 
-        .channel-btn span {
-            font-size: 0.7rem;
+        .comms-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comms-label {
             font-family: var(--font-mono);
-            color: #2f588b;
+            font-size: 0.7rem;
+            color: var(--text-main);
         }
 
-        .channel-btn:hover {
+        .comms-sub {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        /* Survol des comms */
+        .comms-item:hover {
             border-color: var(--primary-blue);
-            background: #0b121e;
-            transform: translateY(-2px);
+            background: #020617;
+            transform: translateY(-1px);
         }
 
-        .channel-btn:hover svg {
+        .comms-item:hover .comms-icon svg {
             transform: rotate(360deg);
             color: var(--text-main);
         }
 
-        .channel-btn:hover span {
-            color: var(--text-main);
+        /* Bloc clearance */
+        .clearance-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100%;
         }
 
-        .clearance {
-            text-align: right;
+        .clearance-text {
             font-family: var(--font-mono);
             color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.4;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            text-align: right;
         }
 
-        .clearance h2 {
-            font-size: 0.85rem;
+        /* CTA clearance améliorée */
+        .cta-clearance {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.7rem 1.6rem;
+            border: 1px solid #1e90ff;
+            border-radius: 999px;
+            text-decoration: none;
+            color: #d8e3ec;
+            letter-spacing: 0.12em;
+            font-size: 0.78rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.4rem;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
 
+        .cta-clearance span {
+            font-size: 0.6rem;
+            opacity: 0.65;
+            margin-top: 0.25rem;
+        }
+
+        .cta-clearance:hover {
+            background: rgba(30, 144, 255, 0.12);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.7);
+        }
+
+        /* Bas de footer */
         .footer-bottom {
             border-top: 1px solid #154287;
             padding-top: 0.8rem;
@@ -828,6 +902,19 @@
             background: #e5533d;
             border-radius: 50%;
             margin-right: 5px;
+        }
+
+        /* Media queries footer */
+        @media (max-width: 1024px) {
+            .footer-top {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .comms-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* ======================= Responsive ======================= */
@@ -873,21 +960,18 @@
 </head>
 
 <body>
+
+
+
     <!-- ======================= NAV / HEADER ======================= -->
     <header class="site-header" role="banner">
         <div class="nav-inner" aria-label="En-tête cockpit">
-            <!-- Pilote -->
             <section class="pilot-panel" aria-labelledby="pilot-name">
                 <p class="pilot-role">Commandant de bord</p>
 
                 <div class="pilot-main">
                     <figure class="pilot-avatar">
-                        <img src="pilote christophehascoet3.png" alt="Portrait du pilote" class="pilot-photo" />
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                            aria-hidden="true">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                        <img src="pilote-christophehascoet3.png" alt="Portrait du pilote" class="pilot-photo" />
                     </figure>
 
                     <div class="pilot-text">
@@ -912,65 +996,89 @@
                             <th>STATUT</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        <tr class="flight-row active">
+                        <tr class="flight-row active" data-url="index.html">
                             <td class="f-code">PF-000</td>
                             <td class="f-dest">ACCUEIL</td>
                             <td class="f-gate">T0</td>
                             <td class="f-stat open">OUVERT</td>
                         </tr>
 
-                        <tr class="flight-row">
+                        <tr class="flight-row" data-url="depart.html">
                             <td class="f-code">PF-001</td>
                             <td class="f-dest">HALL DES DÉPARTS</td>
                             <td class="f-gate">A1</td>
                             <td class="f-stat boarding">EMBARQUEMENT</td>
                         </tr>
 
-                        <tr class="flight-row">
+                        <tr class="flight-row" data-url="passeport.html">
                             <td class="f-code">PF-002</td>
                             <td class="f-dest">PASSEPORT PILOTE</td>
                             <td class="f-gate">B2</td>
-                            <td class="f-stat ontime">À L’HEURE</td>
+                            <td class="f-stat ontime">À L'HEURE</td>
                         </tr>
 
-                        <tr class="flight-row">
+                        <tr class="flight-row" data-url="plan-de-vol.html">
                             <td class="f-code">PF-003</td>
                             <td class="f-dest">PLAN DE VOL</td>
                             <td class="f-gate">C3</td>
-                            <td class="f-stat ontime">À L’HEURE</td>
+                            <td class="f-stat ontime">À L'HEURE</td>
                         </tr>
 
-                        <tr class="flight-row">
-                            <td class="f-code">PF-003</td>
+                        <tr class="flight-row" data-url="embarquement.html">
+                            <td class="f-code">PF-004</td>
                             <td class="f-dest">PORTE D'EMBARQUEMENT</td>
                             <td class="f-gate">C3</td>
-                            <td class="f-stat ontime">À L’HEURE</td>
+                            <td class="f-stat ontime">À L'HEURE</td>
                         </tr>
 
-                        <tr class="flight-row">
-                            <td class="f-code">PF-003</td>
+                        <tr class="flight-row" data-url="cockpit.html">
+                            <td class="f-code">PF-005</td>
                             <td class="f-dest">POSTE DE PILOTAGE</td>
                             <td class="f-gate">C3</td>
-                            <td class="f-stat ontime">À L’HEURE</td>
+                            <td class="f-stat ontime">À L'HEURE</td>
                         </tr>
 
-                        <tr class="flight-row">
-                            <td class="f-code">PF-003</td>
+                        <tr class="flight-row" data-url="tour-de-controle.html">
+                            <td class="f-code">PF-006</td>
                             <td class="f-dest">TOUR DE CONTRÔLE</td>
                             <td class="f-gate">C3</td>
-                            <td class="f-stat ontime">À L’HEURE</td>
+                            <td class="f-stat ontime">À L'HEURE</td>
                         </tr>
                     </tbody>
                 </table>
             </nav>
 
-            <!-- Heure / date -->
-            <aside class="time-module" aria-label="Heure locale">
-                <p id="clock" class="digital-clock" aria-live="polite">00:00</p>
-                <p id="date" class="digital-date">01 JAN 2024</p>
-                <p class="timezone">UTC+1 / CDG</p>
+            <aside class="time-module">
+                <div class="casio-f91w">
+                    <div class="watch-header">
+                        <span>CASIO</span>
+                        <span class="model">F-91W</span>
+                    </div>
+                    <div class="watch-screen-border">
+                        <div class="lcd-screen">
+                            <div class="lcd-top">
+                                <span class="lcd-mode">24H</span>
+                                <div class="lcd-date-group">
+                                    <span id="casio-day">MO</span>
+                                    <span id="casio-date">30</span>
+                                </div>
+                            </div>
+                            <div class="lcd-main-time">
+                                <span id="casio-time">10:58</span>
+                                <span id="casio-seconds">50</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="watch-footer">
+                        <span>WATER</span>
+                        <span class="wr-box">WR</span>
+                        <span>RESIST</span>
+                    </div>
+                    <div class="button btn-left-top"></div>
+                    <div class="button btn-left-bottom"></div>
+                    <div class="button btn-right-bottom"></div>
+                </div>
             </aside>
         </div>
     </header>
@@ -978,118 +1086,226 @@
     <!-- ======================= MAIN ======================= -->
 
 
-    <!-- ======================= FOOTER ======================= -->
+
+    <!-- ======================= FIN DE PISTE ======================= -->
     <div class="runway-lights" id="runwayLights" aria-hidden="true"></div>
 
+    <!-- ======================= FOOTER ======================= -->
     <footer class="site-footer" role="contentinfo">
         <div class="footer-inner">
-            <section class="control-tower" aria-label="Zone de contrôle et communication">
-                <!-- Tour de contrôle -->
-                <section class="tower-freq" aria-label="Fréquence tour de contrôle">
-                    <h2>Tour de contrôle</h2>
-                    <p class="frequency">118.700</p>
-                    <p class="status-text">
-                        <span class="dot-static" aria-hidden="true"></span>
-                        Fréquence active
-                    </p>
+
+            <section class="footer-top" aria-label="Zone de contrôle et communication">
+                <!-- Bloc Tour de contrôle -->
+                <section class="footer-block tower" aria-label="Fréquence tour de contrôle">
+                    <header class="footer-block-header">
+                        <p class="footer-label">Tour de contrôle</p>
+                    </header>
+                    <div class="tower-main">
+                        <p class="tower-frequency">118.700</p>
+                        <p class="tower-sub">CDG · PRIMARY CHANNEL</p>
+                        <p class="tower-status">
+                            <span class="dot-static" aria-hidden="true"></span>
+                            Fréquence active
+                        </p>
+                    </div>
                 </section>
 
-                <!-- Canaux de communication -->
-                <section class="comm-channels" aria-label="Canaux de communication">
-                    <h2>Canaux de communication</h2>
-                    <ul class="channel-grid">
+                <!-- Bloc Canaux de communication -->
+                <section class="footer-block comms" aria-label="Canaux de communication">
+                    <header class="footer-block-header">
+                        <p class="footer-label">Canaux de communication</p>
+                    </header>
+                    <ul class="comms-grid">
                         <li>
-                            <a href="#" class="channel-btn" aria-label="Contact par email">
-                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                    <path
-                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                    </path>
-                                    <polyline points="22,6 12,13 2,6"></polyline>
-                                </svg>
-                                <span>EMAIL</span>
+                            <a href="#" class="comms-item" aria-label="Contact par email">
+                                <span class="comms-icon">
+                                    <!-- Email -->
+                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
+                                        <path
+                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                                        </path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <span class="comms-text">
+                                    <span class="comms-label">Email</span>
+                                    <span class="comms-sub">Cabine / Direct</span>
+                                </span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="channel-btn" aria-label="Profil LinkedIn">
-                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                    <path
-                                        d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
-                                    </path>
-                                    <rect x="2" y="9" width="4" height="12"></rect>
-                                    <circle cx="4" cy="4" r="2"></circle>
-                                </svg>
-                                <span>LINKEDIN</span>
+                            <a href="#" class="comms-item" aria-label="Profil LinkedIn">
+                                <span class="comms-icon">
+                                    <!-- LinkedIn -->
+                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
+                                        <path
+                                            d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
+                                        </path>
+                                        <rect x="2" y="9" width="4" height="12"></rect>
+                                        <circle cx="4" cy="4" r="2"></circle>
+                                    </svg>
+                                </span>
+                                <span class="comms-text">
+                                    <span class="comms-label">LinkedIn</span>
+                                    <span class="comms-sub">Contrôle trafic pro</span>
+                                </span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="channel-btn" aria-label="Profil GitHub">
-                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                    <path
-                                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-                                    </path>
-                                </svg>
-                                <span>GITHUB</span>
+                            <a href="#" class="comms-item" aria-label="Profil GitHub">
+                                <span class="comms-icon">
+                                    <!-- GitHub -->
+                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61
+                           c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77
+                           5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48
+                           a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1
+                           A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78
+                           c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <span class="comms-text">
+                                    <span class="comms-label">GitHub</span>
+                                    <span class="comms-sub">Hangar projets</span>
+                                </span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="channel-btn" aria-label="Contact radio">
-                                <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                    <path
-                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                                    </path>
-                                </svg>
-                                <span>RADIO</span>
+                            <a href="#" class="comms-item" aria-label="Contact radio">
+                                <span class="comms-icon">
+                                    <!-- Radio -->
+                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+                           19.79 19.79 0 0 1-8.63-3.07
+                           19.5 19.5 0 0 1-6-6
+                           19.79 19.79 0 0 1-3.07-8.67
+                           A2 2 0 0 1 4.11 2h3
+                           a2 2 0 0 1 2 1.72
+                           12.84 12.84 0 0 0 .7 2.81
+                           2 2 0 0 1-.45 2.11L8.09 9.91
+                           a16 16 0 0 0 6 6l1.27-1.27
+                           a2 2 0 0 1 2.11-.45
+                           12.84 12.84 0 0 0 2.81.7
+                           A2 2 0 0 1 22 16.92z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <span class="comms-text">
+                                    <span class="comms-label">Radio</span>
+                                    <span class="comms-sub">Contact direct tour</span>
+                                </span>
                             </a>
                         </li>
                     </ul>
                 </section>
 
-                <!-- Clearance -->
-                <section class="clearance" aria-label="Autorisation de carrière">
-                    <h2>Clearance</h2>
-                    <p>CLR TO CAREER VIA<br />PORTFOLIO DIRECT</p>
+                <!-- Bloc Clearance -->
+                <section class="footer-block clearance" aria-label="Autorisation de carrière">
+                    <header class="footer-block-header">
+                        <p class="footer-label">Clearance</p>
+                    </header>
+                    <div class="clearance-main">
+                        <p class="clearance-text">
+                            CLR TO CAREER VIA<br>
+                            PORTFOLIO DIRECT
+                        </p>
+                        <a class="cta-clearance" href="#flight-plan">
+                            REQUEST CLEARANCE
+                            <span>Review flight plan &amp; credentials</span>
+                        </a>
+                    </div>
                 </section>
             </section>
 
+            <!-- Ligne inférieure -->
             <div class="footer-bottom">
-                <p><span class="rec-dot"></span>REC · Enregistreur de données de vol actif</p>
+                <p>
+                    <span class="rec-dot"></span>
+                    REC · Enregistreur de données de vol actif
+                </p>
                 <p>© 2025 — Cleared for Takeoff</p>
             </div>
+
         </div>
     </footer>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <!-- ======================= Script ======================= -->
+
     <script type="module">
         /* =========================
-           HORLOGE (OK)
-        ========================= */
-        function updateTime() {
+      HORLOGE CASIO F-91W
+   ========================= */
+        function updateCasio() {
             const now = new Date();
 
-            document.getElementById("clock").textContent =
-                now.toLocaleTimeString("fr-FR", {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                });
+            // Heure (ex: 22:45)
+            const timeStr = now.toLocaleTimeString("fr-FR", {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
 
-            document.getElementById("date").textContent =
-                now.toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric"
-                }).toUpperCase();
+            // Secondes (ex: 33)
+            const secStr = now.getSeconds().toString().padStart(2, '0');
+
+            // Jour (ex: LU, MA...) - On prend les 2 premières lettres en Anglais pour le style Casio
+            const dayStr = now.toLocaleDateString("en-US", { weekday: "short" }).substring(0, 2).toUpperCase();
+
+            // Date (ex: 30)
+            const dateStr = now.getDate();
+
+            // Mise à jour DOM
+            document.getElementById("casio-time").textContent = timeStr;
+            document.getElementById("casio-seconds").textContent = secStr;
+            document.getElementById("casio-day").textContent = dayStr;
+            document.getElementById("casio-date").textContent = dateStr;
         }
 
-        updateTime();
-        setInterval(updateTime, 1000);
+        setInterval(updateCasio, 1000);
+        updateCasio();
+
 
         /* =========================
-           SPLIT-FLAP RÉALISTE
+           SPLIT-FLAP
+           - remplissage forcé de chaque cellule
+           - animation GSAP
         ========================= */
-        const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.'-";
+
+        const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.’’-";
+
+        // Largeurs fixes par type de cellule pour éviter les trous
+        const COLUMN_WIDTHS = {
+            "f-code": 7,   // PF-000  (6/7 chars)
+            "f-dest": 22,  // ACCUEIL / HALL DES DÉPARTS...
+            "f-gate": 3,   // T0 / A1 / C3
+            "f-stat": 14   // OUVERT / À L'HEURE / EMBARQUEMENT
+        };
+
+        function getTargetWidth(cell) {
+            for (const cls of cell.classList) {
+                if (COLUMN_WIDTHS[cls]) return COLUMN_WIDTHS[cls];
+            }
+            // par défaut, si aucune classe connue
+            return 15;
+        }
 
         function splitCell(cell) {
-            const text = cell.textContent.trim().toUpperCase();
+            const raw = cell.textContent;
+            let text = raw.toUpperCase();
+
+            const targetWidth = getTargetWidth(cell);
+
+            // Tronquer si trop long
+            if (text.length > targetWidth) {
+                text = text.slice(0, targetWidth);
+            }
+            // Compléter avec des espaces si trop court
+            if (text.length < targetWidth) {
+                text = text.padEnd(targetWidth, " ");
+            }
+
             cell.textContent = "";
 
             const word = document.createElement("span");
@@ -1098,8 +1314,8 @@
             [...text].forEach(char => {
                 const flap = document.createElement("span");
                 flap.className = "flap";
-                flap.dataset.char = char;
-                flap.textContent = " ";
+                flap.dataset.char = char;   // même les espaces
+                flap.textContent = " ";     // part de vide pour l’anim
                 word.appendChild(flap);
             });
 
@@ -1108,6 +1324,8 @@
 
         function flipFlap(flap) {
             const target = flap.dataset.char;
+
+            // petite animation mécanique
             const flips = 6 + Math.floor(Math.random() * 5);
             let count = 0;
 
@@ -1134,9 +1352,11 @@
         /* =========================
            INIT TABLEAU
         ========================= */
-        document.querySelectorAll(".flight-table td").forEach(splitCell);
 
-        /* RÉVÉLATION LIGNE PAR LIGNE */
+        // 1) transformer chaque cellule en mot de flaps
+        document.querySelectorAll(".flight-table tbody td").forEach(splitCell);
+
+        // 2) animation initiale en cascade
         document.querySelectorAll(".flight-row").forEach((row, rowIndex) => {
             row.querySelectorAll(".flap").forEach((flap, i) => {
                 gsap.delayedCall(
@@ -1146,17 +1366,42 @@
             });
         });
 
-        /* RE-ANIMATION AU CLIC */
+        /* =========================
+           CLIC SUR LIGNE = ANIM + NAVIGATION
+        ========================= */
+
         document.querySelectorAll(".flight-row").forEach(row => {
-            row.addEventListener("click", () => {
+            // accessibilité clavier
+            row.setAttribute("tabindex", "0");
+            row.style.cursor = "pointer";
+
+            function triggerRow() {
+                const url = row.dataset.url;
+
+                // relance l’animation sur la ligne
                 row.querySelectorAll(".flap").forEach((flap, i) => {
                     gsap.delayedCall(i * 0.03, () => flipFlap(flap));
                 });
+
+                if (url) {
+                    // petit délai pour voir le flip avant de changer de page
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 450);
+                }
+            }
+
+            row.addEventListener("click", triggerRow);
+
+            row.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    triggerRow();
+                }
             });
         });
+
     </script>
-
-
 </body>
 
 </html>
