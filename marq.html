@@ -9,6 +9,8 @@
     <meta name="description"
         content="Portfolio développeur web interactif — Flight Log avec split-flap, Casio F-91W et tableau de vols animé.">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -91,6 +93,14 @@
             overflow-x: hidden;
         }
 
+        body,
+        .passport-wrapper,
+        .passport-book,
+        .passport-page {
+            background: radial-gradient(circle at top, #1b3957, #050b10 60%);
+        }
+
+
         /* ===========================
    HEADER
    =========================== */
@@ -100,6 +110,7 @@
             box-shadow: var(--shadow-soft);
             padding: 1.5rem 0;
             margin-bottom: 2.5rem;
+
         }
 
         .header__inner {
@@ -108,8 +119,9 @@
             padding: 0 1.5rem;
             display: grid;
             grid-template-columns: 220px 1fr 190px;
-            gap: 2rem;
             align-items: center;
+            max-width: 1100px;
+            gap: 2rem;
             position: relative;
         }
 
@@ -245,6 +257,7 @@
             border: 2px solid rgba(0, 0, 0, 0.85);
             box-shadow: var(--shadow-strong), inset 0 0 18px rgba(0, 0, 0, 0.9);
             position: relative;
+            margin: 0 auto;
         }
 
         .flight-board::before {
@@ -284,16 +297,6 @@
         }
 
         /* LIGNES */
-        /* .flight-row {
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            transition: background 0.3s ease;
-            background: linear-gradient(180deg, #14203a, #0a0f19);
-            background-size: 200% 200%;
-            animation: rowGlow 4s ease-in-out infinite;
-        } */
         .flight-row {
             background: linear-gradient(180deg,
                     #14203a,
@@ -335,8 +338,30 @@
         }
 
         .flight-row.active {
-            animation: rowGlow 4.5s ease-in-out infinite;
-            box-shadow: 0 0 14px rgba(30, 144, 255, 0.55);
+            outline: none;
+            box-shadow: none;
+        }
+
+        .flight-row.active .f-stat {
+            animation: blinkStatus 1.2s infinite ease-in-out;
+            color: #38bdf8;
+        }
+
+        @keyframes blinkStatus {
+            0% {
+                opacity: 1;
+                text-shadow: 0 0 6px rgba(30, 144, 255, 0.6);
+            }
+
+            50% {
+                opacity: 0.4;
+                text-shadow: none;
+            }
+
+            100% {
+                opacity: 1;
+                text-shadow: 0 0 6px rgba(30, 144, 255, 0.6);
+            }
         }
 
         /* COULEURS STATUTS */
@@ -418,25 +443,29 @@
             align-items: center;
         }
 
-        /* .casio__body {
-            width: 165px;
-            padding: 12px 16px;
-            background: #181818;
-            border-radius: 20px;
-            border: 1px solid #000;
-            box-shadow:0 8px 18px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.06);
-            position: relative;
-        } */
         .casio__body {
             width: 175px;
             padding: 13px 16px 12px;
-            background: radial-gradient(circle at top, #262626, #111111);
+            background: var(--bg-tab);
             border-radius: 18px;
-            border: 1px solid #000;
+            border: 5px solid var(--bg-tab);
             box-shadow:
                 0 10px 22px rgba(0, 0, 0, 0.9),
                 inset 0 2px 6px rgba(255, 255, 255, 0.05);
             position: relative;
+        }
+
+        .casio__body::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background-image:
+                linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.08),
+                    transparent 40%);
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         /* Texte boîtier */
@@ -464,7 +493,6 @@
 
         .casio__alarm {
             color: #facc15;
-            /* jaune/orange comme la vraie */
         }
 
 
@@ -482,12 +510,6 @@
         }
 
         /* Bordure bleue Casio */
-        /* .casio__screen-border {
-            border: 5px solid #1e56a0;
-            border-radius: 6px;
-            padding: 3px;
-            background: #000;
-        } */
         .casio__screen-border {
             border: 3px solid #1e56a0;
             border-radius: 8px;
@@ -498,36 +520,37 @@
                 inset 0 0 4px rgba(0, 0, 0, 0.7);
         }
 
+        .casio__screen-border::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border-radius: 6px;
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.18),
+                    transparent 45%);
+            pointer-events: none;
+        }
+
         /* Écran LCD */
-        /* .casio__screen {
-            background: linear-gradient(180deg, #cfd6b6, #aeb49a);
-            padding: 6px 8px;
-            border-radius: 4px;
-            font-family: var(--font-mono);
-            color: #1a1a1a;
-            box-shadow:
-                inset 0 2px 4px rgba(0, 0, 0, 0.25),
-                inset 0 -1px 2px rgba(255, 255, 255, 0.15);
-        } */
         .casio__screen {
             padding: 8px 10px;
             border-radius: 4px;
             font-family: var(--font-mono);
             color: #111827;
-            background: linear-gradient(180deg, #d7dfb5 0%, #b7c09a 100%);
+            background: linear-gradient(180deg, #d7dfb5 0%, #b7c09a 100%), repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 1px, transparent 1px, transparent 2px);
             box-shadow:
-                inset 0 2px 4px rgba(0, 0, 0, 0.25),
-                inset 0 -1px 2px rgba(255, 255, 255, 0.15);
+                inset 0 1px 2px rgba(0, 0, 0, 0.35),
+                inset 0 -1px 1px rgba(255, 255, 255, 0.12);
             display: flex;
             flex-direction: column;
             align-items: stretch;
-            filter: contrast(0.95) brightness(0.97);
+            filter: brightness(0.97) contrast(0.96) saturate(0.9);
         }
 
         /* Ligne du haut */
         .casio__top {
             display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            grid-template-columns: auto 1fr;
             align-items: center;
             width: 100%;
             font-size: 10px;
@@ -564,6 +587,20 @@
             margin-top: 2px;
         }
 
+        .casio__ampm {
+            font-size: 10px;
+            margin-left: 2px;
+            align-self: baseline;
+        }
+
+
+        .casio__time,
+        .casio__top {
+            text-shadow:
+                0 0 1px rgba(0, 0, 0, 0.25),
+                0 0 2px rgba(0, 0, 0, 0.15);
+        }
+
         #casio-seconds {
             font-size: 15px;
             margin-left: 4px;
@@ -597,7 +634,7 @@
             width: 4px;
             height: 8px;
             background: #afafaf;
-            border-radius: px;
+            border-radius: 2px;
         }
 
         .casio__btn--lt {
@@ -616,13 +653,196 @@
         }
 
         /* ===========================
+    main passeport
+   =========================== */
+
+        /* Passeport container */
+        .passport-wrapper {
+            margin: 0 auto;
+            width: 1000px;
+            max-width: 100%;
+            perspective: 2000px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+
+        }
+
+        /* Livre */
+        .passport-book {
+            width: 100%;
+            min-height: 600px;
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+            transform-style: preserve-3d;
+            transform: rotateY(-18deg) scale(0.96);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            opacity: 0;
+            border: 5px solid rgba(63, 185, 80, 0.9);
+            transition: transform 0.4s ease;
+        }
+
+        /* Animation au survol pour renforcer l'effet 3D */
+        .passport-wrapper:hover .passport-book {
+            transform: rotateY(-5deg) scale(1);
+        }
+
+        /* Pages */
+        .passport-page {
+            padding: 2.5rem 2.5rem;
+            min-height: 600px;
+            border: 1px solid rgba(63, 185, 80, 0.9);
+            overflow-y: auto;
+        }
+
+        .passport-page--left {
+            border-right: 1px solid rgba(63, 185, 80, 0.18);
+        }
+
+        .passport-label {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            background: radial-gradient(circle at top, #1b3957 0, #050b10 55%, #020407 100%);
+        }
+
+        /* Identité */
+        .passport-identity {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .passport-photo-frame {
+            width: 180px;
+            border-radius: 12px;
+            padding: 0.35rem;
+            background: rgba(12, 22, 34, 0.4);
+            border: 1px solid rgba(142, 197, 255, 0.4);
+        }
+
+        .passport-photo {
+            width: 100%;
+            height: 220px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .passport-photo-caption {
+            margin-top: 0.5rem;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .passport-details {
+            display: grid;
+            gap: 0.7rem;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .passport-detail-row {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.5rem;
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .passport-detail-label {
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .passport-detail-value {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        /* Sections */
+        .passport-section {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .passport-section-title {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--accent);
+            text-shadow: 0 0 6px rgba(31, 111, 234, 0.35);
+            margin-bottom: 0.7rem;
+        }
+
+        .passport-section-text {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 460px;
+            margin: 0 auto;
+        }
+
+        /* Tampon */
+        .passport-stamp {
+            margin-top: 1.5rem;
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            border-radius: 999px;
+            border: 1px dashed rgba(63, 185, 80, 0.9);
+            box-shadow: 0 0 12px rgba(63, 185, 80, 0.35);
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--green);
+        }
+
+        /* Responsivité pour mobile */
+        @media (max-width: 900px) {
+            body {
+                padding: 1rem;
+            }
+
+            .passport-book {
+                grid-template-columns: 1fr;
+                transform: rotateY(0) scale(0.96);
+            }
+
+            .passport-wrapper:hover .passport-book {
+                transform: rotateY(0) scale(1);
+            }
+
+            .passport-page--left {
+                border-right: none;
+                border-bottom: 1px solid rgba(63, 185, 80, 0.18);
+            }
+
+            .passport-page {
+                padding: 1.5rem;
+            }
+        }
+
+        /* ===========================
    FOOTER COCKPIT PREMIUM
    =========================== */
 
         .footer {
             background: var(--bg-panel);
             padding: 2.2rem 0 1.7rem;
-            /* margin-top: 2rem; */
         }
 
         .footer__inner {
@@ -677,7 +897,6 @@
             background: transparent;
             overflow: hidden;
             margin: 1.5rem 0 0;
-            /* plus d'espace sous la piste */
         }
 
         /* Ligne de points lumineux */
@@ -734,6 +953,7 @@
             font-weight: 700;
             letter-spacing: -1px;
             color: var(--color-text);
+            text-shadow: 0 0 12px rgba(30, 144, 255, .7);
         }
 
         .tower__sub {
@@ -758,6 +978,12 @@
             background: var(--color-green);
         }
 
+        .tower__radar {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: #38bdf8;
+        }
+
         /* ===========================
    COMMS (Email, GitHub, LinkedIn, Radio)
    =========================== */
@@ -769,31 +995,37 @@
         }
 
         .comms__item {
-            display: flex;
+            display: grid;
+            grid-template-columns: 40px 1fr;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.7rem;
-            border-radius: 10px;
-            border: 1px solid #11171f;
-            background: #0b1220;
-            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s ease;
+            gap: 12px;
+            padding: 10px 12px;
+            background: linear-gradient(180deg, #0b1020, #060a14);
+            border: 5px solid rgba(30, 144, 255, 0.2);
+            border-radius: 20px;
+            /* transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s ease; */
         }
 
-        .comms__icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 999px;
-            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.3), #020617);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .comms__icon svg {
-            width: 18px;
-            height: 18px;
-            color: var(--color-primary);
+        .comms__icon i {
+            font-size: 20px;
+            color: #38bdf8;
             transition: transform 0.35s ease, color 0.25s ease;
+        }
+
+        .comms__label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .comms__code {
+            font-size: 10px;
+            color: var(--color-primary);
+        }
+
+        .comms__item:hover i {
+            transform: rotate(360deg);
+            color: var(--color-green);
         }
 
         .comms__text {
@@ -804,24 +1036,19 @@
         .comms__label {
             font-family: var(--font-mono);
             font-size: 0.7rem;
-            color: var(--color-text);
+            color: var(--color-green);
         }
 
         .comms__sub {
             font-family: var(--font-mono);
             font-size: 0.6rem;
-            color: var(--color-muted);
+            color: var(--color-primary);
         }
 
         .comms__item:hover {
-            border-color: var(--color-primary);
+            border-color: var(--bg-panel);
             background: #020617;
             transform: translateY(-1px);
-        }
-
-        .comms__item:hover .comms__icon svg {
-            transform: rotate(360deg);
-            color: var(--color-text);
         }
 
         /* ===========================
@@ -851,6 +1078,13 @@
             transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
 
+        .clearance__code {
+            font-family: monospace;
+            color: var(--color-green);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
         .clearance__cta span {
             font-size: 0.6rem;
             opacity: 0.65;
@@ -860,7 +1094,32 @@
         .clearance__cta:hover {
             background: rgba(30, 144, 255, 0.12);
             transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.7);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+        }
+
+        .clearance--refined {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .clearance__code {
+            font-family: monospace;
+            color: var(--color-accent);
+            letter-spacing: 1px;
+            font-size: 12px;
+        }
+
+        .clearance__panel {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .clearance__tag {
+            font-size: 10px;
+            color: #7fa9ff;
+            letter-spacing: 0.8px;
         }
 
         /* ===========================
@@ -1027,6 +1286,7 @@
                             <div class="casio__time">
                                 <span id="casio-time">23:04</span>
                                 <span id="casio-seconds">33</span>
+                                <span id="casio-ampm" class="casio__ampm">PM</span>
                             </div>
 
                         </div>
@@ -1047,12 +1307,105 @@
 
         </div>
     </header>
+    <!-- ======================= MAIN ======================= -->
+    <div class="passport-wrapper">
+        <div class="passport-book" id="passport">
+
+            <!-- PAGE GAUCHE -->
+            <section class="passport-page passport-page--left">
+                <p class="passport-label">Identification du pilote</p>
+
+                <div class="passport-identity">
+                    <figure class="passport-photo-frame">
+                        <img src="pilote-christophehascoet3.png" class="passport-photo"
+                            alt="Photo de Christophe HASCOËT, commandant de bord">
+                        <figcaption class="passport-photo-caption">Commandant de bord</figcaption>
+                    </figure>
+
+                    <dl class="passport-details">
+                        <div class="passport-detail-row">
+                            <dt class="passport-detail-label">Nom de code</dt>
+                            <dd class="passport-detail-value">HASCOËT</dd>
+                        </div>
+
+                        <div class="passport-detail-row">
+                            <dt class="passport-detail-label">Prénom</dt>
+                            <dd class="passport-detail-value">Christophe</dd>
+                        </div>
+
+                        <div class="passport-detail-row">
+                            <dt class="passport-detail-label">Rôle à bord</dt>
+                            <dd class="passport-detail-value">Chef de projet & développeur web junior</dd>
+                        </div>
+
+                        <div class="passport-detail-row">
+                            <dt class="passport-detail-label">Statut</dt>
+                            <dd class="passport-detail-value">Actif — Autorisé au vol</dd>
+                        </div>
+
+                        <div class="passport-detail-row">
+                            <dt class="passport-detail-label">Base principale</dt>
+                            <dd class="passport-detail-value">Région parisienne — CET</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="passport-section">
+                    <h2 class="passport-section-title">Rapport d’identification</h2>
+                    <p class="passport-section-text">
+                        Pilote en montée de compétences, formé à HTML, CSS, PHP, Laravel, React, TypeScript, GitHub et
+                        Trello.
+                        Expérience de 6 mois en vol réel : rédaction de cahiers des charges, briefings clients,
+                        coordination UX/UI &
+                        dev, interventions SQL backend.
+                        J’avance avec humilité, rigueur et curiosité. Mon parcours atypique m’a appris l’adaptabilité et
+                        la gestion
+                        du stress.
+                    </p>
+                </div>
+            </section>
+
+            <!-- PAGE DROITE -->
+            <section class="passport-page passport-page--right">
+                <p class="passport-label">Mission & procédures</p>
+
+                <div class="passport-section">
+                    <h2 class="passport-section-title">Cap & navigation</h2>
+                    <p class="passport-section-text">
+                        Concevoir des solutions utiles, accessibles et faciles à piloter. Priorité à la simplicité, la
+                        lisibilité et
+                        l’expérience passager.
+                    </p>
+                </div>
+
+                <div class="passport-section">
+                    <h2 class="passport-section-title">Protocole opérationnel</h2>
+                    <p class="passport-section-text">
+                        Analyse du besoin, clarifications, collaboration avec l’équipage, progression étape par étape,
+                        respect des
+                        procédures Agile.
+                    </p>
+                </div>
+
+                <div class="passport-section">
+                    <h2 class="passport-section-title">Objectif de mission</h2>
+                    <p class="passport-section-text">
+                        Continuer à monter en altitude, apprendre chaque jour et apporter une valeur réelle à chaque
+                        projet, même
+                        modestement au début.
+                    </p>
+                </div>
+
+                <div class="passport-stamp">Visa technique — Apte au vol</div>
+            </section>
+
+        </div>
+    </div>
 
 
-    <!-- ======================= FOOTER ======================= -->
     <!-- ======================= RUNWAY LIGHTS ======================= -->
     <div class="runway-lights" aria-hidden="true"></div>
-
+    <!-- ======================= FOOTER ======================= -->
     <footer class="footer">
         <div class="footer__inner">
 
@@ -1061,13 +1414,12 @@
                 <!-- === Tour de contrôle === -->
                 <article class="footer-block footer-block--tower">
                     <h2 class="footer-block__title">Tour de contrôle</h2>
-
                     <div class="footer-block__content">
-                        <p class="tower__freq">118.700</p>
-                        <p class="tower__sub">CDG · PRIMARY CHANNEL</p>
+                        <p class="tower__freq">TWR 118.700</p>
+                        <p class="tower__sub">CDG · PRIMARY</p>
                         <p class="tower__status">
                             <span class="tower__dot"></span>
-                            Fréquence active
+                            ACTIVE
                         </p>
                     </div>
                 </article>
@@ -1080,13 +1432,7 @@
                         <li>
                             <a href="#" class="comms__item">
                                 <span class="comms__icon">
-                                    <!-- SVG email -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path
-                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                        </path>
-                                        <polyline points="22,6 12,13 2,6"></polyline>
-                                    </svg>
+                                    <i class="fa-solid fa-envelope"></i>
                                 </span>
                                 <span class="comms__text">
                                     <span class="comms__label">Email</span>
@@ -1098,14 +1444,7 @@
                         <li>
                             <a href="#" class="comms__item">
                                 <span class="comms__icon">
-                                    <!-- SVG LinkedIn -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path
-                                            d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
-                                        </path>
-                                        <rect x="2" y="9" width="4" height="12"></rect>
-                                        <circle cx="4" cy="4" r="2"></circle>
-                                    </svg>
+                                    <i class="fa-brands fa-linkedin"></i>
                                 </span>
                                 <span class="comms__text">
                                     <span class="comms__label">LinkedIn</span>
@@ -1117,16 +1456,7 @@
                         <li>
                             <a href="#" class="comms__item">
                                 <span class="comms__icon">
-                                    <!-- SVG GitHub -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61
-                           c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77
-                           5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48
-                           a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1
-                           A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78
-                           c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-                                        </path>
-                                    </svg>
+                                    <i class="fa-brands fa-github"></i>
                                 </span>
                                 <span class="comms__text">
                                     <span class="comms__label">GitHub</span>
@@ -1138,22 +1468,7 @@
                         <li>
                             <a href="#" class="comms__item">
                                 <span class="comms__icon">
-                                    <!-- SVG Radio -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2
-                                             19.79 19.79 0 0 1-8.63-3.07
-                                             19.5 19.5 0 0 1-6-6
-                                             19.79 19.79 0 0 1-3.07-8.67
-                                             A2 2 0 0 1 4.11 2h3
-                                             a2 2 0 0 1 2 1.72
-                                             12.84 12.84 0 0 0 .7 2.81
-                                             2 2 0 0 1-.45 2.11L8.09 9.91
-                                             a16 16 0 0 0 6 6l1.27-1.27
-                                             a2 2 0 0 1 2.11-.45
-                                             12.84 12.84 0 0 0 2.81.7
-                                             A2 2 0 0 1 22 16.92z">
-                                        </path>
-                                    </svg>
+                                    <i class="fa-solid fa-headset"></i>
                                 </span>
                                 <span class="comms__text">
                                     <span class="comms__label">Radio</span>
@@ -1168,17 +1483,25 @@
                 <article class="footer-block footer-block--clearance">
                     <h2 class="footer-block__title">Clearance</h2>
 
-                    <div class="footer-block__content">
-                        <p class="clearance__text">
-                            CLR TO CAREER VIA<br>
-                            PORTFOLIO DIRECT
+                    <div class="footer-block__content clearance--refined">
+
+                        <p class="clearance__code">
+                            CLR TO PORTFOLIO
+                            VIA FLIGHT PLAN
                         </p>
 
-                        <a class="clearance__cta" href="#flight-plan">
-                            REQUEST CLEARANCE
-                            <span>Review flight plan &amp; credentials</span>
-                        </a>
+                        <div class="clearance__panel">
+                            <span class="clearance__tag">STATUS : READY</span>
+
+                            <a class="clearance__cta" href="#flight-plan">
+                                REQUEST CLEARANCE
+                                <span>Review flight plan & credentials</span>
+                            </a>
+                        </div>
+
                     </div>
+
+
                 </article>
 
             </section>
@@ -1186,8 +1509,9 @@
             <div class="footer__bottom">
                 <p>
                     <span class="footer__rec-dot"></span>
-                    REC · Enregistreur de données de vol actif
+                    REC — FLIGHT DATA ACTIVE
                 </p>
+
                 <p>© 2025 — Cleared for Takeoff</p>
             </div>
 
@@ -1208,6 +1532,10 @@
     ========================= */
         function updateCasio() {
             const now = new Date();
+
+            //am-pm
+            const ampm = now.getHours() >= 12 ? "PM" : "AM";
+            document.getElementById("casio-ampm").textContent = ampm;
 
             // Heure (ex: 22:45)
             const timeStr = now.toLocaleTimeString("fr-FR", {
@@ -1400,7 +1728,13 @@
                 }
             });
         });
-
+        gsap.to("#passport", {
+            opacity: 1,
+            rotateY: 0,
+            scale: 1,
+            duration: 1.2,
+            ease: "power3.out"
+        });
     </script>
 </body>
 
