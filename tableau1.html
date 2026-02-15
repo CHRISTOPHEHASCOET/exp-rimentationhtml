@@ -18,7 +18,6 @@
       --status-green: #40b950;
       --text-main: #e6edf3;
       --text-muted: #6b7280;
-      /* ✅ Ajoutée pour la date */
       --font-mono: 'JetBrains Mono', monospace;
       --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
     }
@@ -117,61 +116,6 @@
     }
 
     /* TABLEAU DES VOLS */
-    /* .flight-board {
-      background: #050a12;
-      border-radius: 8px;
-      padding: 1.2rem;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
-    }
-
-    .flight-table {
-      width: auto;
-      border-collapse: separate;
-      border-spacing: 0 6px;
-    
-    }
-
-    .flight-table th {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: #4a5568;
-      text-align: left;
-      padding-bottom: 10px;
-      letter-spacing: 2px;
-      overflow: hidden;
-    }
-
-    .flight-table td {
-      padding: 6px 4px;
-      vertical-align: middle;
-      overflow: hidden;
-      text-align: left;
-    } */
-    /* .flight-table {
-  width: 100%;
-  border-collapse: collapse;
-} */
-
-    /* On empêche le clipping */
-    /* .flight-table td {
-  overflow: visible;
-} */
-
-    /* Largeurs logiques basées sur le nombre de flaps */
-    /* .col-vol       .word { min-width: 8.5rem; }
-.col-destination .word { min-width: 32rem; }
-.col-porte     .word { min-width: 4.5rem; }
-.col-statut    .word { min-width: 18rem; } */
-
-    /* Séparateurs */
-    /* .flight-table tbody tr {
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.flight-table tbody tr:last-child {
-  border-bottom: none;
-} */
 
     /* === FLIGHT BOARD === */
     .flight-board {
@@ -212,13 +156,13 @@
     }
 
     .flight-table tbody tr:hover {
-      /* background: rgba(255, 255, 255, 0.04); */
+      background: rgba(255, 255, 255, 0.04);
     }
 
     /* === CELLS === */
     .flight-table td {
-      /* padding: 6px 10px;
-      white-space: nowrap; */
+      padding: 6px 10px;
+      white-space: nowrap;
      
     }
 
@@ -242,7 +186,7 @@
       width: 30%;
     }
 
-    /* .flight-table th {
+    .flight-table th {
       font-family: var(--font-mono);
       font-size: 0.65rem;
       color: #4a5568;
@@ -257,7 +201,7 @@
 
     .flight-table tbody tr:hover {
       background: rgba(255, 255, 255, 0.04);
-    } */
+    }
 
     /* EFFET MECANIQUE DES LETTRES (FLAPS) */
     .word {

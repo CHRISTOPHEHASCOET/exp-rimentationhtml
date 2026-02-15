@@ -1,1486 +1,549 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
-  <title>Portfolio – Commandant de bord web</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Passeport Digital - Christophe Hascoët</title>
 
-  <!-- Typo sobre et “aéroportuaire” -->
+  <!-- Polices Tech : Rajdhani & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  >
-
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-BTvyuLrk7eNEpDylkYFEb7eU3p48Tt5rG6ypUXwN9F+f3x45r+iZ7l6rbZpK9QkTtCjA1ZtN3S07URr0p8OOxA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
 
   <style>
+    /* ========================================================================
+     1. VOS VARIABLES DE DESIGN (Thème Dark/Tech)
+     ======================================================================== */
     :root {
-      /* Palette inspirée UI aéroport, contrastée, sans noir/jaune/fluo */
-      --clr-bg: #0b1721;           /* bleu nuit cockpit */
-      --clr-bg-elevated: #122131;  /* carte couloir */
-      --clr-panel: #151f2b;        /* panneau de vol */
-      --clr-accent: #4fa3ff;       /* bleu balise piste */
-      --clr-accent-soft: #8ec5ff;
-      --clr-text: #f4f7fb;
-      --clr-text-muted: #9ca9bd;
-      --clr-border-soft: rgba(255, 255, 255, 0.08);
-      --clr-badge: #20354a;
-      --clr-danger: #ff6b6b;
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --bg-card: #101e38;
+      --bg-tab: #1a222d;
 
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
+      --color-primary: #1f6fea;
+      --color-accent: #00d2ff;
+      --color-green: #3fb950;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
+      --color-soft-accent: #8ec5ff;
 
-      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.45);
+      --font-sans: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
 
-      --transition-fast: 180ms ease-out;
-      --transition-med: 260ms ease-out;
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
 
-      --nav-height: 82px;
+      --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+      --shadow-soft: 0 4px 30px rgba(0, 210, 255, 0.15);
+
+      --book-width: 420px;
+      --book-height: 580px;
     }
 
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      font-family: "Barlow", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      color: var(--clr-text);
-      background: radial-gradient(circle at top, #1b3957 0, #050b10 52%, #020407 100%);
+      background: var(--bg-main);
+      color: var(--color-text);
+      font-family: var(--font-sans);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.25;
-      background-size: 120px 120px;
-      mix-blend-mode: screen;
-      z-index: 1;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .wrapper {
-      width: min(1180px, 100% - 32px);
-      margin-inline: auto;
-    }
-
-    /* HEADER / NAV – tableau des départs */
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      backdrop-filter: blur(20px);
-      background: linear-gradient(to bottom, rgba(2, 8, 16, 0.9), rgba(2, 8, 16, 0.78));
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .site-header-inner {
-      height: var(--nav-height);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .brand-block {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      min-width: 0;
-    }
-
-    .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: inline-flex;
-      align-items: center;
       justify-content: center;
-      color: var(--clr-accent-soft);
-      background: radial-gradient(circle at 30% 0, #2b7bff 0, #102033 40%, #070c13 100%);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .brand-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-
-    .brand-title {
-      font-size: 15px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--clr-text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .brand-sub {
-      font-size: 12px;
-      color: var(--clr-text-muted);
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .brand-sub span {
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-weight: 500;
-    }
-
-    .brand-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 999px;
-      background: var(--clr-accent);
-      box-shadow: 0 0 10px rgba(79, 163, 255, 0.8);
-    }
-
-    /* NAVIGATION – tableau de portes */
-
-    .nav-panel {
-      flex: 1;
-      max-width: 620px;
-      background: radial-gradient(circle at 0 0, rgba(79, 163, 255, 0.28) 0, rgba(79, 163, 255, 0) 56%),
-                  linear-gradient(to right, rgba(8, 17, 27, 0.98), rgba(8, 17, 27, 0.96));
-      border-radius: 999px;
-      padding: 10px 18px;
-      display: flex;
       align-items: center;
-      gap: 14px;
-      border: 1px solid var(--clr-border-soft);
-      position: relative;
       overflow: hidden;
+      perspective: 2500px;
     }
 
-    .nav-label {
-      font-size: 11px;
+    /* Titre global en dehors du passeport */
+    .main-title {
+      position: absolute;
+      top: 40px;
+      font-family: var(--font-sans);
+      font-size: 2.5rem;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      z-index: 0;
     }
 
-    .nav-label::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--clr-accent);
-      box-shadow: 0 0 10px rgba(79, 163, 255, 0.9);
-    }
-
-    .nav-table {
-      display: flex;
-      align-items: stretch;
-      gap: 4px;
-      flex: 1;
-    }
-
-    .nav-item {
+    /* ========================================================================
+     2. MOTEUR 3D DU DATAPAD (Le "Livre")
+     ======================================================================== */
+    .scene {
       position: relative;
-      flex: 1;
-      min-width: 0;
-      border-radius: 999px;
-      padding: 6px 8px;
+      width: var(--book-width);
+      height: var(--book-height);
+      transform: rotateX(15deg) rotateY(-10deg);
+      transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 10;
+    }
+
+    .scene.is-open {
+      transform: translateX(210px) rotateX(10deg) rotateY(0deg);
+    }
+
+    /* La base (Page Droite Fixe) */
+    .book-base {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-panel);
+      border-radius: 4px 20px 20px 4px;
+      box-shadow: var(--shadow-strong);
+      /* Épaisseur tech du boitier */
+      border-left: 4px solid var(--color-primary);
+      border-right: 1px solid rgba(0, 210, 255, 0.2);
+      border-top: 1px solid rgba(0, 210, 255, 0.2);
+      border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+    }
+
+    /* La page qui tourne */
+    .flip-page {
+      position: absolute;
+      inset: 0;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      z-index: 10;
       cursor: pointer;
-      isolation: isolate;
-      overflow: hidden;
-      transition: background-color var(--transition-fast), transform var(--transition-fast);
     }
 
-    .nav-item::before {
-      /* ligne lumineuse piste */
-      content: "";
+    .face {
       position: absolute;
-      inset-block: 0;
-      left: -80%;
-      width: 60%;
-      background: linear-gradient(120deg, transparent 0, rgba(255, 255, 255, 0.09) 45%, transparent 100%);
-      opacity: 0;
-      transform: skewX(-18deg);
-      transition: opacity 220ms ease-out, transform 220ms ease-out;
-      pointer-events: none;
+      inset: 0;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
-    .nav-item:hover::before,
-    .nav-item:focus-within::before {
-      opacity: 1;
-      transform: translateX(160%) skewX(-18deg);
-    }
-
-    .nav-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      transform: translateY(-1px);
-    }
-
-    .nav-link {
+    /* ========================================================================
+     3. COUVERTURE AVEC HOLOGRAMME ANIMÉ (Votre Version 2)
+     ======================================================================== */
+    .face-front {
+      background: var(--bg-card);
+      border: 1px solid rgba(0, 210, 255, 0.5);
+      border-radius: 4px 20px 20px 4px;
+      box-shadow: var(--shadow-soft);
+      padding: 60px 20px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--clr-text-muted);
-    }
-
-    .nav-main {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 6px;
-    }
-
-    .nav-destination {
-      font-weight: 600;
-      color: var(--clr-text);
-      white-space: nowrap;
-    }
-
-    .nav-gate {
-      font-feature-settings: "tnum" 1;
-      font-variant-numeric: tabular-nums;
-      opacity: 0.7;
-    }
-
-    .nav-status {
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--clr-accent-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-    }
-
-    .nav-item[aria-current="page"] .nav-status {
-      color: var(--clr-accent);
-    }
-
-    /* Avion nav */
-
-    .nav-plane {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 30px;
-      width: 30px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: radial-gradient(circle at 30% 0, #4fa3ff 0, #122436 40%, #020509 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-      pointer-events: none;
-      z-index: 4;
-      color: var(--clr-text);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-    }
-
-    .nav-plane::after {
-      content: "";
-      position: absolute;
-      inset: 2px;
-      border-radius: inherit;
-      border: 1px solid rgba(255, 255, 255, 0.09);
-    }
-
-    .nav-plane-trail {
-      position: absolute;
-      left: -120px;
-      right: 100%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(142, 197, 255, 0.9));
-      opacity: 0.7;
-      pointer-events: none;
-      z-index: 3;
-    }
-
-    /* Badge pilote à droite */
-
-    .pilot-badge {
-      background: radial-gradient(circle at top, #395a7f 0, #162236 38%, #060a11 100%);
-      border-radius: 999px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
-      min-width: 0;
-    }
-
-    .pilot-photo {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #375f88, #1d2938);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--clr-text);
-      position: relative;
+      text-align: center;
       overflow: hidden;
+      /* Nécessaire pour l'hologramme */
     }
 
-    .pilot-photo::after {
+    /* Animation Hologramme (Balayage) */
+    .face-front::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 55%);
-      mix-blend-mode: screen;
       pointer-events: none;
+      background: linear-gradient(120deg, transparent 30%, rgba(0, 210, 255, 0.15) 50%, transparent 70%);
+      animation: holo 4s infinite linear;
     }
 
-    .pilot-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
+    @keyframes holo {
+      0% {
+        transform: translateX(-100%);
+      }
 
-    .pilot-name {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .pilot-flight {
-      font-size: 10px;
-      color: var(--clr-text-muted);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      font-feature-settings: "tnum" 1;
-    }
-
-    .pilot-flight span {
-      color: var(--clr-accent-soft);
-      font-weight: 500;
-    }
-
-    /* MAIN HERO – hall de départ */
-
-    .hero {
-      padding-block: 32px 40px;
-    }
-
-    .hero-grid {
-      display: grid;
-      gap: 24px;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-      align-items: stretch;
-    }
-
-    @media (max-width: 900px) {
-      .hero-grid {
-        grid-template-columns: minmax(0, 1fr);
+      100% {
+        transform: translateX(100%);
       }
     }
 
-    .hero-primary {
-      background: linear-gradient(145deg, rgba(16, 33, 56, 0.98), rgba(7, 13, 22, 0.98));
-      border-radius: var(--radius-lg);
-      padding: 22px 22px 24px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-primary::before {
-      content: "";
-      position: absolute;
-      inset: -80px;
-      background: radial-gradient(circle at 0 0, rgba(79, 163, 255, 0.25) 0, transparent 55%);
-      pointer-events: none;
-      opacity: 0.85;
-    }
-
-    .hero-primary-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-tagline {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.3em;
-      color: var(--clr-accent-soft);
-      margin-bottom: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hero-tagline span {
-      width: 36px;
-      height: 1px;
-      background: linear-gradient(to right, rgba(142, 197, 255, 0.1), rgba(142, 197, 255, 0.9));
-    }
-
-    .hero-title {
-      font-size: clamp(26px, 3vw, 32px);
-      line-height: 1.1;
-      margin: 0 0 10px;
-    }
-
-    .hero-title span {
-      color: var(--clr-accent-soft);
-      font-weight: 600;
-    }
-
-    .hero-subtitle {
-      margin: 0 0 18px;
-      color: var(--clr-text-muted);
-      font-size: 14px;
-      max-width: 40rem;
-    }
-
-    .hero-subtitle-roles {
-      margin-top: 4px;
-      font-size: 13px;
-      color: var(--clr-text);
-      opacity: 0.9;
-    }
-
-    .hero-status-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 16px;
-      align-items: center;
-      margin-bottom: 18px;
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--clr-text-muted);
-    }
-
-    .hero-status-pill {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(142, 197, 255, 0.4);
-      background: rgba(9, 25, 43, 0.9);
-      color: var(--clr-accent-soft);
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-feature-settings: "tnum" 1;
-    }
-
-    .hero-status-pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #4fa3ff 0, #162b40 50%, #070b11 100%);
-      box-shadow: 0 0 10px rgba(79, 163, 255, 0.9);
-    }
-
-    .hero-status-sep {
-      width: 24px;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .hero-cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .title-h1 {
+      font-size: 2rem;
+      letter-spacing: 4px;
+      line-height: 1.2;
+      color: var(--color-accent);
+      text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
       margin-bottom: 20px;
     }
 
-    .btn {
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      border: 1px solid transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: background-color var(--transition-med), color var(--transition-med), transform var(--transition-fast), box-shadow var(--transition-med), border-color var(--transition-med);
-      background: none;
-      color: inherit;
+    .logo-tech {
+      font-size: 4rem;
+      color: var(--color-primary);
+      margin: 40px 0;
+      filter: drop-shadow(0 0 10px var(--color-primary));
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #4fa3ff, #8ec5ff);
-      color: #04111f;
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 14px 30px rgba(6, 19, 33, 0.9);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 40px rgba(6, 19, 33, 1);
-    }
-
-    .btn-ghost {
-      border-color: rgba(255, 255, 255, 0.14);
-      background: rgba(6, 13, 22, 0.7);
-      color: var(--clr-text);
-    }
-
-    .btn-ghost:hover {
-      background: rgba(9, 18, 30, 0.95);
-      transform: translateY(-1px);
-    }
-
-    .btn-icon {
-      font-feature-settings: "tnum" 1;
-    }
-
-    .hero-footnote {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 18px;
-      font-size: 11px;
-      color: var(--clr-text-muted);
-      margin-top: 4px;
-    }
-
-    .hero-footnote strong {
-      color: var(--clr-text);
-      font-weight: 500;
-    }
-
-    /* Carte “plan de vol” à droite */
-
-    .hero-secondary {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .flight-plan-card {
-      flex: 1;
-      background: linear-gradient(150deg, rgba(10, 21, 36, 0.96), rgba(5, 9, 16, 0.96));
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      box-shadow: var(--shadow-soft);
-      padding: 16px 18px 18px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .flight-plan-card::before {
-      content: "";
-      position: absolute;
-      inset: -60px;
-      background:
-        radial-gradient(circle at 80% 0, rgba(79, 163, 255, 0.24) 0, transparent 60%),
-        radial-gradient(circle at 0 100%, rgba(79, 163, 255, 0.13) 0, transparent 55%);
-      opacity: 0.9;
-      pointer-events: none;
-    }
-
-    .flight-plan-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .card-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .card-title {
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--clr-text-muted);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-title-badge {
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(79, 163, 255, 0.12);
-      border: 1px solid rgba(79, 163, 255, 0.3);
-      color: var(--clr-accent-soft);
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .card-meta {
-      font-size: 11px;
-      color: var(--clr-text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pill-small {
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-      background: rgba(6, 13, 22, 0.9);
-    }
-
-    /* Mini “carte de vol” */
-
-    .flight-map {
-      margin-top: 10px;
-      margin-bottom: 14px;
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      background: radial-gradient(circle at 0 0, rgba(79, 163, 255, 0.22) 0, rgba(79, 163, 255, 0) 55%),
-                  rgba(8, 18, 30, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .flight-map::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: 0.4;
-      background-image:
-        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.06) 0, transparent 55%),
-        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 100% 100%, 40px 40px, 40px 40px;
-      mix-blend-mode: screen;
-      pointer-events: none;
-    }
-
-    .flight-map-inner {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-      gap: 12px;
-      align-items: center;
-    }
-
-    @media (max-width: 640px) {
-      .flight-map-inner {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .flight-leg {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .airport-code {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-
-    .airport-code-main {
-      font-size: 20px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 600;
-      font-feature-settings: "tnum" 1;
-    }
-
-    .airport-code-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-      white-space: nowrap;
-    }
-
-    .flight-lane {
-      position: relative;
-      flex: 1;
-      height: 2px;
-      border-radius: 999px;
-      background: linear-gradient(to right, rgba(79, 163, 255, 0.1), rgba(79, 163, 255, 0.8));
-      overflow: hidden;
-    }
-
-    .flight-lane-dashes {
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 30%, transparent 30%);
-      background-size: 8px 2px;
-      opacity: 0.5;
-      mix-blend-mode: screen;
-    }
-
-    .flight-lane-plane {
-      position: absolute;
-      top: 50%;
-      left: 18%;
-      transform: translate(-50%, -50%);
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #ffffff 0, #4fa3ff 50%, #193147 100%);
-      box-shadow: 0 0 12px rgba(79, 163, 255, 0.9);
-    }
-
-    .flight-extra {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 11px;
-      color: var(--clr-text-muted);
-    }
-
-    .flight-extra-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .flight-extra-row strong {
-      font-weight: 500;
-      color: var(--clr-text);
-    }
-
-    .flight-leg-secondary {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .flight-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .flight-tag {
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: rgba(8, 18, 30, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--clr-text-muted);
-    }
-
-    .flight-score {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 4px;
-      font-size: 12px;
-      color: var(--clr-accent-soft);
-      font-feature-settings: "tnum" 1;
-    }
-
-    .flight-score span {
-      font-size: 10px;
-      color: var(--clr-text-muted);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      font-size: 11px;
-      color: var(--clr-text-muted);
-      margin-top: 6px;
-    }
-
-    .card-footer span {
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    /* Panneau départ rapide (raccourci des 6 “pages”) */
-
-    .quick-departures {
-      background: rgba(7, 13, 22, 0.94);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 10px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .quick-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-    }
-
-    .quick-table {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr) auto auto;
-      gap: 6px 10px;
-      align-items: center;
-      font-size: 11px;
-      font-feature-settings: "tnum" 1;
-    }
-
-    @media (max-width: 640px) {
-      .quick-table {
-        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) auto;
-        row-gap: 2px;
-      }
-
-      .quick-table .quick-col-desktop {
-        display: none;
-      }
-    }
-
-    .quick-header-cell {
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-      padding-bottom: 2px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .quick-row {
-      min-height: 18px;
-      padding-block: 1px;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
-      display: contents;
-    }
-
-    .quick-dest {
-      font-weight: 500;
-      color: var(--clr-text);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .quick-label {
-      color: var(--clr-text-muted);
-    }
-
-    .quick-badge {
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--clr-text-muted);
-      justify-self: end;
-    }
-
-    .quick-badge--accent {
-      border-color: rgba(79, 163, 255, 0.7);
-      color: var(--clr-accent-soft);
-      background: rgba(10, 28, 49, 0.9);
-    }
-
-    .quick-time {
-      justify-self: end;
-      color: var(--clr-text-muted);
-    }
-
-    /* FOOTER – zone de contrôle */
-
-    .site-footer {
+    .status-holo {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--color-green);
+      text-shadow: 0 0 10px var(--color-green);
       margin-top: auto;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      background: linear-gradient(to top, #020508, #040910);
-      padding-block: 14px 16px;
     }
 
-    .footer-inner {
+    /* ========================================================================
+     4. INTÉRIEUR GAUCHE (Dos de la couverture)
+     ======================================================================== */
+    .face-back {
+      background: var(--bg-tab);
+      border-radius: 20px 4px 4px 20px;
+      transform: rotateY(180deg) translateZ(1px);
+      padding: 40px 30px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      font-size: 11px;
-      color: var(--clr-text-muted);
-      flex-wrap: wrap;
+      flex-direction: column;
+      justify-content: center;
+      border: 1px solid rgba(0, 210, 255, 0.2);
     }
 
-    .footer-status {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+    .log-block {
+      margin-bottom: 25px;
     }
 
-    .footer-status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(6, 12, 20, 0.9);
-      letter-spacing: 0.18em;
+    .log-block h3 {
+      color: var(--color-soft-accent);
+      border-bottom: 1px solid var(--color-primary);
+      margin-bottom: 8px;
       text-transform: uppercase;
+      font-size: 1.1rem;
+      padding-bottom: 4px;
     }
 
-    .footer-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #20d899 0, #127051 50%, #030906 100%);
-      box-shadow: 0 0 10px rgba(32, 216, 153, 0.9);
+    .log-block p {
+      font-size: 0.95rem;
+      color: var(--color-muted);
+      text-align: justify;
+      line-height: 1.5;
+      font-family: var(--font-sans);
+      font-weight: 500;
     }
 
-    .footer-meta {
+    /* ========================================================================
+     5. PAGE D'IDENTITÉ AVEC HUD SCANLINE (Votre Version 1)
+     ======================================================================== */
+    .data-page {
+      position: absolute;
+      inset: 0;
+      padding: 30px;
       display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      border-radius: 4px 20px 20px 4px;
+      overflow: hidden;
+      /* Nécessaire pour le scan HUD */
+      background: radial-gradient(circle at top, #0c1a2c, #060c14 60%);
     }
 
-    .footer-meta span {
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
+    /* Scanline accessible */
 
-    .footer-link {
-      text-decoration: none;
-      color: inherit;
-      position: relative;
-    }
-
-    .footer-link::after {
+    .data-page::before {
       content: "";
       position: absolute;
-      left: 0;
-      bottom: -1px;
-      width: 0;
-      height: 1px;
-      background: linear-gradient(to right, rgba(142, 197, 255, 0.2), rgba(142, 197, 255, 1));
-      transition: width 180ms ease-out;
+
+      width: 120%;
+      height: 2px;
+
+      background: linear-gradient(90deg,
+          transparent,
+          var(--color-accent),
+          transparent);
+
+      top: -10%;
+      left: -10%;
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition: opacity .4s ease;
     }
 
-    .footer-link:hover::after {
+    /* Activation au survol */
+    .scene:hover .data-page::before,
+    .scene:focus-within .data-page::before {
+      animation: scan 2.5s linear;
+      opacity: .8;
+    }
+
+    @keyframes scan {
+      from {
+        top: -10%;
+      }
+
+      to {
+        top: 110%;
+      }
+    }
+
+
+    .id-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid rgba(0, 210, 255, 0.3);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .id-header h2 {
+      font-size: 1.2rem;
+      color: var(--color-accent);
+      letter-spacing: 2px;
+    }
+
+    .id-header .rf-bg {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--color-green);
+      text-shadow: 0 0 5px var(--color-green);
+    }
+
+    .id-grid {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 20px;
+      flex-grow: 1;
+      z-index: 2;
+    }
+
+    /* Photo Cyberpunk */
+    .photo-main {
+      width: 130px;
+      height: 170px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid var(--color-primary);
+      box-shadow: 0 0 15px rgba(31, 111, 234, 0.3);
+    }
+
+    .photo-main img {
       width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(1.2) grayscale(30%) brightness(0.9);
     }
 
-    @media (max-width: 720px) {
-      .site-header-inner {
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      .nav-panel {
-        order: 3;
-        width: 100%;
-      }
-      .pilot-badge {
-        margin-left: auto;
-      }
-      .brand-block {
-        flex: 1 1 100%;
-      }
+    .data-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    @media (max-width: 520px) {
-      .nav-label {
-        display: none;
+    .data-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      font-family: var(--font-sans);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-text);
+      font-family: var(--font-mono);
+    }
+
+    .value.highlight {
+      color: var(--color-accent);
+      text-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+    }
+
+    /* Mots clés Tech */
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tech-tags span {
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      color: var(--color-accent);
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+
+    /* MRZ Façon Code Terminal */
+    .mrz-zone {
+      margin-top: auto;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      letter-spacing: 2px;
+      color: var(--color-soft-accent);
+      font-weight: bold;
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      z-index: 2;
+    }
+
+    .help-text {
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      text-align: center;
+      color: var(--color-muted);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: opacity 0.5s;
+      font-family: var(--font-mono);
+    }
+
+    /* Respect accessibilité système */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      * {
+        animation: none;
+        transition: none;
       }
+
     }
   </style>
 </head>
+
 <body>
-  <header class="site-header" aria-label="Navigation principale - Terminal">
-    <div class="wrapper site-header-inner">
-      <!-- Bloc marque / aéroport -->
-      <div class="brand-block">
-        <div class="brand-logo" aria-hidden="true">
-          AT
+
+  <h1 class="main-title">Autorisation d’Accès</h1>
+
+  <main class="scene" id="scene">
+
+    <!-- LE BLOC PAGES (Base Fixe : Votre HUD) -->
+    <article class="book-base">
+      <section class="data-page" id="idDataPage">
+
+        <header class="id-header">
+          <h2>TERMINAL AUTHORIZATION</h2>
+          <div class="rf-bg">CLEARANCE : APPROVED</div>
+        </header>
+
+        <div class="id-grid">
+          <!-- VOTRE PHOTO -->
+          <figure class="photo-main">
+            <!-- METTEZ VOTRE PHOTO ICI -->
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80"
+              alt="Christophe Hascoët">
+          </figure>
+
+          <!-- VOS DONNÉES -->
+          <div class="data-col">
+            <div style="display:flex; gap:15px;">
+              <div class="data-group"><span class="label">ID Class</span><span class="value">DEV-PRO</span></div>
+              <div class="data-group"><span class="label">Base</span><span class="value">FRA</span></div>
+            </div>
+            <div class="data-group"><span class="label">Identifiant Numérique</span><span
+                class="value">#CH-2025-SYS</span></div>
+            <div class="data-group"><span class="label">Nom de Code</span><span class="value">HASCOËT CHRISTOPHE</span>
+            </div>
+            <div class="data-group"><span class="label">Rôle Opérationnel</span><span class="value highlight">CHEF DE
+                PROJET & DÉV JUNIOR</span></div>
+
+            <div class="tech-tags">
+              <span>HTML/CSS</span><span>PHP</span><span>LARAVEL</span>
+              <span>REACT</span><span>TYPESCRIPT</span><span>AGILE</span>
+            </div>
+          </div>
         </div>
-        <div class="brand-meta">
-          <div class="brand-title">
-            Terminal · Portfolio développeur
-          </div>
-          <div class="brand-sub" aria-hidden="true">
-            <span>FR&nbsp;APT</span>
-            <div class="brand-dot"></div>
-            <span>Runway&nbsp;WEB&nbsp;·&nbsp;MOBILE</span>
-          </div>
+
+        <!-- LE CODE OPTIQUE (MRZ) -->
+        <div class="mrz-zone">
+          DEV-320&lt;&lt;FLIGHT&lt;&lt;READY&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+          SYS&gt;&gt;HASCOET&gt;&gt;CHRISTOPHE&gt;&gt;ONLINE&lt;&lt;&lt;&lt;
+        </div>
+      </section>
+    </article>
+
+    <!-- LA COUVERTURE QUI TOURNE (Votre Hologramme) -->
+    <aside class="flip-page" id="flip-page" tabindex="0" role="button" aria-label="Ouvrir le passeport">
+
+      <!-- RECTO : Extérieur Holo -->
+      <div class="face face-front">
+        <h1 class="title-h1">HOLOGRAPHIC<br>ID CARD</h1>
+        <div class="logo-tech">⎔</div>
+        <div class="title-h1" style="font-size: 1.5rem; margin-top: auto; margin-bottom: 20px;">PASSPORT DIGITAL</div>
+        <div class="status-holo">AUTHORIZED FOR TAKEOFF</div>
+      </div>
+
+      <!-- VERSO : Intérieur Gauche -->
+      <div class="face face-back">
+        <div class="log-block">
+          <h3>Cap & Navigation</h3>
+          <p>Créer des solutions utiles, accessibles et faciles à prendre en main. Privilégier la simplicité à la
+            complexité inutile.</p>
+        </div>
+        <div class="log-block">
+          <h3>Protocole Opérationnel</h3>
+          <p>Approche transparente en cadre Agile : comprendre les besoins, demander des clarifications, collaborer et
+            avancer par étape.</p>
+        </div>
+        <div class="log-block">
+          <h3>Objectif de Mission</h3>
+          <p>Monter en compétence et apporter une valeur réelle à chaque projet technologique.</p>
         </div>
       </div>
 
-      <!-- Navigation tableau de départs -->
-      <nav class="nav-panel" aria-label="Tableau des départs du portfolio">
-        <div class="nav-label">
-          <span></span>
-          Departures
-        </div>
+    </aside>
 
-        <div class="nav-table" id="nav-table">
-          <button class="nav-item" data-target="#checkin" aria-current="page">
-            <span class="nav-link">
-              <span class="nav-main">
-                <span class="nav-destination">Check-in</span>
-                <span class="nav-gate">Gate&nbsp;01</span>
-              </span>
-              <span class="nav-status">Enregistrement</span>
-            </span>
-          </button>
+    <div class="help-text" id="help-text">[ CLIQUEZ POUR INITIALISER ]</div>
 
-          <button class="nav-item" data-target="#security">
-            <span class="nav-link">
-              <span class="nav-main">
-                <span class="nav-destination">Contrôles</span>
-                <span class="nav-gate">Gate&nbsp;02</span>
-              </span>
-              <span class="nav-status">Stack technique</span>
-            </span>
-          </button>
-
-          <button class="nav-item" data-target="#boarding">
-            <span class="nav-link">
-              <span class="nav-main">
-                <span class="nav-destination">Boarding</span>
-                <span class="nav-gate">Gate&nbsp;03</span>
-              </span>
-              <span class="nav-status">Projets</span>
-            </span>
-          </button>
-
-          <button class="nav-item" data-target="#cockpit">
-            <span class="nav-link">
-              <span class="nav-main">
-                <span class="nav-destination">Cockpit</span>
-                <span class="nav-gate">Gate&nbsp;04</span>
-              </span>
-              <span class="nav-status">Méthode &amp; pilotage</span>
-            </span>
-          </button>
-
-          <button class="nav-item" data-target="#cruise">
-            <span class="nav-link">
-              <span class="nav-main">
-                <span class="nav-destination">Cruise</span>
-                <span class="nav-gate">Gate&nbsp;05</span>
-              </span>
-              <span class="nav-status">Expériences</span>
-            </span>
-          </button>
-
-          <button class="nav-item" data-target="#arrival">
-            <span class="nav-link">
-              <span class="nav-main">
-                <span class="nav-destination">Arrival</span>
-                <span class="nav-gate">Gate&nbsp;06</span>
-              </span>
-              <span class="nav-status">Contact &amp; next flight</span>
-            </span>
-          </button>
-        </div>
-
-        <!-- Avion qui survole les portes -->
-        <div class="nav-plane" id="nav-plane" aria-hidden="true">
-          ✈
-          <div class="nav-plane-trail"></div>
-        </div>
-      </nav>
-
-      <!-- Badge pilote -->
-      <aside class="pilot-badge" aria-label="Badge de pilote">
-        <div class="pilot-photo" aria-hidden="true">
-          P
-        </div>
-        <div class="pilot-meta">
-          <div class="pilot-name">
-            Commandant · Votre nom
-          </div>
-          <div class="pilot-flight">
-            Flight&nbsp;<span>DEV&nbsp;320</span>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero" id="checkin">
-      <div class="wrapper hero-grid">
-        <!-- Hall principal / Check-in -->
-        <article class="hero-primary" aria-labelledby="hero-title">
-          <div class="hero-primary-inner">
-            <div class="hero-tagline">
-              Boarding pass
-              <span></span>
-            </div>
-
-            <h1 class="hero-title" id="hero-title">
-              Développeur web &amp; mobile ·
-              <span>Commandant de bord de vos projets digitaux</span>
-            </h1>
-
-            <p class="hero-subtitle">
-              Un portfolio pensé comme un terminal aéroportuaire : chaque porte
-              correspond à une étape réelle de vol, de votre besoin business au
-              déploiement en production. Tout est piloté avec un souci de
-              performance, de lisibilité et de continuité d’expérience.
-              <span class="hero-subtitle-roles">
-                Rôles à bord : développement front-end, intégration mobile, chef de projet junior.
-              </span>
-            </p>
-
-            <div class="hero-status-row" aria-hidden="true">
-              <div class="hero-status-pill">
-                <span class="hero-status-pill-dot"></span>
-                Flight&nbsp;DEV&nbsp;320 · On time
-              </div>
-              <div class="hero-status-sep"></div>
-              <span>Origine · Curiosité</span>
-              <span>Destination · Produits utilisables</span>
-            </div>
-
-            <div class="hero-cta-row">
-              <button class="btn btn-primary" data-target="#boarding">
-                Embarquer sur un projet
-                <span aria-hidden="true" class="btn-icon">→</span>
-              </button>
-
-              <button class="btn btn-ghost" data-target="#security">
-                Passer les contrôles techniques
-              </button>
-            </div>
-
-            <div class="hero-footnote">
-              <span>
-                <strong>UX/UI</strong> comme tour de contrôle : lisibilité, priorisation, parcours.
-              </span>
-              <span>
-                <strong>Code</strong> comme plan de vol : HTML5 sémantique, CSS modulaire, JS ES6 structuré.
-              </span>
-            </div>
-          </div>
-        </article>
-
-        <!-- À droite : plan de vol + mini tableau -->
-        <aside class="hero-secondary" aria-label="Résumé de plan de vol">
-          <section class="flight-plan-card" aria-label="Plan de vol du portfolio">
-            <div class="flight-plan-inner">
-              <header class="card-head">
-                <h2 class="card-title">
-                  Flight plan
-                  <span class="card-title-badge">
-                    Portfolio&nbsp;·&nbsp;Non-stop
-                  </span>
-                </h2>
-                <div class="card-meta">
-                  <span>Durée prévue : 6 sections</span>
-                  <span>·</span>
-                  <span>ESC&nbsp;·&nbsp;Retour à tout moment</span>
-                </div>
-              </header>
-
-              <div class="flight-map" aria-hidden="true">
-                <div class="flight-map-inner">
-                  <div class="flight-leg">
-                    <div class="airport-code">
-                      <div class="airport-code-main">CVL</div>
-                      <div class="airport-code-label">Origine · Curiculum</div>
-                    </div>
-                    <div class="flight-lane">
-                      <div class="flight-lane-dashes"></div>
-                      <div class="flight-lane-plane"></div>
-                    </div>
-                    <div class="airport-code">
-                      <div class="airport-code-main">PRD</div>
-                      <div class="airport-code-label">Destination · Produit</div>
-                    </div>
-                  </div>
-                  <div class="flight-leg-secondary">
-                    <div class="flight-tags">
-                      <span class="flight-tag">Check-in · Présentation</span>
-                      <span class="flight-tag">Contrôles · Tech &amp; stack</span>
-                      <span class="flight-tag">Boarding · Projets</span>
-                    </div>
-                    <div class="flight-extra">
-                      <div class="flight-extra-row">
-                        <span>Altitude de détail</span>
-                        <strong>De synthétique à très concret, selon la porte choisie</strong>
-                      </div>
-                      <span>
-                        Interfaces inspirées des vrais terminaux : rien de décoratif, tout est guidage.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <footer class="card-footer">
-                <span>Seatbelt sign · On</span>
-                <span>Veuillez attacher vos ceintures, la démo va décoller.</span>
-              </footer>
-            </div>
-          </section>
-
-          <!-- Mini panneau de départs des 6 sections -->
-          <section class="quick-departures" aria-label="Raccourcis vers les portes principales">
-            <header class="quick-head">
-              <span>Next departures</span>
-              <span>All flights non-stop</span>
-            </header>
-
-            <div class="quick-table">
-              <div class="quick-header-cell">Destination</div>
-              <div class="quick-header-cell">Porte</div>
-              <div class="quick-header-cell quick-col-desktop">Statut</div>
-              <div class="quick-header-cell">ETA</div>
-
-              <div class="quick-row">
-                <button class="nav-item quick-dest" data-target="#checkin">
-                  Check-in
-                </button>
-                <div class="quick-label">Profil &amp; objectifs</div>
-                <div class="quick-badge quick-col-desktop quick-badge--accent">Boarding</div>
-                <div class="quick-time">00:01</div>
-              </div>
-
-              <div class="quick-row">
-                <button class="nav-item quick-dest" data-target="#security">
-                  Contrôles
-                </button>
-                <div class="quick-label">Tech &amp; outillage</div>
-                <div class="quick-badge quick-col-desktop">On time</div>
-                <div class="quick-time">00:02</div>
-              </div>
-
-              <div class="quick-row">
-                <button class="nav-item quick-dest" data-target="#boarding">
-                  Boarding
-                </button>
-                <div class="quick-label">Projets dirigés</div>
-                <div class="quick-badge quick-col-desktop">Final call</div>
-                <div class="quick-time">00:03</div>
-              </div>
-
-              <div class="quick-row">
-                <button class="nav-item quick-dest" data-target="#cockpit">
-                  Cockpit
-                </button>
-                <div class="quick-label">Méthode &amp; pilotage</div>
-                <div class="quick-badge quick-col-desktop">Ready</div>
-                <div class="quick-time">00:04</div>
-              </div>
-
-              <div class="quick-row">
-                <button class="nav-item quick-dest" data-target="#cruise">
-                  Cruise
-                </button>
-                <div class="quick-label">Expériences &amp; soft skills</div>
-                <div class="quick-badge quick-col-desktop">Cruising</div>
-                <div class="quick-time">00:05</div>
-              </div>
-
-              <div class="quick-row">
-                <button class="nav-item quick-dest" data-target="#arrival">
-                  Arrival
-                </button>
-                <div class="quick-label">Contact &amp; disponibilité</div>
-                <div class="quick-badge quick-col-desktop">Approach</div>
-                <div class="quick-time">00:06</div>
-              </div>
-            </div>
-          </section>
-        </aside>
-      </div>
-    </section>
-
-    <!-- Placeholder des 5 autres sections pour la nav (structure uniquement,
-         tu rempliras le contenu détaillé plus tard dans le même thème) -->
-
-    <section id="security" aria-label="Contrôles de sécurité · Stack technique">
-      <!-- Contenu des stacks / outils / bonnes pratiques ici -->
-    </section>
-
-    <section id="boarding" aria-label="Porte d'embarquement · Projets">
-      <!-- Contenu projets détaillés, mis en scène comme des vols / routes -->
-    </section>
-
-    <section id="cockpit" aria-label="Cockpit · Méthode &amp; pilotage de projet">
-      <!-- Contenu méthode de travail, gestion de projet, communication -->
-    </section>
-
-    <section id="cruise" aria-label="Croisière · Expériences &amp; parcours">
-      <!-- Parcours pro/formation, présenté comme historique de vols -->
-    </section>
-
-    <section id="arrival" aria-label="Zone d’arrivée · Contact">
-      <!-- Call-to-action contact, disponibilité, prochains vols (missions) -->
-    </section>
   </main>
 
-  <footer class="site-footer" aria-label="Barre d'état de vol">
-    <div class="wrapper footer-inner">
-      <div class="footer-status">
-        <div class="footer-status-pill">
-          <span class="footer-dot"></span>
-          Flight&nbsp;DEV&nbsp;320 · Stable
-        </div>
-        <span>Dernière vérification pré-vol : HTML&nbsp;·&nbsp;CSS&nbsp;·&nbsp;JS OK</span>
-      </div>
-
-      <div class="footer-meta">
-        <span>Autonomie · <strong>Remote / Hybride</strong></span>
-        <span>Base · <strong>France</strong></span>
-        <a href="#arrival" class="footer-link">Ouvrir zone d’arrivée</a>
-      </div>
-    </div>
-  </footer>
-
+  <!-- GSAP pour l'animation physique de la page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script>
-    // GSAP – avion qui se déplace sur les liens survolés/cliqués
-    (function () {
-      const plane = document.getElementById("nav-plane");
-      const planeTrail = plane.querySelector(".nav-plane-trail");
-      const navPanel = document.querySelector(".nav-panel");
-      const navItems = Array.from(
-        document.querySelectorAll(".nav-table .nav-item")
-      );
+    const scene = document.getElementById('scene');
+    const flipPage = document.getElementById('flip-page');
+    const helpText = document.getElementById('help-text');
 
-      const buttonsScroll = Array.from(
-        document.querySelectorAll("[data-target]")
-      );
+    let isOpen = false;
+    let isAnimating = false;
 
-      function getItemCenterX(el) {
-        const rect = el.getBoundingClientRect();
-        const navRect = navPanel.getBoundingClientRect();
-        return rect.left + rect.width / 2 - navRect.left;
+    flipPage.addEventListener('click', () => {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      const tl = gsap.timeline({ onComplete: () => isAnimating = false });
+
+      if (!isOpen) {
+        // Ouverture 3D et décalage
+        tl.to(flipPage, { duration: 1.5, rotationY: -180, ease: "power2.inOut" }, 0)
+          .to(scene, { duration: 1.5, x: 200, rotateX: 5, rotateY: 0, ease: "power2.inOut" }, 0);
+
+        helpText.style.opacity = '0';
+        isOpen = true;
+      } else {
+        // Fermeture 3D
+        tl.to(flipPage, { duration: 1.5, rotationY: 0, ease: "power2.inOut" }, 0)
+          .to(scene, { duration: 1.5, x: 0, rotateX: 15, rotateY: -10, ease: "power2.inOut" }, 0);
+
+        setTimeout(() => helpText.style.opacity = '1', 1000);
+        isOpen = false;
       }
+    });
 
-      function animatePlaneTo(el) {
-        if (!el) return;
-        const x = getItemCenterX(el);
-
-        gsap.to(plane, {
-          duration: 0.28,
-          x: x - plane.offsetWidth / 2,
-          ease: "power2.out"
-        });
-
-        gsap.fromTo(
-          planeTrail,
-          { opacity: 0, scaleX: 0.2 },
-          { opacity: 0.8, scaleX: 1, duration: 0.35, ease: "power2.out" }
-        );
+    // Léger suivi de la souris pour la profondeur 3D
+    document.addEventListener('mousemove', (e) => {
+      if (!isOpen) {
+        const xPos = (e.clientX / window.innerWidth - 0.5) * 6;
+        const yPos = (e.clientY / window.innerHeight - 0.5) * 6;
+        gsap.to(scene, { rotationY: -10 + xPos, rotationX: 15 - yPos, duration: 0.5, ease: "power1.out" });
       }
-
-      if (navItems.length) {
-        const active = navItems.find((n) =>
-          n.getAttribute("aria-current") === "page"
-        );
-        if (active) {
-          window.addEventListener("load", () => animatePlaneTo(active));
-        }
-      }
-
-      navItems.forEach((item) => {
-        item.addEventListener("mouseenter", () => animatePlaneTo(item));
-        item.addEventListener("focus", () => animatePlaneTo(item));
-      });
-
-      // Scroll doux sur tous les boutons/links avec data-target
-      function scrollToTarget(target) {
-        const el = document.querySelector(target);
-        if (!el) return;
-
-        const headerOffset = document.querySelector(".site-header").offsetHeight;
-        const rect = el.getBoundingClientRect();
-        const offset = rect.top + window.scrollY - headerOffset - 12;
-
-        gsap.to(window, {
-          duration: 0.6,
-          scrollTo: { y: offset, autoKill: true },
-          ease: "power2.out"
-        });
-      }
-
-      buttonsScroll.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          const target = btn.getAttribute("data-target");
-          if (!target) return;
-          e.preventDefault();
-
-          scrollToTarget(target);
-
-          const navButton = navItems.find(
-            (n) => n.getAttribute("data-target") === target
-          );
-          if (navButton) {
-            navItems.forEach((n) => n.removeAttribute("aria-current"));
-            navButton.setAttribute("aria-current", "page");
-            animatePlaneTo(navButton);
-          }
-        });
-      });
-    })();
+    });
   </script>
+
 </body>
+
 </html>

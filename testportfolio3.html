@@ -1,421 +1,365 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Passeport Professionnel - Hascoët</title>
-    <style>
-        /* --- POLICES & VARIABLES --- */
-        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Roboto+Mono:wght@400;700&display=swap');
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Digital Passport - Christophe Hascoët</title>
 
-        :root {
-            --bg-paper: #f4f4f4; /* Fond papier officiel */
-            --bg-dark: #1a1a1a;  /* Fond sombre pour le cadre */
-            --ink-blue: #002a5c; /* Bleu administratif */
-            --ink-black: #111;
-            --stamp-red: #d32f2f;
-            --stamp-green: #2e7d32;
-            --border-color: #333;
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-        body {
-            background-color: #0d0d0d;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Special Elite', cursive; /* Police machine à écrire/officielle */
-            padding: 20px;
-        }
+<style>
+  /* ========================================================================
+     1. VOS COULEURS & VARIABLES (Thème Premium Dark Tech)
+     ======================================================================== */
+  :root {
+    --bg-page: #0a0d14;
+    --bg-panel: #111820;
+    --bg-card: #101e38;
 
-        /* --- LE LIVRET (SIMULATION 2 PAGES) --- */
-        .passport-booklet {
-            display: flex;
-            width: 100%;
-            max-width: 1200px;
-            height: 800px;
-            background: #fff;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            position: relative;
-            overflow: hidden;
-        }
+    --color-primary: #1f6fea;
+    --color-accent: #00d2ff;
+    --color-green: #3fb950;
+    --color-amber: #ff9500;
+    --color-text: #e6edf3;
+    --color-muted: #909aa7;
 
-        /* Filigrane Géant "République Française" */
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 150px;
-            color: rgba(0, 42, 92, 0.05);
-            font-weight: bold;
-            z-index: 0;
-            pointer-events: none;
-            white-space: nowrap;
-            font-family: 'Times New Roman', serif;
-        }
+    --font-sans: 'Rajdhani', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
 
-        /* --- PAGE DE GAUCHE (IDENTITÉ) --- */
-        .page-left {
-            width: 50%;
-            border-right: 1px solid #ccc;
-            padding: 40px;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
-        }
+    --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+    --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+    --radius-panel: 20px;
+    
+    --book-width: 440px; /* Légèrement élargi pour le confort de lecture */
+    --book-height: 600px;
+  }
 
-        /* --- PAGE DE DROITE (COMPÉTENCES & VISAS) --- */
-        .page-right {
-            width: 50%;
-            padding: 40px;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* --- EN-TÊTE OFFICIEL --- */
-        .header-official {
-            text-align: center;
-            border-bottom: 2px double var(--ink-blue);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .header-official h1 {
-            font-size: 1.2rem;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--ink-blue);
-            font-family: 'Times New Roman', serif;
-        }
-        .header-official h2 {
-            font-size: 0.9rem;
-            margin: 5px 0 0;
-            color: #555;
-            font-style: italic;
-        }
+  body {
+    background: var(--bg-main);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; font-family: var(--font-sans);
+    overflow: hidden; perspective: 2500px;
+  }
 
-        /* --- SECTION IDENTIFICATION --- */
-        .id-block {
-            margin-bottom: 20px;
-        }
-        .id-title {
-            background: var(--ink-blue);
-            color: #fff;
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            font-family: 'Roboto Mono', monospace;
-        }
+  /* ========================================================================
+     2. MOTEUR 3D DROIT (Face à l'écran)
+     ======================================================================== */
+  .scene {
+    position: relative;
+    width: var(--book-width); height: var(--book-height);
+    transform: rotateX(0deg) rotateY(0deg); /* Parfaitement droit */
+    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  }
 
-        /* Photo Placeholder */
-        .photo-container {
-            width: 100%;
-            height: 200px;
-            background: #ddd;
-            border: 2px solid var(--ink-blue);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-        .photo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%) contrast(1.2); /* Effet photo d'identité */
-        }
-        .photo-stamp {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: var(--stamp-red);
-            color: white;
-            font-size: 0.6rem;
-            padding: 2px 5px;
-            transform: rotate(-5deg);
-            font-family: 'Roboto Mono', monospace;
-        }
+  /* Ouverture centrée */
+  .scene.is-open {
+    transform: translateX(220px) rotateX(0deg) rotateY(0deg);
+  }
 
-        /* Tableau des données */
-        .data-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            font-size: 0.75rem;
-            margin-bottom: 20px;
-            font-family: 'Roboto Mono', monospace;
-        }
-        .data-label {
-            color: var(--ink-blue);
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .data-value {
-            text-align: right;
-            border-bottom: 1px dotted #ccc;
-        }
+  .book-base {
+    position: absolute; inset: 0;
+    background: var(--bg-panel);
+    border-radius: 4px var(--radius-panel) var(--radius-panel) 4px;
+    box-shadow: var(--shadow-strong);
+    border-left: 2px solid #000;
+  }
 
-        /* --- LISTES OFFICIELLES (Puces carrées) --- */
-        .official-list {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0;
-            font-size: 0.8rem;
-        }
-        .official-list li {
-            margin-bottom: 4px;
-            position: relative;
-            padding-left: 15px;
-        }
-        .official-list li::before {
-            content: "■";
-            position: absolute;
-            left: 0;
-            color: var(--ink-blue);
-            font-size: 0.6rem;
-            top: 4px;
-        }
+  .flip-page {
+    position: absolute; inset: 0;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    z-index: 10; cursor: pointer;
+  }
 
-        /* --- TAMPONS (STAMPS) --- */
-        .stamp-container {
-            margin-top: auto; /* Pousse vers le bas */
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
+  .face {
+    position: absolute; inset: 0;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  }
 
-        .stamp-red {
-            width: 100px;
-            height: 100px;
-            border: 3px solid var(--stamp-red);
-            border-radius: 50%;
-            color: var(--stamp-red);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-weight: bold;
-            font-size: 0.7rem;
-            transform: rotate(-10deg);
-            opacity: 0.8;
-            font-family: 'Roboto Mono', monospace;
-            text-transform: uppercase;
-            line-height: 1.1;
-        }
+  /* ========================================================================
+     3. COUVERTURE : 100% ASSUMÉ FICTIF & PREMIUM
+     ======================================================================== */
+  .face-front {
+    background:var(--bg-main);
+    border-radius:4px var(--radius-panel) var(--radius-panel) 4px;
+    border:5px solid var(--bg-card);
+    padding:50px 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    box-shadow:inset -5px 0 20px rgba(0,0,0,.5);
+  }
 
-        /* --- ZONE MRZ (BAS DE PAGE) --- */
-        .mrz-zone {
-            background: #000;
-            color: #0f0; /* Vert terminal */
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.6rem;
-            padding: 5px;
-            margin-top: 20px;
-            border-top: 1px solid #333;
-            letter-spacing: 1px;
-            line-height: 1.2;
-        }
+  /* Mention légale bien visible en haut */
+  .disclaimer {
+    background: rgba(255, 149, 0, 0.1);
+    color: var(--color-amber);
+    border: 1px dashed var(--color-amber);
+    padding: 5px 15px; font-family: var(--font-mono); font-size: 0.75rem;
+    text-transform: uppercase; border-radius: 4px; margin-bottom: 30px;
+  }
 
-        /* --- STYLES SPÉCIFIQUES DROITE --- */
-        .section-header {
-            color: var(--ink-blue);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            border-bottom: 1px solid var(--ink-blue);
-            margin-bottom: 10px;
-            padding-bottom: 2px;
-            font-family: 'Roboto Mono', monospace;
-            letter-spacing: 1px;
-        }
+  .face-front h1 { 
+    font-family: var(--font-sans); font-size: 2.5rem; letter-spacing: 5px; line-height: 1.1; 
+    color: var(--color-text); text-transform: uppercase; margin-bottom: 10px;
+  }
+  
+  .subtitle { color: var(--color-accent); font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; }
 
-        .content-text {
-            font-size: 0.8rem;
-            line-height: 1.3;
-            text-align: justify;
-            margin-bottom: 15px;
-            color: #333;
-        }
+  .tech-icon { font-size: 5rem; color: var(--color-accent); margin: auto 0; filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.4)); }
+  
+  .title-pass { 
+    font-family: var(--font-mono); font-size: 1.2rem; letter-spacing: 6px; 
+    color: var(--color-text); margin-top: auto; border: 1px solid var(--color-text); padding: 10px 20px;
+  }
 
-        /* Bouton Visa */
-        .visa-btn-official {
-            background: transparent;
-            border: 1px dashed var(--stamp-green);
-            color: var(--stamp-green);
-            padding: 10px;
-            text-align: center;
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            margin-top: auto;
-            width: 100%;
-        }
+  /* ========================================================================
+     4. INTÉRIEUR GAUCHE : LE TEXTE AÉRONAUTIQUE
+     ======================================================================== */
+  .face-back {
+    background-color: var(--bg-page);
+    border-radius: var(--radius-panel) 4px 4px var(--radius-panel);
+    transform: rotateY(180deg) translateZ(1px);
+    padding: 35px 25px; display: flex; flex-direction: column;
+    border-right: 1px solid rgba(0,0,0,0.5);
+    overflow-y: auto; /* Permet de scroller si l'écran est petit */
+  }
 
-        /* Responsive pour mobile */
-        @media (max-width: 768px) {
-            .passport-booklet {
-                flex-direction: column;
-                height: auto;
-            }
-            .page-left, .page-right {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #ccc;
-            }
-        }
-    </style>
+  /* Masquer la barre de scroll pour l'élégance */
+  .face-back::-webkit-scrollbar { width: 0px; }
+
+  .log-block { margin-bottom: 20px; }
+  .log-block h3 { color: var(--color-primary); font-family: var(--font-sans); border-bottom: 1px solid rgba(31, 111, 234, 0.3); margin-bottom: 8px; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px; padding-bottom: 4px;}
+  .log-block p { font-size: 0.85rem; color: var(--color-muted); text-align: justify; line-height: 1.5; font-family: var(--font-sans); font-weight: 500;}
+  
+  /* Listes à puces esthétiques */
+  ul.flight-list { list-style: none; padding-left: 5px; margin-top: 5px;}
+  ul.flight-list li { font-size: 0.85rem; color: var(--color-muted); line-height: 1.5; margin-bottom: 5px; position: relative; padding-left: 15px;}
+  ul.flight-list li::before { content: "•"; color: var(--color-accent); position: absolute; left: 0; font-weight: bold;}
+
+  /* ========================================================================
+     5. PAGE DROITE : IDENTITÉ ET VISAS (Tampons Projets)
+     ======================================================================== */
+  .data-page {
+    position: absolute; inset: 0; padding: 30px; display: flex; flex-direction: column;
+    border-radius: 4px var(--radius-panel) var(--radius-panel) 4px; overflow: hidden;
+  }
+
+  .ambient-shadow {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, transparent 50%);
+    z-index: 20; pointer-events: none; opacity: 1; 
+  }
+
+  .id-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 25px; }
+  .id-header h2 { font-size: 1.2rem; color: var(--color-text); font-family: var(--font-sans); letter-spacing: 2px;}
+  /* Statut avec couleur Ambre/Orange */
+  .id-header .status { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-amber); border: 1px solid var(--color-amber); padding: 3px 8px; border-radius: 4px;}
+
+  .id-grid { display: grid; grid-template-columns: 120px 1fr; gap: 20px; position: relative; z-index: 2;}
+
+  /* Photo Profil */
+  .photo-main { width: 120px; height: 160px; border-radius: 8px; overflow: hidden; border: 2px solid var(--color-primary); box-shadow: 0 0 15px rgba(31, 111, 234, 0.2); }
+  .photo-main img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%) contrast(1.1); }
+
+  .data-col { display: flex; flex-direction: column; gap: 10px; }
+  .data-group { display: flex; flex-direction: column; }
+  .label { font-size: 0.65rem; text-transform: uppercase; color: var(--color-muted); letter-spacing: 1px; margin-bottom: 2px; font-weight: 600;}
+  .value { font-size: 0.95rem; font-weight: 700; color: var(--color-text); font-family: var(--font-mono); }
+  .value.highlight { color: var(--color-accent); font-family: var(--font-sans); font-size: 1.2rem; letter-spacing: 1px; line-height: 1.2;}
+
+  /* ---------------------------------------------------
+     ZONE DES VISAS (Projets tamponnés)
+     --------------------------------------------------- */
+  .visas-section {
+    margin-top: auto;
+    position: relative;
+    z-index: 2;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(255,255,255,0.1);
+  }
+  .visas-title { font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  
+  .visas-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: flex-start;
+  }
+
+  /* Style global des tampons (Visas) */
+  .visa {
+    display: inline-flex; justify-content: center; align-items: center;
+    border-radius: 50%; width: 65px; height: 65px;
+    font-family: var(--font-mono); font-size: 0.65rem; font-weight: bold; text-align: center;
+    text-transform: uppercase; opacity: 0.8; mix-blend-mode: screen;
+  }
+
+  /* Tampons personnalisés (Couleurs, Bordures et Rotations aléatoires pour le réalisme) */
+  .visa-react { border: 2px dashed var(--color-accent); color: var(--color-accent); transform: rotate(-15deg); }
+  .visa-ia { border: 2px solid var(--color-amber); color: var(--color-amber); transform: rotate(10deg); border-radius: 8px; width: 60px;}
+  .visa-api { border: 3px double var(--color-green); color: var(--color-green); transform: rotate(-5deg); }
+  .visa-ecom { border: 2px dotted var(--color-primary); color: var(--color-primary); transform: rotate(20deg); }
+
+  .help-text { position: absolute; bottom: -40px; width: 100%; text-align: center; color: var(--color-muted); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; transition: opacity 0.5s; font-family: var(--font-mono);}
+
+</style>
 </head>
 <body>
 
-    <div class="passport-booklet">
-        <!-- FILIGRANE DE FOND -->
-        <div class="watermark">RÉPUBLIQUE FRANÇAISE</div>
+<main class="scene" id="scene">
+  
+  <!-- LE BLOC PAGES (Base Fixe, Droite) -->
+  <article class="book-base">
+    <section class="data-page" id="idDataPage">
+      
+      <!-- L'ombre ambiante projetée par la couverture -->
+      <div class="ambient-shadow" id="ambient-shadow"></div>
 
-        <!-- PAGE 1 : IDENTITÉ & INFOS -->
-        <div class="page-left">
-            
-            <!-- En-tête Autorité -->
-            <div class="header-official">
-                <h1>PASSEPORT PROFESSIONNEL — STRUCTURE OFFICIELLE</h1>
-                <h2>PORTFOLIO DE DÉVELOPPEMENT — FLIGHT AUTHORITY</h2>
-            </div>
+      <header class="id-header">
+        <h2>PORTFOLIO ID</h2>
+        <div class="status">EN APPROCHE FINALE</div>
+      </header>
 
-            <!-- Bloc Identification -->
-            <div class="id-block">
-                <div class="id-title">EN-TÊTE D’AUTORITÉ</div>
-                <div style="font-size: 0.7rem; margin-bottom: 10px; font-family: 'Roboto Mono', monospace;">
-                    <strong>Type de document :</strong> Passeport professionnel — Développement web<br>
-                    <strong>Numéro de document :</strong> ID-PASS-DEV-2024<br>
-                    <strong>Date d’émission :</strong> 24/05/2024<br>
-                    <strong>Statut :</strong> <span style="color: green;">Valide — Autorisé au vol</span>
-                </div>
-            </div>
+      <div class="id-grid">
+        <!-- VOTRE PHOTO -->
+        <figure class="photo-main">
+          <!-- METTEZ VOTRE PHOTO ICI -->
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80" alt="Christophe Hascoët">
+        </figure>
 
-            <!-- Photo & Nom -->
-            <div class="photo-container">
-                <!-- METTRE VOTRE IMAGE ICI -->
-                <img src="https://via.placeholder.com/300x400/333/fff?text=PHOTO+PILOTE" alt="Commandant de Bord">
-                <div class="photo-stamp">IDENTIFIÉ</div>
-            </div>
-
-            <!-- Données Titulaire -->
-            <div class="data-grid">
-                <div class="data-label">Nom de code</div>
-                <div class="data-value">HASCOËT</div>
-                
-                <div class="data-label">Prénom</div>
-                <div class="data-value">Christophe</div>
-                
-                <div class="data-label">Rôle certifié</div>
-                <div class="data-value">Chef de projet & Dev Web Junior</div>
-                
-                <div class="data-label">Base principale</div>
-                <div class="data-value">Région Parisienne</div>
-            </div>
-
-            <!-- Compétences (Liste factuelle) -->
-            <div class="id-block">
-                <div class="id-title">COMPÉTENCES CERTIFIÉES</div>
-                <ul class="official-list">
-                    <li>HTML sémantique</li>
-                    <li>CSS / SASS</li>
-                    <li>JavaScript</li>
-                    <li>TypeScript</li>
-                    <li>React</li>
-                    <li>PHP</li>
-                    <li>Laravel</li>
-                    <li>Outils (GitHub, Trello)</li>
-                </ul>
-            </div>
-
-            <!-- Procédures -->
-            <div class="id-block">
-                <div class="id-title">PROCÉDURES OPÉRATIONNELLES</div>
-                <ul class="official-list">
-                    <li>Analyse du besoin</li>
-                    <li>Clarification des objectifs</li>
-                    <li>Coordination UX / UI / Dev</li>
-                    <li>Implémentation technique</li>
-                    <li>Tests et validation</li>
-                    <li>Livraison</li>
-                </ul>
-            </div>
-
-            <!-- Zone MRZ -->
-            <div class="mrz-zone">
-                DEV&lt;CHRISTOPHE&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
-                FRA&lt;WEB&lt;JUNIOR&lt;2026&lt;&lt;&lt;&lt;&lt;&lt;<br>
-                PASS&lt;PORTFOLIO&lt;VALID&lt;&lt;&lt;&lt;&lt;&lt;&lt;
-            </div>
+        <!-- VOS DONNÉES -->
+        <div class="data-col">
+          <div style="display:flex; gap:10px;">
+            <div class="data-group"><span class="label">Numéro</span><span class="value" style="font-size:0.8rem;">DEV-2026-001</span></div>
+            <div class="data-group"><span class="label">Nationalité</span><span class="value" style="font-size:0.8rem;">Digital Citizen</span></div>
+          </div>
+          <div class="data-group"><span class="label">Nom</span><span class="value">HASCOËT CHRISTOPHE</span></div>
+          <div class="data-group"><span class="label">Rôle Opérationnel</span><span class="value highlight">CHEF DE PROJET &<br>DÉV JUNIOR</span></div>
         </div>
+      </div>
 
-        <!-- PAGE 2 : MISSION & VISAS -->
-        <div class="page-right">
-            
-            <!-- En-tête Mission -->
-            <div class="header-official">
-                <h1>MISSION & PROCÉDURES</h1>
-            </div>
-
-            <!-- Cap & Navigation -->
-            <div class="section-header">CAP & NAVIGATION</div>
-            <p class="content-text">
-                Concevoir des solutions utiles, accessibles et faciles à piloter. Priorité à la simplicité, la lisibilité et l'expérience passager.
-            </p>
-
-            <!-- Protocole -->
-            <div class="section-header">PROTOCOLE OPÉRATIONNEL</div>
-            <p class="content-text">
-                Analyse du besoin, clarifications, collaboration avec l'équipage, progression étape par étape, respect des procédures Agile.
-            </p>
-
-            <!-- Objectif -->
-            <div class="section-header">OBJECTIF DE MISSION</div>
-            <p class="content-text">
-                Continuer à monter en altitude, apprendre chaque jour et apporter une valeur réelle à chaque projet, même modestement au début.
-            </p>
-
-            <!-- Expérience -->
-            <div class="section-header">EXPÉRIENCE CONSIGNÉE</div>
-            <ul class="official-list">
-                <li>Expérience en conditions réelles</li>
-                <li>Participation à des projets clients</li>
-                <li>Rédaction de cahiers des charges</li>
-                <li>Interventions front-end et backend SQL</li>
-            </ul>
-
-            <!-- Observations -->
-            <div class="section-header">OBSERVATIONS OFFICIELLES</div>
-            <p class="content-text" style="font-style: italic; color: #555;">
-                Profil en montée de compétences, rigoureux, orienté apprentissage continu et amélioration progressive.
-            </p>
-
-            <!-- Zone Tampons & Visa -->
-            <div class="stamp-container">
-                <div>
-                    <div style="font-size: 0.6rem; color: #666; margin-bottom: 5px;">
-                        Document consultable à des fins professionnelles<br>Reproduction partielle autorisée.
-                    </div>
-                </div>
-                
-                <!-- LE TAMPON ROUGE -->
-                <div class="stamp-red">
-                    VISA TECHNIQUE<br>APTE AU VOL<br><span style="font-size: 0.5rem; margin-top:2px;">24 MAI 2024</span>
-                </div>
-            </div>
-
+      <!-- LES VISAS (Vos Projets) -->
+      <div class="visas-section">
+        <div class="visas-title">Visas d'Exploitation (Projets)</div>
+        <div class="visas-grid">
+          <div class="visa visa-react">VISA<br>REACT</div>
+          <div class="visa visa-ia">VISA<br>I.A.</div>
+          <div class="visa visa-api">VISA<br>API</div>
+          <div class="visa visa-ecom">VISA<br>E-COM</div>
         </div>
+      </div>
+
+    </section>
+  </article>
+
+  <!-- LA COUVERTURE QUI TOURNE -->
+  <aside class="flip-page" id="flip-page">
+    
+    <!-- RECTO : Extérieur Carbone -->
+    <div class="face face-front">
+      <!-- MENTION LÉGALE FICTIVE -->
+      <div class="disclaimer">Document fictif – Portfolio créatif</div>
+      
+      <h1>DIGITAL<br>PASSPORT</h1>
+      <div class="subtitle">Creative Portfolio – Non Governmental</div>
+      
+      <div class="tech-icon">⎔</div>
+      
+      <div class="title-pass">ID_DÉVELOPPEUR</div>
     </div>
+
+    <!-- VERSO : Intérieur Gauche (Vos Textes Détaillés) -->
+    <div class="face face-back">
+      
+      <div class="log-block">
+        <h3>Plan de vol</h3>
+        <p>Ancien navigateur des métiers de l’hôtellerie, j’ai effectué une remise des gaz vers le développement web et la gestion de projet IT. Aujourd’hui, j’évolue dans un environnement collaboratif, à l’interface entre la technique et la stratégie, pour concevoir des solutions digitales fiables, opérationnelles et centrées utilisateur.</p>
+      </div>
+      
+      <div class="log-block">
+        <h3>Altitude & Expérience</h3>
+        <p>Mon parcours m’a appris à :</p>
+        <ul class="flight-list">
+          <li><strong>Gérer les turbulences :</strong> adaptabilité, résistance au stress et esprit d’équipe en environnement exigeant.</li>
+          <li><strong>Co-piloter en équipe :</strong> coordination Agile, clarifications avec les parties prenantes, synchronisation UX/UI et tech.</li>
+          <li><strong>Atterrir des projets :</strong> du cadrage initial au déploiement (performance, accessibilité, satisfaction).</li>
+        </ul>
+      </div>
+      
+      <div class="log-block">
+        <h3>Cap & Navigation</h3>
+        <p>Mon objectif : concevoir des solutions aussi précises qu’un plan de vol.</p>
+        <ul class="flight-list">
+          <li><strong>Clarté avant tout :</strong> pas de complexité inutile.</li>
+          <li><strong>Contrôle aérien :</strong> analyse des besoins, itérations Agile (Trello/Jira), livraisons maîtrisées.</li>
+          <li><strong>Innovation maîtrisée :</strong> interfaces modernes et performantes.</li>
+        </ul>
+      </div>
+
+      <div class="log-block" style="margin-bottom: 0;">
+        <h3>Objectif de mission</h3>
+        <p>Contribuer à des projets digitaux fiables et aboutis, où chaque ligne de code et chaque décision stratégique participent à un déploiement réussi.</p>
+      </div>
+
+    </div>
+
+  </aside>
+
+  <div class="help-text" id="help-text">[ CLIQUEZ POUR OUVRIR ]</div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+  const scene = document.getElementById('scene');
+  const flipPage = document.getElementById('flip-page');
+  const ambientShadow = document.getElementById('ambient-shadow');
+  const helpText = document.getElementById('help-text');
+  
+  let isOpen = false;
+  let isAnimating = false;
+
+  flipPage.addEventListener('click', () => {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const tl = gsap.timeline({ onComplete: () => isAnimating = false });
+
+    if (!isOpen) {
+      // Ouverture du livre (Reste parfaitement de face)
+      tl.to(flipPage, { duration: 1.5, rotationY: -180, ease: "power2.inOut" }, 0)
+        .to(scene, { duration: 1.5, x: 220, rotateX: 0, rotateY: 0, ease: "power2.inOut" }, 0)
+        .to(ambientShadow, { duration: 1.5, opacity: 0, ease: "power2.inOut" }, 0);
+      
+      helpText.style.opacity = '0';
+      isOpen = true;
+    } else {
+      // Fermeture
+      tl.to(flipPage, { duration: 1.5, rotationY: 0, ease: "power2.inOut" }, 0)
+        .to(scene, { duration: 1.5, x: 0, rotateX: 0, rotateY: 0, ease: "power2.inOut" }, 0)
+        .to(ambientShadow, { duration: 1.5, opacity: 1, ease: "power2.inOut" }, 0);
+      
+      setTimeout(() => helpText.style.opacity = '1', 1000);
+      isOpen = false;
+    }
+  });
+
+  // Léger suivi de la souris (très minimaliste pour ne pas déformer le texte)
+  document.addEventListener('mousemove', (e) => {
+    if(!isOpen) {
+      const xPos = (e.clientX / window.innerWidth - 0.5) * 3; 
+      const yPos = (e.clientY / window.innerHeight - 0.5) * 3;
+      gsap.to(scene, { rotationY: xPos, rotationX: -yPos, duration: 0.5, ease: "power1.out" });
+    }
+  });
+
+</script>
 
 </body>
 </html>

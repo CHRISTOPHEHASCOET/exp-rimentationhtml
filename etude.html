@@ -3,328 +3,301 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>FLIGHT LOG // HALL DES DÉPARTS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Polices -->
+  <title>Hall des Départs · Portfolio</title>
+  <!-- Je charge les polices utilisées dans toute l'interface -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap"
-    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
 
-  <!-- GSAP -->
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
   <style>
     :root {
-      --bg: #050b10;
-      --panel: #0c1622;
-      --accent: #1f6fea;
-      --accent-soft: #8ec5ff;
-      --text: #e6edf3;
-      --muted: #8b949e;
-      --green: #3fb950;
-
-      --mono: 'JetBrains Mono', monospace;
-      --display: 'Rajdhani', sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --primary-blue: #1f6fea;
+      --status-green: #3fb950;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
+      --font-sans: 'Oswald', sans-serif;
+      /* --font-mono: 'Oswald', sans-serif; */
+      --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+      --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.6);
+      --radius-panel: 16px;
+      --container-width: 1300px;
     }
 
     body {
-      background: radial-gradient(circle at top, #1b3957 0, #050b10 55%, #020407 100%);
-      color: var(--text);
-      font-family: var(--display);
+      margin: 0;
       min-height: 100vh;
-    }
-
-    header {
-      padding: 2rem;
-      text-align: center;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      border-bottom: 1px solid rgba(255, 255, 255, .1);
-    }
-
-    header span {
-      color: var(--accent);
-    }
-
-    main {
-      max-width: 1200px;
-      margin: auto;
-      padding: 2rem;
-    }
-
-    .board-header {
+      background: var(--bg-main);
+      color: var(--color-text);
+      font-family: var(--font-sans);
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
     }
 
-    .controls {
+    .btn-group {
       display: flex;
-      border: 1px solid #2f588b;
-      border-radius: 6px;
-      overflow: hidden;
+      gap: 1rem;
+      margin: 1rem 0;
     }
 
-    .controls button {
-      background: transparent;
+    .btn-group button {
+      background: var(--bg-panel);
       border: none;
-      padding: .6rem 1.5rem;
-      color: var(--muted);
-      font-family: var(--mono);
+      color: var(--color-text);
+      padding: 0.6rem 1.2rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
       cursor: pointer;
-      border-right: 1px solid #2f588b;
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
     }
 
-    .controls button:last-child {
-      border-right: none;
-    }
-
-    .controls button.active {
-      background: var(--accent);
+    .btn-group button.active {
+      background: var(--primary-blue);
       color: #fff;
+      box-shadow: 0 0 15px var(--primary-blue);
     }
 
-    .subtitle {
-      font-family: var(--mono);
-      color: var(--muted);
-      font-size: .9rem;
+    .flight-board {
+      max-width: var(--container-width);
+      background: var(--bg-main);
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      border: 5px solid rgba(0, 0, 0, 0.85);
+      box-shadow: var(--shadow-strong), inset 0 0 18px rgba(0, 0, 0, 0.9);
+      margin-bottom: 2rem;
+      position: relative;
     }
 
-    .terminal {
-      border: 1px solid rgba(142, 197, 255, .25);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
-      padding: 1rem;
-      overflow-x: auto;
-    }
-
-    table {
+    .flight-table {
       width: 100%;
-      border-collapse: collapse;
-      font-family: var(--mono);
-      text-transform: uppercase;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      perspective: 900px;
     }
 
-    th {
+    .flight-table th {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #5f6b7a;
+      letter-spacing: 2px;
+      padding: 0 10px 10px;
       text-align: left;
-      color: var(--accent);
-      padding: .75rem;
-      font-size: .8rem;
-      border-bottom: 2px solid rgba(142, 197, 255, .2);
     }
 
-    td {
-      padding: .9rem .75rem;
-      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    .flight-table td {
+      padding: 6px 10px;
       white-space: nowrap;
     }
 
-    tr:hover {
-      background: rgba(31, 111, 234, .08);
+    .flight-table tbody tr {
+      background: var(--bg-main);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.8);
+      transition: background 0.3s ease;
     }
 
-    .code {
-      color: var(--accent-soft);
-      font-weight: 700;
+    .flight-table tbody tr:hover td {
+      background: rgba(31, 111, 234, 0.15);
+      cursor: pointer;
     }
 
-    .status {
-      color: var(--green);
-    }
+    /* Flap word */
 
-    /* SPLIT FLAP */
-    .flap-cell {
+    .word {
       display: flex;
-      gap: 2px;
+      gap: 0;
+      padding: 2px 3px;
+      background: linear-gradient(180deg, #0c1118, #050a12);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 0 rgba(0, 0, 0, 0.9);
+      transform-style: preserve-3d;
     }
 
     .flap {
-      width: 22px;
-      height: 34px;
-      perspective: 800px;
-    }
-
-    .flap-inner {
-      width: 100%;
-      height: 100%;
-      background: var(--panel);
-      border: 1px solid rgba(142, 197, 255, .25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-style: preserve-3d;
+      width: 1.1rem;
+      height: 1.1rem;
+      line-height: 1.1rem;
+      letter-spacing: 0.02em;
+      text-align: center;
+      background: linear-gradient(180deg, #1b2230 0%, #0a0d14 50%, #05070d 100%);
+      border: 1px solid rgba(0, 0, 0, 0.85);
+      border-radius: 3px;
+      transform-origin: center bottom;
       backface-visibility: hidden;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
+      font-variant-numeric: tabular-nums;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      perspective: 900px;
     }
 
-    .flap.space .flap-inner {
-      background: transparent;
-      border: none;
+    .flap::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .row-green td .flap {
+      color: var(--status-green);
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.5);
+    }
+
+    .row-blue td .flap {
+      color: var(--primary-blue);
+      text-shadow: 0 0 8px rgba(31, 111, 234, 0.5);
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    CHRISTOPHE HASCOËT // <span>COMMANDANT DE BORD</span>
-  </header>
+  <div class="btn-group">
+    <button id="btn-departs" class="active">DÉPARTS</button>
+    <button id="btn-arrivees">ARRIVÉES</button>
+  </div>
 
-  <main>
-    <div class="board-header">
-      <div class="controls">
-        <button class="active" data-board="departs">Départs</button>
-        <button data-board="arrivees">Arrivées</button>
-      </div>
-      <p id="subtitle" class="subtitle"></p>
-    </div>
-
-    <div class="terminal">
-      <table>
-        <thead>
-          <tr>
-            <th>VOL</th>
-            <th id="th-loc">DESTINATION</th>
-            <th id="th-time">ETD</th>
-            <th>GATE</th>
-            <th>STATUS</th>
-          </tr>
-        </thead>
-        <tbody id="board"></tbody>
-      </table>
-    </div>
-  </main>
+  <div class="flight-board">
+    <table id="table-departs" class="flight-table">
+      <thead>
+        <tr>
+          <th>VOL</th>
+          <th>DESTINATION</th>
+          <th>HEURE</th>
+          <th>PORTE</th>
+          <th>STATUT</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <table id="table-arrivees" class="flight-table" style="display:none">
+      <thead>
+        <tr>
+          <th>VOL</th>
+          <th>PROVENANCE</th>
+          <th>HEURE</th>
+          <th>STAND</th>
+          <th>STATUT</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script>
-    const FLAP_CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-";
-    const boardEl = document.getElementById("board");
-    const subtitleEl = document.getElementById("subtitle");
-    const thLoc = document.getElementById("th-loc");
-    const thTime = document.getElementById("th-time");
+    const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.+’-";
 
-    const BOARDS = {
-      departs: {
-        subtitle: "Tableau des départs — Compétences en montée",
-        loc: "DESTINATION",
-        time: "ETD",
-        data: [
-          { vol: "DEV01", loc: "TYPESCRIPT AVANCÉ", time: "13:45", gate: "A01", stat: "EN PRÉPARATION" },
-          { vol: "DEV02", loc: "ARCHITECTURE FRONT", time: "19:00", gate: "A02", stat: "EN MONTÉE" },
-          { vol: "DEV03", loc: "GSAP AVANCÉ", time: "10:00", gate: "B01", stat: "PROCÉDURE EN COURS" }
-        ]
-      },
-      arrivees: {
-        subtitle: "Tableau des arrivées — Compétences maîtrisées",
-        loc: "PROVENANCE",
-        time: "ATA",
-        data: [
-          { vol: "OPS01", loc: "HTML SÉMANTIQUE", time: "11:45", gate: "A", stat: "OPÉRATIONNEL" },
-          { vol: "OPS02", loc: "JAVASCRIPT ES6+", time: "09:00", gate: "B", stat: "VALIDÉ" }
-        ]
+    // Données départs/arrivées
+    const DEPARTS = [
+      { v: 'DEV01', d: 'TYPESCRIPT AVANCÉ', t: '--:--', g: 'A01', s: 'EN PRÉPARATION' },
+      { v: 'DEV02', d: 'TESTS AUTOMATISÉS', t: '--:--', g: 'A02', s: 'EN CONFIGURATION' },
+      { v: 'DEV03', d: 'JAVASCRIPT ES6+', t: '--:--', g: 'B01', s: 'EN MONTÉE' },
+      { v: 'DEV04', d: 'PERFORMANCE WEB', t: '--:--', g: 'B02', s: 'EN APPROCHE' },
+      { v: 'DEV05', d: 'GSAP AVANCÉ', t: '--:--', g: 'C01', s: 'PROCÉDURE EN COURS' }
+    ];
+    const ARRIVEES = [
+      { v: 'OPS01', d: 'HTML SÉMANTIQUE', t: '--:--', g: 'A', s: 'OPÉRATIONNEL' },
+      { v: 'OPS02', d: 'CSS / SASS', t: '--:--', g: 'A', s: 'MAÎTRISE CONFIRMÉE' },
+      { v: 'OPS03', d: 'JAVASCRIPT ES6+', t: '--:--', g: 'B', s: 'PROCÉDURE VALIDÉE' },
+      { v: 'OPS04', d: 'ACCESSIBILITÉ', t: '--:--', g: 'B', s: 'AUTORISÉ AU SERVICE' },
+      { v: 'OPS05', d: 'PHP / LARAVEL', t: '--:--', g: 'C', s: 'EN SERVICE ACTIF' }
+    ];
+
+    function createWord(text, length = 20) {
+      const word = document.createElement('div');
+      word.className = 'word';
+
+      const safeText = text || "--:--";
+
+      for (let i = 0; i < length; i++) {
+        const span = document.createElement('span');
+        span.className = 'flap';
+
+        const char = safeText[i] ?? " ";
+        span.dataset.char = char;
+        span.textContent = char === " " ? "\u00A0" : char;
+
+        word.appendChild(span);
       }
-    };
 
-    function createFlapCell(text) {
-      const td = document.createElement("td");
-      td.className = "flap-cell";
+      // hover léger (tu l’avais déjà)
+      word.addEventListener('mouseenter', () => word.style.transform = 'scale(1.05)');
+      word.addEventListener('mouseleave', () => word.style.transform = 'scale(1)');
 
-      [...text].forEach(char => {
-        const flap = document.createElement("span");
-        flap.className = "flap" + (char === " " ? " space" : "");
+      return word;
+    }
 
-        const inner = document.createElement("span");
-        inner.className = "flap-inner";
-        inner.textContent = char === " " ? "" : char;
 
-        flap.appendChild(inner);
-        td.appendChild(flap);
+    function populateTable(tableId, data) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        ['v', 'd', 't', 'g', 's'].forEach(k => {
+          const td = document.createElement('td');
+          let len =
+            k === 'v' ? 6 :
+              k === 't' ? 5 :
+                k === 'g' ? 4 :
+                  22;   // marge propre pour texte long
+
+          td.appendChild(createWord(row[k], len));
+          ;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
       });
-
-      return td;
     }
 
     function animateFlaps() {
-      document.querySelectorAll(".flap:not(.space)").forEach((flap, i) => {
-        const inner = flap.querySelector(".flap-inner");
-        const finalChar = inner.textContent;
-        const steps = 5 + Math.floor(Math.random() * 5);
-
-        const tl = gsap.timeline({ delay: i * 0.01 });
-
-        for (let j = 0; j < steps; j++) {
-          tl.to(inner, {
-            rotationX: -90,
-            duration: 0.06,
-            onComplete: () => {
-              inner.textContent = FLAP_CHARS[Math.floor(Math.random() * FLAP_CHARS.length)];
-            }
-          }).to(inner, {
-            rotationX: 0,
-            duration: 0.06
-          });
-        }
-
-        tl.to(inner, {
-          rotationX: -90,
-          duration: 0.06,
-          onComplete: () => inner.textContent = finalChar
-        }).to(inner, {
-          rotationX: 0,
-          duration: 0.06
-        });
+      document.querySelectorAll('.flap').forEach(flap => {
+        const finalChar = flap.dataset.char;
+        if (finalChar === ' ') return;
+        const flips = 12 + Math.floor(Math.random() * 8);
+        let count = 0;
+        const interval = setInterval(() => {
+          flap.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+          gsap.fromTo(flap, { rotationX: -90 }, { rotationX: 0, duration: 0.25, ease: 'power2.out' });
+          if (++count >= flips) { clearInterval(interval); flap.textContent = finalChar; }
+        }, 140 + Math.random() * 40);
       });
     }
 
-    function render(type) {
-      const board = BOARDS[type];
-      boardEl.innerHTML = "";
-      subtitleEl.textContent = board.subtitle;
-      thLoc.textContent = board.loc;
-      thTime.textContent = board.time;
-
-      board.data.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="code">${row.vol}</td>
-        `;
-        tr.appendChild(createFlapCell(row.loc));
-        tr.innerHTML += `
-          <td>${row.time}</td>
-          <td>${row.gate}</td>
-          <td class="status">${row.stat}</td>
-        `;
-        boardEl.appendChild(tr);
-      });
-
-      gsap.from("tbody tr", {
-        opacity: 0,
-        y: 12,
-        stagger: .08,
-        duration: .4
-      });
-
+    // Switch boutons
+    const btnDep = document.getElementById('btn-departs');
+    const btnArr = document.getElementById('btn-arrivees');
+    btnDep.addEventListener('click', () => {
+      btnDep.classList.add('active'); btnArr.classList.remove('active');
+      document.getElementById('table-departs').style.display = '';
+      document.getElementById('table-arrivees').style.display = 'none';
       animateFlaps();
-    }
-
-    document.querySelectorAll(".controls button").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".controls button").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        render(btn.dataset.board);
-      });
+    });
+    btnArr.addEventListener('click', () => {
+      btnArr.classList.add('active'); btnDep.classList.remove('active');
+      document.getElementById('table-departs').style.display = 'none';
+      document.getElementById('table-arrivees').style.display = '';
+      animateFlaps();
     });
 
-    render("departs");
+    window.addEventListener('load', () => {
+      populateTable('table-departs', DEPARTS);
+      populateTable('table-arrivees', ARRIVEES);
+      animateFlaps();
+    });
   </script>
-
 </body>
+
 </html>

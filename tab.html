@@ -1,1407 +1,297 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flight Log · Portfolio Développeur Web</title>
-
-    <meta name="description"
-        content="Portfolio développeur web interactif — Flight Log avec split-flap, Casio F-91W et tableau de vols animé.">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-
-
-    <style>
-        /* ===========================
-   RESET
-   =========================== */
-
-        html {
-            box-sizing: border-box;
-            font-size: 16px;
-            scroll-behavior: smooth;
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: inherit;
-            margin: 0;
-            padding: 0;
-        }
-
-        img {
-            display: block;
-            max-width: 100%;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        ul,
-        li {
-            list-style: none;
-        }
-
-        /* ===========================
-   VARIABLES
-   =========================== */
-
-        :root {
-            --bg-page: #0a0d14;
-            --bg-panel: #111820;
-            --bg-card: #101e38;
-            --bg-tab: #1a222d;
-
-            --color-primary: #1f6fea;
-            --color-accent: #00d2ff;
-            --color-green: #3fb950;
-            --color-text: #e6edf3;
-            --color-muted: #909aa7;
-            --color-soft-accent: #8ec5ff;
-
-            --font-sans: 'Rajdhani', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-
-            --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
-            --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.6);
-            --radius-panel: 16px;
-
-            --container-width: 1300px;
-        }
-
-        /* ===========================
-   BODY
-   =========================== */
-
-        body {
-            background: radial-gradient(circle at top, #1b3957, #050b10 60%);
-            color: var(--color-text);
-            font-family: var(--font-sans);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        /* ===========================
-   HEADER
-   =========================== */
-
-        .header {
-            background-color: var(--bg-panel);
-            box-shadow: var(--shadow-soft);
-            padding: 1.5rem 0;
-            margin-bottom: 2.5rem;
-        }
-
-        .header__inner {
-            max-width: var(--container-width);
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: 220px 1fr 190px;
-            gap: 2rem;
-            align-items: center;
-            position: relative;
-        }
-
-        .header__inner::before,
-        .header__inner::after {
-            content: "";
-            position: absolute;
-            top: -1.5rem;
-            height: 5px;
-            border-radius: 999px;
-        }
-
-        .header__inner::before {
-            left: 0;
-            width: 20%;
-            background: var(--color-primary);
-        }
-
-        .header__inner::after {
-            left: 25%;
-            width: 10%;
-            background: var(--color-green);
-        }
-
-        /* ===========================
-   PILOT CARD
-   =========================== */
-
-        .pilot-card {
-            background: var(--bg-tab);
-            border-radius: 8px;
-            padding: 0.7rem 1.1rem;
-            box-shadow: var(--shadow-soft);
-            position: relative;
-        }
-
-        .pilot-card::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 6px;
-            bottom: 6px;
-            width: 3px;
-            background: var(--color-primary);
-            border-radius: 3px;
-        }
-
-        .pilot-card__role {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--color-primary);
-            text-align: center;
-        }
-
-        .pilot-card__main {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .pilot-card__avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 8px;
-            border: 1px solid #2f588b;
-            overflow: hidden;
-        }
-
-        .pilot-card__photo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .pilot-card__name {
-            font-size: 1.05rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .pilot-card__id {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--color-muted);
-        }
-
-        .pilot-card__status {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--color-green);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .pilot-card__dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--color-green);
-        }
-
-        .pilot-card__dot--pulse {
-            animation: pulse 3s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 8px rgba(63, 185, 80, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(63, 185, 80, 0);
-            }
-        }
-
-
-        /* ===========================
-   FLIGHT BOARD (TABLEAU DES VOLS)
-   =========================== */
-
-        .flight-board {
-            max-width: var(--container-width);
-            background: linear-gradient(145deg, #101827, #0a101b);
-            border-radius: 20px;
-            padding: 1rem 1.2rem;
-            border: 2px solid rgba(0, 0, 0, 0.85);
-            box-shadow: var(--shadow-strong), inset 0 0 18px rgba(0, 0, 0, 0.9);
-            position: relative;
-        }
-
-        .flight-board::before {
-            content: "";
-            position: absolute;
-            inset: 8px;
-            border-radius: 14px;
-            border: 1px solid rgba(140, 180, 255, 0.18);
-            pointer-events: none;
-        }
-
-        .flight-board__title {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--color-muted);
-            margin-bottom: 0.6rem;
-            text-align: left;
-        }
-
-        /* TABLE */
-        .flight-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 3px;
-        }
-
-        .flight-table thead th {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--color-primary);
-            letter-spacing: 2px;
-            padding: 0 10px 10px;
-            text-align: left;
-            text-shadow: 0 0 6px rgba(30, 144, 255, 0.25);
-        }
-
-        /* LIGNES */
-        /* .flight-row {
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            transition: background 0.3s ease;
-            background: linear-gradient(180deg, #14203a, #0a0f19);
-            background-size: 200% 200%;
-            animation: rowGlow 4s ease-in-out infinite;
-        } */
-        .flight-row {
-            background: linear-gradient(180deg,
-                    #14203a,
-                    #0a0f19,
-                    #14203a);
-            background-size: 200% 200%;
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            animation: rowGlow 4.5s ease-in-out infinite;
-        }
-
-
-        @keyframes rowGlow {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        .flight-row:hover {
-            background: linear-gradient(180deg, #1e3a8a, #0a0f19);
-            box-shadow: 0 0 12px rgba(30, 144, 255, 0.35);
-        }
-
-        .flight-row td {
-            padding: 4px 6px;
-            white-space: nowrap;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-        }
-
-        .flight-row.active {
-            animation: rowGlow 4.5s ease-in-out infinite;
-            box-shadow: 0 0 14px rgba(30, 144, 255, 0.55);
-        }
-
-        /* COULEURS STATUTS */
-        .f-code {
-            color: var(--color-accent);
-            font-weight: 600;
-        }
-
-        .f-gate {
-            color: var(--color-muted);
-            font-weight: 600;
-        }
-
-        .f-stat.open {
-            color: var(--color-soft-accent);
-            font-weight: 600;
-        }
-
-        .f-stat.boarding {
-            color: var(--color-green);
-            font-weight: 600;
-        }
-
-        .f-stat.ontime {
-            color: var(--color-primary);
-            font-weight: 600;
-        }
-
-        /* ===========================
-   SPLIT‑FLAP (compatible GSAP)
-   =========================== */
-
-        .word {
-            display: flex;
-            gap: 0;
-            padding: 2px 3px;
-            background: linear-gradient(180deg, #0c1118, #050a12);
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.9);
-        }
-
-        .flap {
-            width: 1.05rem;
-            height: 1.15rem;
-            line-height: 1.15rem;
-            text-align: center;
-            background: linear-gradient(180deg, #1b2230 0%, #0a0d14 50%, #05070d 100%);
-            border: 1px solid rgba(0, 0, 0, 0.85);
-            border-radius: 3px;
-            transform-origin: center bottom;
-            backface-visibility: hidden;
-            position: relative;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
-            font-variant-numeric: tabular-nums;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-        }
-
-        .flap::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.7);
-        }
-
-        /* ===========================
-   CASIO F‑91W — VERSION RÉALISTE
-   =========================== */
-
-        .casio {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* .casio__body {
-            width: 165px;
-            padding: 12px 16px;
-            background: #181818;
-            border-radius: 20px;
-            border: 1px solid #000;
-            box-shadow:0 8px 18px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.06);
-            position: relative;
-        } */
-        .casio__body {
-            width: 175px;
-            padding: 13px 16px 12px;
-            background: radial-gradient(circle at top, #262626, #111111);
-            border-radius: 18px;
-            border: 1px solid #000;
-            box-shadow:
-                0 10px 22px rgba(0, 0, 0, 0.9),
-                inset 0 2px 6px rgba(255, 255, 255, 0.05);
-            position: relative;
-        }
-
-        /* Texte boîtier */
-        .casio__header {
-            display: flex;
-            justify-content: space-between;
-            padding: 0 4px;
-            margin-bottom: 4px;
-        }
-
-        .casio__function-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 4px 3px;
-            margin-bottom: 3px;
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: 0.3px;
-        }
-
-        .casio__light {
-            color: #e5e7eb;
-        }
-
-        .casio__alarm {
-            color: #facc15;
-            /* jaune/orange comme la vraie */
-        }
-
-
-        .casio__brand,
-        .casio__model {
-            font-size: 10px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-            color: #dcdcdc;
-        }
-
-        .casio__model {
-            font-style: italic;
-            color: #a49666;
-        }
-
-        /* Bordure bleue Casio */
-        /* .casio__screen-border {
-            border: 5px solid #1e56a0;
-            border-radius: 6px;
-            padding: 3px;
-            background: #000;
-        } */
-        .casio__screen-border {
-            border: 3px solid #1e56a0;
-            border-radius: 8px;
-            padding: 3px;
-            background: #050505;
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                inset 0 0 4px rgba(0, 0, 0, 0.7);
-        }
-
-        /* Écran LCD */
-        /* .casio__screen {
-            background: linear-gradient(180deg, #cfd6b6, #aeb49a);
-            padding: 6px 8px;
-            border-radius: 4px;
-            font-family: var(--font-mono);
-            color: #1a1a1a;
-            box-shadow:
-                inset 0 2px 4px rgba(0, 0, 0, 0.25),
-                inset 0 -1px 2px rgba(255, 255, 255, 0.15);
-        } */
-        .casio__screen {
-            padding: 8px 10px;
-            border-radius: 4px;
-            font-family: var(--font-mono);
-            color: #111827;
-            background: linear-gradient(180deg, #d7dfb5 0%, #b7c09a 100%);
-            box-shadow:
-                inset 0 2px 4px rgba(0, 0, 0, 0.25),
-                inset 0 -1px 2px rgba(255, 255, 255, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            filter: contrast(0.95) brightness(0.97);
-        }
-
-        /* Ligne du haut */
-        .casio__top {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            width: 100%;
-            font-size: 10px;
-            margin-bottom: 4px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-
-        .casio__mode {
-            font-size: 10px;
-            justify-self: flex-start;
-        }
-
-        .casio__date {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .casio__date span {
-            min-width: 18px;
-            text-align: center;
-        }
-
-        /* Heure principale */
-        .casio__time {
-            font-size: 30px;
-            line-height: 1;
-            font-weight: 700;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: center;
-            align-items: baseline;
-            margin-top: 2px;
-        }
-
-        #casio-seconds {
-            font-size: 15px;
-            margin-left: 4px;
-        }
-
-        /* Footer boîtier */
-        .casio__footer {
-            margin-top: 5px;
-            font-size: 9px;
-            color: #e5e7eb;
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-            font-weight: 600;
-            letter-spacing: 0.25px;
-        }
-
-        .casio__wr {
-            border: 1px solid #a61c1c;
-            color: #f97373;
-            padding: 0 3px;
-            font-weight: 700;
-            font-size: 8px;
-            letter-spacing: 0.4px;
-            background: #111827;
-        }
-
-        /* Boutons physiques */
-        .casio__btn {
-            position: absolute;
-            width: 4px;
-            height: 8px;
-            background: #afafaf;
-            border-radius: px;
-        }
-
-        .casio__btn--lt {
-            left: -4px;
-            top: 25%;
-        }
-
-        .casio__btn--lb {
-            left: -4px;
-            bottom: 25%;
-        }
-
-        .casio__btn--rb {
-            right: -4px;
-            bottom: 25%;
-        }
-
-        /* ===========================
-   FOOTER COCKPIT PREMIUM
-   =========================== */
-
-        .footer {
-            background: var(--bg-panel);
-            padding: 2.2rem 0 1.7rem;
-            /* margin-top: 2rem; */
-        }
-
-        .footer__inner {
-            max-width: var(--container-width);
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        /* Grille principale */
-        .footer__top {
-            display: grid;
-            grid-template-columns: minmax(0, 240px) minmax(0, 1.8fr) minmax(0, 240px);
-            gap: 2.5rem;
-            margin-bottom: 1.8rem;
-        }
-
-        /* Bloc générique */
-        .footer-block {
-            background: radial-gradient(circle at top, #111827, #020617);
-            border-radius: var(--radius-panel);
-            border: 1px solid rgba(15, 23, 42, 0.9);
-            box-shadow:
-                0 14px 35px rgba(0, 0, 0, 0.85),
-                inset 0 0 14px rgba(0, 0, 0, 0.9);
-            padding: 1rem 1.2rem 1.1rem;
-        }
-
-        /* Titre de bloc */
-        .footer-block__title {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--color-muted);
-            margin-bottom: 0.6rem;
-        }
-
-        /* Contenu générique */
-        .footer-block__content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-
-        /* ===========================
-   RUNWAY LIGHTS — PISTE COCKPIT
-   =========================== */
-        .runway-lights {
-            position: relative;
-            width: 100%;
-            height: 18px;
-            background: transparent;
-            overflow: hidden;
-            margin: 1.5rem 0 0;
-            /* plus d'espace sous la piste */
-        }
-
-        /* Ligne de points lumineux */
-        .runway-lights::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 50%;
-            height: 4px;
-            transform: translateY(-50%);
-            background-image: radial-gradient(circle, #1e90ff 2px, transparent 3px);
-            background-size: 26px 4px;
-            background-repeat: repeat-x;
-            opacity: 0.9;
-            animation: runwayDotsPulse 1.6s ease-in-out infinite;
-        }
-
-        /* Halo lumineux */
-        .runway-lights::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.3), transparent 60%);
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        /* Animation pulsée */
-        @keyframes runwayDotsPulse {
-            0% {
-                opacity: 0.4;
-                filter: drop-shadow(0 0 0px rgba(56, 189, 248, 0));
-            }
-
-            50% {
-                opacity: 1;
-                filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
-            }
-
-            100% {
-                opacity: 0.4;
-                filter: drop-shadow(0 0 0px rgba(56, 189, 248, 0));
-            }
-        }
-
-        /* ===========================
-   TOUR DE CONTRÔLE
-   =========================== */
-
-        .tower__freq {
-            font-size: 2.4rem;
-            font-family: var(--font-mono);
-            font-weight: 700;
-            letter-spacing: -1px;
-            color: var(--color-text);
-        }
-
-        .tower__sub {
-            font-size: 0.75rem;
-            font-family: var(--font-mono);
-            color: var(--color-muted);
-        }
-
-        .tower__status {
-            font-size: 0.8rem;
-            color: var(--color-green);
-            font-family: var(--font-mono);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tower__dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--color-green);
-        }
-
-        /* ===========================
-   COMMS (Email, GitHub, LinkedIn, Radio)
-   =========================== */
-
-        .comms {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0.8rem;
-        }
-
-        .comms__item {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.7rem;
-            border-radius: 10px;
-            border: 1px solid #11171f;
-            background: #0b1220;
-            transition: border-color 0.25s ease, background 0.25s ease, transform 0.15s ease;
-        }
-
-        .comms__icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 999px;
-            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.3), #020617);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .comms__icon svg {
-            width: 18px;
-            height: 18px;
-            color: var(--color-primary);
-            transition: transform 0.35s ease, color 0.25s ease;
-        }
-
-        .comms__text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .comms__label {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--color-text);
-        }
-
-        .comms__sub {
-            font-family: var(--font-mono);
-            font-size: 0.6rem;
-            color: var(--color-muted);
-        }
-
-        .comms__item:hover {
-            border-color: var(--color-primary);
-            background: #020617;
-            transform: translateY(-1px);
-        }
-
-        .comms__item:hover .comms__icon svg {
-            transform: rotate(360deg);
-            color: var(--color-text);
-        }
-
-        /* ===========================
-   CLEARANCE
-   =========================== */
-
-        .clearance__text {
-            font-family: var(--font-mono);
-            color: var(--color-muted);
-            font-size: 0.8rem;
-            line-height: 1.5;
-            text-align: right;
-            margin-bottom: 0.8rem;
-        }
-
-        .clearance__cta {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0.7rem 1.6rem;
-            border: 1px solid #1e90ff;
-            border-radius: 999px;
-            color: #d8e3ec;
-            letter-spacing: 0.12em;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .clearance__cta span {
-            font-size: 0.6rem;
-            opacity: 0.65;
-            margin-top: 0.25rem;
-        }
-
-        .clearance__cta:hover {
-            background: rgba(30, 144, 255, 0.12);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.7);
-        }
-
-        /* ===========================
-   BAS DE FOOTER
-   =========================== */
-
-        .footer__bottom {
-            border-top: 1px solid #154287;
-            padding-top: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: #606a78;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .footer__rec-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: #e5533d;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-
-        /* ===========================
-   RESPONSIVE FOOTER
-   =========================== */
-
-        @media (max-width: 1024px) {
-            .footer__top {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .comms {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dossier Développeur - Christophe Hascoët</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ========================================================================
+     1. VOS COULEURS & VARIABLES
+     ======================================================================== */
+  :root {
+    --bg-page: #0a0d14;
+    --bg-panel: #111820;
+    --bg-card: #101e38;
+
+    --color-primary: #1f6fea;
+    --color-accent: #00d2ff;
+    --color-green: #3fb950;
+    --color-amber: #ff9500;
+    --color-text: #e6edf3;
+    --color-muted: #909aa7;
+
+    --font-sans: 'Rajdhani', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+    --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+    --radius-panel: 20px;
+    
+    --book-width: 420px;
+    --book-height: 560px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg-main);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; font-family: var(--font-sans);
+    overflow: hidden; perspective: 2500px;
+  }
+
+  /* ========================================================================
+     2. MOTEUR 3D DROIT (Face à l'écran)
+     ======================================================================== */
+  .scene {
+    position: relative;
+    width: var(--book-width); height: var(--book-height);
+    /* Le livre est maintenant parfaitement DROIT de face */
+    transform: rotateX(0deg) rotateY(0deg);
+    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* À l'ouverture, on le décale juste sur la droite, en restant droit */
+  .scene.is-open {
+    transform: translateX(210px) rotateX(0deg) rotateY(0deg);
+  }
+
+  .book-base {
+    position: absolute; inset: 0;
+    background: var(--bg-panel);
+    border-radius: 4px var(--radius-panel) var(--radius-panel) 4px;
+    box-shadow: var(--shadow-strong);
+    border-left: 2px solid #000;
+  }
+
+  .flip-page {
+    position: absolute; inset: 0;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    z-index: 10; cursor: pointer;
+  }
+
+  .face {
+    position: absolute; inset: 0;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  }
+
+  /* ========================================================================
+     3. COUVERTURE (Fermée)
+     ======================================================================== */
+  .face-front {
+    background-color: var(--bg-card);
+    border-radius: 4px var(--radius-panel) var(--radius-panel) 4px;
+    transform: rotateY(0deg);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    padding: 60px 20px; display: flex; flex-direction: column; align-items: center; text-align: center;
+    box-shadow: inset -5px 0 20px rgba(0,0,0,0.5);
+  }
+
+  .face-front h1 { 
+    font-family: var(--font-sans); font-size: 2.2rem; letter-spacing: 4px; line-height: 1.2; 
+    color: var(--color-text); text-transform: uppercase;
+  }
+  
+  .tech-icon { font-size: 4rem; color: var(--color-accent); margin: 50px 0; text-shadow: 0 0 15px var(--color-accent); }
+  
+  .title-pass { 
+    font-family: var(--font-mono); font-size: 1.2rem; letter-spacing: 6px; 
+    color: var(--color-accent); margin-top: auto; margin-bottom: 35px; border: 1px solid var(--color-accent); padding: 10px 20px;
+  }
+
+  /* ========================================================================
+     4. INTÉRIEUR GAUCHE (Dos de la couverture)
+     ======================================================================== */
+  .face-back {
+    background-color: var(--bg-page);
+    border-radius: var(--radius-panel) 4px 4px var(--radius-panel);
+    transform: rotateY(180deg) translateZ(1px);
+    padding: 40px 30px; display: flex; flex-direction: column; justify-content: center;
+    border-right: 1px solid rgba(0,0,0,0.5);
+  }
+
+  .log-block { margin-bottom: 30px; }
+  .log-block h3 { color: var(--color-primary); font-family: var(--font-sans); border-bottom: 1px solid var(--color-primary); margin-bottom: 8px; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 1px; padding-bottom: 4px;}
+  .log-block p { font-size: 0.95rem; color: var(--color-muted); text-align: justify; line-height: 1.6; font-family: var(--font-sans); font-weight: 500;}
+
+  /* ========================================================================
+     5. PAGE DROITE (Intérieur, Profil Fixe)
+     ======================================================================== */
+  .data-page {
+    position: absolute; inset: 0; padding: 30px; display: flex; flex-direction: column;
+    border-radius: 4px var(--radius-panel) var(--radius-panel) 4px; overflow: hidden;
+  }
+
+  .ambient-shadow {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, transparent 50%);
+    z-index: 20; pointer-events: none; opacity: 1; 
+  }
+
+  .id-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 25px; }
+  .id-header h2 { font-size: 1.2rem; color: var(--color-text); font-family: var(--font-sans); letter-spacing: 2px;}
+  .id-header .status { font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-green); border: 1px solid var(--color-green); padding: 3px 8px; border-radius: 4px;}
+
+  .id-grid { display: grid; grid-template-columns: 130px 1fr; gap: 20px; flex-grow: 1; position: relative; z-index: 2;}
+
+  .photo-main { width: 130px; height: 170px; border-radius: 8px; overflow: hidden; border: 2px solid var(--color-primary); box-shadow: 0 0 15px rgba(31, 111, 234, 0.2); }
+  .photo-main img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%) contrast(1.1); }
+
+  .data-col { display: flex; flex-direction: column; gap: 12px; }
+  .data-group { display: flex; flex-direction: column; }
+  .label { font-size: 0.7rem; text-transform: uppercase; color: var(--color-muted); letter-spacing: 1px; margin-bottom: 2px; font-weight: 600;}
+  .value { font-size: 1rem; font-weight: 700; color: var(--color-text); font-family: var(--font-mono); }
+  .value.highlight { color: var(--color-accent); font-family: var(--font-sans); font-size: 1.3rem; letter-spacing: 1px;}
+
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+  .tech-tags span { background: rgba(31, 111, 234, 0.1); border: 1px solid rgba(0, 210, 255, 0.3); color: var(--color-accent); padding: 3px 8px; font-size: 0.75rem; border-radius: 4px; font-family: var(--font-mono);}
+
+  .tech-footer {
+    margin-top: auto; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 6px;
+    font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6;
+    color: var(--color-muted); border: 1px solid rgba(255,255,255,0.05); z-index: 2; position: relative;
+  }
+  .tech-footer span { color: var(--color-accent); }
+
+  .help-text { position: absolute; bottom: -40px; width: 100%; text-align: center; color: var(--color-muted); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; transition: opacity 0.5s; font-family: var(--font-mono);}
+
+</style>
 </head>
-
 <body>
 
-    <!-- ======================= HEADER ======================= -->
-    <header class="header" role="banner">
-        <div class="header__inner">
+<main class="scene" id="scene">
+  
+  <!-- LE BLOC PAGES (Base Fixe posée sur le bureau) -->
+  <article class="book-base">
+    <section class="data-page" id="idDataPage">
+      
+      <!-- L'ombre ambiante projetée par la couverture -->
+      <div class="ambient-shadow" id="ambient-shadow"></div>
 
-            <!-- === Carte pilote === -->
-            <section class="pilot-card" aria-labelledby="pilot-card__name">
-                <p class="pilot-card__role">Commandant de bord</p>
+      <header class="id-header">
+        <h2>DOSSIER PROFIL</h2>
+        <div class="status">ACCÈS VALIDE</div>
+      </header>
 
-                <div class="pilot-card__main">
-                    <figure class="pilot-card__avatar">
-                        <img src="pilote-christophehascoet3.png" alt="Portrait du pilote" class="pilot-card__photo" />
-                    </figure>
+      <div class="id-grid">
+        <!-- VOTRE PHOTO -->
+        <figure class="photo-main">
+          <!-- METTEZ VOTRE PHOTO ICI -->
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80" alt="Christophe Hascoët">
+        </figure>
 
-                    <div class="pilot-card__info">
-                        <p id="pilot-card__name" class="pilot-card__name">CHRISTOPHE HASCOET</p>
-                        <p class="pilot-card__id">ID : CPT-2024-001</p>
-                        <p class="pilot-card__status">
-                            <span class="pilot-card__dot pilot-card__dot--pulse"></span>
-                            En service
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- === Tableau des vols === -->
-            <nav class="flight-board" aria-label="Tableau des vols">
-                <h1 class="flight-board__title">Tableau des vols</h1>
-                <table class="flight-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">VOL</th>
-                            <th scope="col">DESTINATION</th>
-                            <th scope="col">PORTE</th>
-                            <th scope="col">STATUT</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        <tr class="flight-row active" data-url="tab.html">
-                            <td class="f-code">PF-000</td>
-                            <td class="f-dest"><a href="tab.html">ACCUEIL</a></td>
-                            <td class="f-gate">T0</td>
-                            <td class="f-stat open">OUVERT</td>
-                        </tr>
-
-                        <tr class="flight-row" data-url="halldepart.html">
-                            <td class="f-code">PF-001</td>
-                            <td class="f-dest"><a href="halldepart.html">HALL DES DÉPARTS</a></td>
-                            <td class="f-gate">A1</td>
-                            <td class="f-stat boarding">EMBARQUEMENT</td>
-                        </tr>
-
-                        <tr class="flight-row" data-url="passeport1.html">
-                            <td class="f-code">PF-002</td>
-                            <td class="f-dest"><a href="passeport1.html">PASSEPORT DU PILOTE</a></td>
-                            <td class="f-gate">B2</td>
-                            <td class="f-stat ontime">À L'HEURE</td>
-                        </tr>
-
-                        <tr class="flight-row" data-url="etudedecas.html">
-                            <td class="f-code">PF-003</td>
-                            <td class="f-dest"><a href="etudedecas.html">PLAN DE VOL</a></td>
-                            <td class="f-gate">C1</td>
-                            <td class="f-stat ontime">À L'HEURE</td>
-                        </tr>
-
-                        <tr class="flight-row" data-url="nav1.html">
-                            <td class="f-code">PF-004</td>
-                            <td class="f-dest"><a href="nav1.html">PORTE D'EMBARQUEMENT</a></td>
-                            <td class="f-gate">C3</td>
-                            <td class="f-stat ontime">À L'HEURE</td>
-                        </tr>
-
-                        <tr class="flight-row" data-url="tableau1.html">
-                            <td class="f-code">PF-005</td>
-                            <td class="f-dest"><a href="tableau1.html">POSTE DE PILOTAGE</a></td>
-                            <td class="f-gate">C3</td>
-                            <td class="f-stat ontime">À L'HEURE</td>
-                        </tr>
-
-                        <tr class="flight-row" data-url="test2.html">
-                            <td class="f-code">PF-006</td>
-                            <td class="f-dest"><a href="test2.html">TOUR DE CONTRÔLE</a></td>
-                            <td class="f-gate">C3</td>
-                            <td class="f-stat ontime">À L'HEURE</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </nav>
-
-            <!-- === Montre Casio === -->
-            <aside class="casio" aria-label="Horloge de bord Casio F-91W">
-                <div class="casio__body">
-
-                    <div class="casio__header">
-                        <span class="casio__brand">CASIO</span>
-                        <span class="casio__model">F‑91W</span>
-                    </div>
-                    <div class="casio__function-bar">
-                        <span class="casio__light">LIGHT</span>
-                        <span class="casio__alarm">ALARM CHRONOGRAPH</span>
-                    </div>
-                    <div class="casio__screen-border">
-                        <div class="casio__screen">
-
-                            <div class="casio__top">
-                                <span class="casio__mode">24H</span>
-                                <div class="casio__date">
-                                    <span id="casio-day">SA</span>
-                                    <span id="casio-date">31</span>
-                                </div>
-                            </div>
-
-                            <div class="casio__time">
-                                <span id="casio-time">23:04</span>
-                                <span id="casio-seconds">33</span>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="casio__footer">
-                        <span>WATER</span>
-                        <span class="casio__wr">WR</span>
-                        <span>RESIST</span>
-                    </div>
-
-                    <div class="casio__btn casio__btn--lt"></div>
-                    <div class="casio__btn casio__btn--lb"></div>
-                    <div class="casio__btn casio__btn--rb"></div>
-
-                </div>
-            </aside>
-
-        </div>
-    </header>
-
-
-    <!-- ======================= FOOTER ======================= -->
-    <!-- ======================= RUNWAY LIGHTS ======================= -->
-    <div class="runway-lights" aria-hidden="true"></div>
-
-    <footer class="footer">
-        <div class="footer__inner">
-
-            <section class="footer__top">
-
-                <!-- === Tour de contrôle === -->
-                <article class="footer-block footer-block--tower">
-                    <h2 class="footer-block__title">Tour de contrôle</h2>
-
-                    <div class="footer-block__content">
-                        <p class="tower__freq">118.700</p>
-                        <p class="tower__sub">CDG · PRIMARY CHANNEL</p>
-                        <p class="tower__status">
-                            <span class="tower__dot"></span>
-                            Fréquence active
-                        </p>
-                    </div>
-                </article>
-
-                <!-- === Comms === -->
-                <article class="footer-block footer-block--comms">
-                    <h2 class="footer-block__title">Canaux de communication</h2>
-
-                    <ul class="comms">
-                        <li>
-                            <a href="#" class="comms__item">
-                                <span class="comms__icon">
-                                    <!-- SVG email -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path
-                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                        </path>
-                                        <polyline points="22,6 12,13 2,6"></polyline>
-                                    </svg>
-                                </span>
-                                <span class="comms__text">
-                                    <span class="comms__label">Email</span>
-                                    <span class="comms__sub">Cabine / Direct</span>
-                                </span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" class="comms__item">
-                                <span class="comms__icon">
-                                    <!-- SVG LinkedIn -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path
-                                            d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
-                                        </path>
-                                        <rect x="2" y="9" width="4" height="12"></rect>
-                                        <circle cx="4" cy="4" r="2"></circle>
-                                    </svg>
-                                </span>
-                                <span class="comms__text">
-                                    <span class="comms__label">LinkedIn</span>
-                                    <span class="comms__sub">Contrôle trafic pro</span>
-                                </span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" class="comms__item">
-                                <span class="comms__icon">
-                                    <!-- SVG GitHub -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61
-                           c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77
-                           5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48
-                           a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1
-                           A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78
-                           c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-                                        </path>
-                                    </svg>
-                                </span>
-                                <span class="comms__text">
-                                    <span class="comms__label">GitHub</span>
-                                    <span class="comms__sub">Hangar projets</span>
-                                </span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#" class="comms__item">
-                                <span class="comms__icon">
-                                    <!-- SVG Radio -->
-                                    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true">
-                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2
-                                             19.79 19.79 0 0 1-8.63-3.07
-                                             19.5 19.5 0 0 1-6-6
-                                             19.79 19.79 0 0 1-3.07-8.67
-                                             A2 2 0 0 1 4.11 2h3
-                                             a2 2 0 0 1 2 1.72
-                                             12.84 12.84 0 0 0 .7 2.81
-                                             2 2 0 0 1-.45 2.11L8.09 9.91
-                                             a16 16 0 0 0 6 6l1.27-1.27
-                                             a2 2 0 0 1 2.11-.45
-                                             12.84 12.84 0 0 0 2.81.7
-                                             A2 2 0 0 1 22 16.92z">
-                                        </path>
-                                    </svg>
-                                </span>
-                                <span class="comms__text">
-                                    <span class="comms__label">Radio</span>
-                                    <span class="comms__sub">Contact direct tour</span>
-                                </span>
-                            </a>
-                        </li>
-                    </ul>
-                </article>
-
-                <!-- === Clearance === -->
-                <article class="footer-block footer-block--clearance">
-                    <h2 class="footer-block__title">Clearance</h2>
-
-                    <div class="footer-block__content">
-                        <p class="clearance__text">
-                            CLR TO CAREER VIA<br>
-                            PORTFOLIO DIRECT
-                        </p>
-
-                        <a class="clearance__cta" href="#flight-plan">
-                            REQUEST CLEARANCE
-                            <span>Review flight plan &amp; credentials</span>
-                        </a>
-                    </div>
-                </article>
-
-            </section>
-
-            <div class="footer__bottom">
-                <p>
-                    <span class="footer__rec-dot"></span>
-                    REC · Enregistreur de données de vol actif
-                </p>
-                <p>© 2025 — Cleared for Takeoff</p>
+        <!-- VOS DONNÉES -->
+        <div class="data-col">
+          <div style="display:flex; gap:20px;">
+            <div class="data-group"><span class="label">Statut</span><span class="value" style="color: var(--color-green);">Actif</span></div>
+            <div class="data-group"><span class="label">ID Dev</span><span class="value">#CH-2025</span></div>
+          </div>
+          <div class="data-group"><span class="label">Identité</span><span class="value">HASCOËT CHRISTOPHE</span></div>
+          <div class="data-group"><span class="label">Rôle Opérationnel</span><span class="value highlight">CHEF DE PROJET & DÉV JUNIOR</span></div>
+          
+          <!-- Tags de compétences -->
+          <div class="data-group">
+            <span class="label">Stack Technique</span>
+            <div class="tech-tags">
+              <span>HTML/CSS</span><span>PHP</span><span>LARAVEL</span>
+              <span>REACT</span><span>TS</span><span>AGILE</span>
             </div>
-
+          </div>
         </div>
-    </footer>
+      </div>
 
+      <div class="tech-footer">
+        > system.identify("Hascoët");<br>
+        > loading profile... <span>[OK]</span><br>
+        > status: <span>ready_for_mission</span>
+      </div>
+    </section>
+  </article>
 
+  <!-- LA COUVERTURE QUI TOURNE -->
+  <aside class="flip-page" id="flip-page">
+    
+    <!-- RECTO -->
+    <div class="face face-front">
+      <h1>PORTFOLIO<br>OPÉRATIONNEL</h1>
+      <div class="tech-icon">⎔</div>
+      <div class="title-pass">ID_DÉVELOPPEUR</div>
+    </div>
 
+    <!-- VERSO -->
+    <div class="face face-back">
+      <!-- Mettez vos nouveaux textes ici ! -->
+      <div class="log-block">
+        <h3>Cap & Navigation</h3>
+        <p>Créer des solutions utiles, accessibles et faciles à prendre en main. Privilégier la simplicité et l’expérience utilisateur à la complexité inutile.</p>
+      </div>
+      <div class="log-block">
+        <h3>Protocole Opérationnel</h3>
+        <p>Une approche transparente et Agile : comprendre les besoins, demander des clarifications, collaborer avec l'équipe et avancer étape par étape.</p>
+      </div>
+      <div class="log-block">
+        <h3>Objectif de Mission</h3>
+        <p>Continuer à apprendre, monter en compétence et apporter une valeur réelle à chaque projet, même modestement au début.</p>
+      </div>
+    </div>
 
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  </aside>
 
-    <!-- ======================= Script ======================= -->
+  <div class="help-text" id="help-text">[ CLIQUEZ POUR OUVRIR ]</div>
 
-    <script type="module">
-        /* =========================
-      HORLOGE CASIO F-91W
-    ========================= */
-        function updateCasio() {
-            const now = new Date();
+</main>
 
-            // Heure (ex: 22:45)
-            const timeStr = now.toLocaleTimeString("fr-FR", {
-                hour: "2-digit",
-                minute: "2-digit"
-            });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+  const scene = document.getElementById('scene');
+  const flipPage = document.getElementById('flip-page');
+  const ambientShadow = document.getElementById('ambient-shadow');
+  const helpText = document.getElementById('help-text');
+  
+  let isOpen = false;
+  let isAnimating = false;
 
-            // Secondes (ex: 33)
-            const secStr = now.getSeconds().toString().padStart(2, '0');
+  flipPage.addEventListener('click', () => {
+    if (isAnimating) return;
+    isAnimating = true;
 
-            // Jour (ex: LU, MA...) - On prend les 2 premières lettres en Anglais pour le style Casio
-            const dayStr = now.toLocaleDateString("en-US", { weekday: "short" }).substring(0, 2).toUpperCase();
+    const tl = gsap.timeline({ onComplete: () => isAnimating = false });
 
-            // Date (ex: 30)
-            const dateStr = now.getDate();
+    if (!isOpen) {
+      // Le livre s'ouvre, il reste droit (rotateX: 0, rotateY: 0)
+      tl.to(flipPage, { duration: 1.5, rotationY: -180, ease: "power2.inOut" }, 0)
+        .to(scene, { duration: 1.5, x: 200, rotateX: 0, rotateY: 0, ease: "power2.inOut" }, 0)
+        .to(ambientShadow, { duration: 1.5, opacity: 0, ease: "power2.inOut" }, 0);
+      
+      helpText.style.opacity = '0';
+      isOpen = true;
+    } else {
+      // Le livre se ferme, et revient au centre droit
+      tl.to(flipPage, { duration: 1.5, rotationY: 0, ease: "power2.inOut" }, 0)
+        .to(scene, { duration: 1.5, x: 0, rotateX: 0, rotateY: 0, ease: "power2.inOut" }, 0)
+        .to(ambientShadow, { duration: 1.5, opacity: 1, ease: "power2.inOut" }, 0);
+      
+      setTimeout(() => helpText.style.opacity = '1', 1000);
+      isOpen = false;
+    }
+  });
 
-            // Mise à jour DOM
-            document.getElementById("casio-time").textContent = timeStr;
-            document.getElementById("casio-seconds").textContent = secStr;
-            document.getElementById("casio-day").textContent = dayStr;
-            document.getElementById("casio-date").textContent = dateStr;
-        }
+  // J'ai réduit l'effet de la souris pour que ça reste bien lisible et moins "jeu vidéo"
+  document.addEventListener('mousemove', (e) => {
+    if(!isOpen) {
+      const xPos = (e.clientX / window.innerWidth - 0.5) * 4; 
+      const yPos = (e.clientY / window.innerHeight - 0.5) * 4;
+      gsap.to(scene, { rotationY: xPos, rotationX: -yPos, duration: 0.5, ease: "power1.out" });
+    }
+  });
 
-        setInterval(updateCasio, 1000);
-        updateCasio();
+</script>
 
-
-        /* =========================
-           SPLIT-FLAP
-           - remplissage forcé de chaque cellule
-           - animation GSAP
-        ========================= */
-
-        const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.’’-";
-
-        // Largeurs fixes par type de cellule pour éviter les trous
-        const COLUMN_WIDTHS = {
-            "f-code": 7,   // PF-000  (6/7 chars)
-            "f-dest": 22,  // ACCUEIL / HALL DES DÉPARTS...
-            "f-gate": 3,   // T0 / A1 / C3
-            "f-stat": 14   // OUVERT / À L'HEURE / EMBARQUEMENT
-        };
-
-        function getTargetWidth(cell) {
-            for (const cls of cell.classList) {
-                if (COLUMN_WIDTHS[cls]) return COLUMN_WIDTHS[cls];
-            }
-            // par défaut, si aucune classe connue
-            return 15;
-        }
-
-        function splitCell(cell) {
-            const raw = cell.textContent;
-            let text = raw.toUpperCase();
-
-            const targetWidth = getTargetWidth(cell);
-
-            // Tronquer si trop long
-            if (text.length > targetWidth) {
-                text = text.slice(0, targetWidth);
-            }
-            // Compléter avec des espaces si trop court
-            if (text.length < targetWidth) {
-                text = text.padEnd(targetWidth, " ");
-            }
-
-            cell.textContent = "";
-
-            const word = document.createElement("span");
-            word.className = "word";
-
-            [...text].forEach(char => {
-                const flap = document.createElement("span");
-                flap.className = "flap";
-                flap.dataset.char = char;   // même les espaces
-                flap.textContent = " ";     // part de vide pour l’anim
-                word.appendChild(flap);
-            });
-
-            cell.appendChild(word);
-        }
-
-        function flipFlap(flap) {
-            const target = flap.dataset.char;
-
-            // petite animation mécanique
-            const flips = 6 + Math.floor(Math.random() * 5);
-            let count = 0;
-
-            gsap.to(flap, {
-                rotationX: -90,
-                duration: 0.07,
-                repeat: flips,
-                yoyo: true,
-                ease: "power1.inOut",
-                onRepeat: () => {
-                    count++;
-                    flap.textContent =
-                        count < flips
-                            ? CHARS[Math.floor(Math.random() * CHARS.length)]
-                            : target;
-                },
-                onComplete: () => {
-                    flap.textContent = target;
-                    gsap.set(flap, { rotationX: 0 });
-                }
-            });
-        }
-
-        /* =========================
-           INIT TABLEAU
-        ========================= */
-
-        // 1) transformer chaque cellule en mot de flaps
-        document.querySelectorAll(".flight-table tbody td").forEach(splitCell);
-
-        // 2) animation initiale en cascade
-        document.querySelectorAll(".flight-row").forEach((row, rowIndex) => {
-            row.querySelectorAll(".flap").forEach((flap, i) => {
-                gsap.delayedCall(
-                    rowIndex * 0.35 + i * 0.05,
-                    () => flipFlap(flap)
-                );
-            });
-        });
-
-        /* =========================
-           CLIC SUR LIGNE = ANIM + NAVIGATION
-        ========================= */
-
-        // document.querySelectorAll(".flight-row").forEach(row => {
-        //     // accessibilité clavier
-        //     row.setAttribute("tabindex", "0");
-        //     row.style.cursor = "pointer";
-
-        //     function triggerRow() {
-        //         const url = row.dataset.url;
-
-        //         // relance l’animation sur la ligne
-        //         row.querySelectorAll(".flap").forEach((flap, i) => {
-        //             gsap.delayedCall(i * 0.03, () => flipFlap(flap));
-        //         });
-
-        //         if (url) {
-        //             // petit délai pour voir le flip avant de changer de page
-        //             setTimeout(() => {
-        //                 window.location.href = url;
-        //             }, 450);
-        //         }
-        //     }
-
-        //     row.addEventListener("click", triggerRow);
-
-        //     row.addEventListener("keydown", (e) => {
-        //         if (e.key === "Enter" || e.key === " ") {
-        //             e.preventDefault();
-        //             triggerRow();
-        //         }
-        //     });
-        // });
-        document.querySelectorAll(".flight-row").forEach(row => {
-            const url = row.dataset.url;
-
-            // --- Synchroniser automatiquement tous les <a> avec data-url ---
-            row.querySelectorAll("a").forEach(a => {
-                a.href = url;
-            });
-
-            row.setAttribute("tabindex", "0");
-            row.style.cursor = "pointer";
-
-            function triggerRow() {
-                row.querySelectorAll(".flap").forEach((flap, i) => {
-                    gsap.delayedCall(i * 0.03, () => flipFlap(flap));
-                });
-
-                if (url) {
-                    setTimeout(() => {
-                        window.location.href = url;
-                    }, 450);
-                }
-            }
-
-            row.addEventListener("click", triggerRow);
-
-            row.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    triggerRow();
-                }
-            });
-        });
-
-    </script>
 </body>
-
 </html>

@@ -1,200 +1,328 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-<meta charset="UTF-8">
-<title>Solari Board</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hall des Départs · Portfolio</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Rajdhani:wght@600;700&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --primary-blue: #1f6fea;
+      --status-green: #40b950;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
+      --font-sans: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+      --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.6);
+      --radius-panel: 16px;
+      --container-width: 1300px;
+    }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg-main);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-<style>
-:root {
-  --panel: rgba(12,22,34,.55);
-  --border: rgba(142,197,255,.25);
-  --text: #e6edf3;
-  --accent: #1f6fea;
-  --mono: 'JetBrains Mono', monospace;
-}
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    .btn-group button {
+      background: var(--bg-panel);
+      border: none;
+      color: var(--color-text);
+      padding: 0.6rem 1.2rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+    }
 
-body {
-  background: radial-gradient(circle at top, #1b3957, #050b10 60%);
-  font-family: var(--mono);
-  color: var(--text);
-  padding: 3rem;
-}
+    .btn-group button.active {
+      background: var(--primary-blue);
+      color: #fff;
+      box-shadow: 0 0 15px var(--primary-blue);
+    }
 
-/* ===== TABLE ===== */
-.solari-board {
-  border: 1px solid var(--border);
-  padding: 1rem;
-}
+    .flight-board {
+      max-width: var(--container-width);
+      background: var(--bg-main);
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
+      border: 5px solid rgba(0, 0, 0, 0.85);
+      box-shadow: var(--shadow-strong), inset 0 0 18px rgba(0, 0, 0, 0.9);
+      margin-bottom: 2rem;
+    }
 
-.solari-header {
-  display: grid;
-  grid-template-columns: 6ch 26ch 6ch 6ch 18ch;
-  gap: .6rem;
-  margin-bottom: .5rem;
-  color: var(--accent);
-  font-size: .75rem;
-}
+    .flight-board::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(140, 180, 255, 0.18);
+      pointer-events: none;
+    }
 
-.solari-row {
-  display: grid;
-  grid-template-columns: 6ch 26ch 6ch 6ch 18ch;
-  gap: .6rem;
-  margin-bottom: .4rem;
-}
+    .flight-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      perspective: 900px;
+    }
 
-/* ===== SPLIT FLAP ===== */
-.flap-cell {
-  display: flex;
-  gap: 2px;
-}
+    .flight-table th {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #5f6b7a;
+      letter-spacing: 2px;
+      padding: 0 10px 10px;
+      text-align: left;
+    }
 
-.flap {
-  width: 20px;
-  height: 32px;
-  perspective: 900px;
-  position: relative;
-}
+    .flight-table td {
+      padding: 6px 10px;
+      white-space: nowrap;
+    }
 
-.flap::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: rgba(255,255,255,.2);
-  z-index: 5;
-}
+    .flight-table tbody tr {
+      background: var(--bg-main);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 0 rgba(0, 0, 0, 0.8);
+    }
 
-.flap-top,
-.flap-bottom {
-  position: absolute;
-  width: 100%;
-  height: 50%;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backface-visibility: hidden;
-}
+    .flight-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+    }
 
-.flap-top {
-  top: 0;
-  transform-origin: bottom;
-  z-index: 2;
-}
+    .word {
+      display: flex;
+      gap: 0;
+      padding: 2px 3px;
+      background: linear-gradient(180deg, #0c1118, #050a12);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 0 rgba(0, 0, 0, 0.9);
+      transform-style: preserve-3d;
+    }
 
-.flap-bottom {
-  bottom: 0;
-  transform-origin: top;
-  transform: rotateX(90deg);
-}
+    .flap {
+      width: 1.15rem;
+      height: 1.15rem;
+      line-height: 1.15rem;
+      text-align: center;
+      background: linear-gradient(180deg, #1b2230 0%, #0a0d14 50%, #05070d 100%);
+      border: 1px solid rgba(0, 0, 0, 0.85);
+      border-radius: 3px;
+      transform-origin: center bottom;
+      backface-visibility: hidden;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
+      font-variant-numeric: tabular-nums;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      perspective: 900px;
+    }
 
-.flap.space .flap-top,
-.flap.space .flap-bottom {
-  background: transparent;
-  border: none;
-}
-</style>
+    .flap::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    /* Couleurs par statut */
+    .row-green td {
+      background-color: rgba(63, 185, 80, 0.1);
+    }
+
+    .row-blue td {
+      background-color: rgba(31, 111, 234, 0.1);
+    }
+
+
+    .flight-table tbody tr:hover td {
+      background: linear-gradient(90deg, rgba(31, 111, 234, 0.2), rgba(31, 111, 234, 0.05));
+      transition: background 0.3s ease-out;
+      cursor: pointer;
+    }
+
+    /* Ligne active (ex: si tu veux marquer “Départs” ou “Arrivées”) */
+    .row-active td {
+      background-color: rgba(31, 111, 234, 0.25);
+    }
+
+    .row-green .flap {
+      color: var(--status-green);
+      text-shadow: 0 0 8px rgba(64, 185, 80, 0.6);
+    }
+
+    .row-blue .flap {
+      color: var(--primary-blue);
+      text-shadow: 0 0 8px rgba(31, 111, 234, 0.6);
+    }
+
+    .row-flash {
+      animation: blink 0.25s alternate 6;
+    }
+
+    @keyframes blink {
+      from {
+        background: rgba(31, 111, 234, 0.25);
+      }
+
+      to {
+        background: rgba(31, 111, 234, 0.05);
+      }
+    }
+
+    .row-light {
+      background: linear-gradient(90deg, rgba(31, 111, 234, 0.35), rgba(31, 111, 234, 0.05)) !important;
+      transition: background 1.2s ease-out;
+    }
+  </style>
 </head>
 
 <body>
 
-<section class="solari-board" aria-label="Tableau des vols">
-
-  <div class="solari-header">
-    <div>VOL</div><div>DESTINATION</div><div>ETD</div><div>PORTE</div><div>STATUS</div>
+  <div class="btn-group">
+    <button id="btn-departs" class="active">DÉPARTS</button>
+    <button id="btn-arrivees">ARRIVÉES</button>
   </div>
 
-  <div id="solari-body"></div>
+  <div class="flight-board">
+    <table id="table-departs" class="flight-table">
+      <thead>
+        <tr>
+          <th>VOL</th>
+          <th>DESTINATION</th>
+          <th>HEURE</th>
+          <th>PORTE</th>
+          <th>STATUT</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <table id="table-arrivees" class="flight-table" style="display:none">
+      <thead>
+        <tr>
+          <th>VOL</th>
+          <th>PROVENANCE</th>
+          <th>HEURE</th>
+          <th>STAND</th>
+          <th>STATUT</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-</section>
+  <script>
+   const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.’’-";
 
-<script>
-(() => {
-  "use strict";
+    const DEPARTS = [
+      { v: 'DEV01', d: 'TYPESCRIPT AVANCÉ', t: '--:--', g: 'A01', s: 'EN PRÉPARATION', next: 'À L’HEURE', delay: 5000, href: '#' },
+      { v: 'DEV02', d: 'TESTS AUTOMATISÉS', t: '--:--', g: 'A02', s: 'EN CONFIGURATION', next: 'À L’HEURE', delay: 7000, href: '#' },
+      { v: 'DEV03', d: 'ARCHITECTURE FRONT', t: '--:--', g: 'B01', s: 'EN MONTÉE', next: 'À L’HEURE', delay: 9000, href: '#' },
+      { v: 'DEV04', d: 'PERFORMANCE WEB', t: '--:--', g: 'B02', s: 'EN APPROCHE', next: 'À L’HEURE', delay: 11000, href: '#' },
+      { v: 'DEV05', d: 'GSAP AVANCÉ', t: '--:--', g: 'C01', s: 'PROCÉDURE EN COURS', next: 'À L’HEURE', delay: 13000, href: '#' }
+    ];
 
-  const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const DATA = [
-    ["DEV01", "TYPESCRIPT AVANCE", "13:45", "A01", "EN PREPARATION"],
-    ["DEV02", "ARCHITECTURE FRONT", "19:00", "A02", "EN MONTEE"],
-    ["DEV03", "GSAP AVANCE", "10:00", "B01", "PROCEDURE"]
-  ];
+    const ARRIVEES = [
+      { v: 'OPS01', d: 'HTML SÉMANTIQUE', t: '--:--', g: 'A', s: 'OPÉRATIONNEL', href: '#' },
+      { v: 'OPS02', d: 'CSS / SASS', t: '--:--', g: 'A', s: 'MAÎTRISE CONFIRMÉE', href: '#' },
+      { v: 'OPS03', d: 'JAVASCRIPT ES6+', t: '--:--', g: 'B', s: 'PROCÉDURE VALIDÉE', href: '#' },
+      { v: 'OPS04', d: 'ACCESSIBILITÉ', t: '--:--', g: 'B', s: 'AUTORISÉ AU SERVICE', href: '#' },
+      { v: 'OPS05', d: 'PHP / LARAVEL', t: '--:--', g: 'C', s: 'EN SERVICE ACTIF', href: '#' },
+      { v: 'OPS06', d: 'GIT / WORKFLOW', t: '--:--', g: 'C', s: 'CERTIFIÉ INTERNE', href: '#' }
+    ];
 
-  const WIDTHS = [6, 26, 6, 6, 18];
-  const body = document.getElementById("solari-body");
-
-  const pad = (t, l) => t.padEnd(l, " ").slice(0, l);
-
-  const makeCell = text => {
-    const cell = document.createElement("div");
-    cell.className = "flap-cell";
-
-    [...text].forEach(char => {
-      const flap = document.createElement("span");
-      flap.className = "flap" + (char === " " ? " space" : "");
-      flap.innerHTML = `
-        <span class="flap-top">${char}</span>
-        <span class="flap-bottom">${char}</span>`;
-      cell.appendChild(flap);
-    });
-
-    return cell;
-  };
-
-  // RENDER
-  DATA.forEach(row => {
-    const r = document.createElement("div");
-    r.className = "solari-row";
-
-    row.forEach((col, i) => {
-      r.appendChild(makeCell(pad(col, WIDTHS[i])));
-    });
-
-    body.appendChild(r);
-  });
-
-  // ANIMATION SOLARI (ÇA TOURNE POUR DE VRAI)
-  document.querySelectorAll(".flap:not(.space)").forEach((flap, i) => {
-    const top = flap.querySelector(".flap-top");
-    const bottom = flap.querySelector(".flap-bottom");
-    const finalChar = top.textContent;
-
-    const tl = gsap.timeline({ delay: i * 0.02 });
-
-    for (let k = 0; k < 5; k++) {
-      tl.to(top, {
-        rotationX: -90,
-        duration: 0.05,
-        ease: "power1.in",
-        onComplete: () => {
-          const r = CHARS[Math.floor(Math.random() * CHARS.length)];
-          top.textContent = r;
-          bottom.textContent = r;
-          gsap.set(top, { rotationX: 0 });
-        }
+    function createWord(text, length = 15) {
+      const word = document.createElement('div'); word.className = 'word';
+      const safeText = text || "--:--";
+      for (let i = 0; i < length; i++) {
+        const span = document.createElement('span'); span.className = 'flap';
+        const char = safeText[i] ?? ' ';
+        span.dataset.char = char;
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        word.appendChild(span);
+      }
+      return word;
+    }
+   
+    function populateTable(tableId, data) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        const tr = document.createElement('tr'); tr.dataset.href = row.href;
+        ['v', 'd', 't', 'g', 's'].forEach(key => {
+          const td = document.createElement('td');
+          let len = key === 'v' ? 6 : key === 't' ? 5 : key === 'g' ? 3 : 20;
+          td.appendChild(createWord(row[key], len));
+          if (key === 's') td.classList.add('col-statut');
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
       });
     }
 
-    tl.to(top, {
-      rotationX: -90,
-      duration: 0.05,
-      onComplete: () => {
-        top.textContent = finalChar;
-        bottom.textContent = finalChar;
-        gsap.set(top, { rotationX: 0 });
-      }
+    function animateFlaps() {
+      document.querySelectorAll('.flap').forEach(flap => {
+        const finalChar = flap.dataset.char;
+        if (finalChar === ' ') return;
+        const flips = 5 + Math.floor(Math.random() * 5);
+        let count = 0;
+        const interval = setInterval(() => {
+          const randChar = CHARS[Math.floor(Math.random() * CHARS.length)];
+          flap.textContent = randChar;
+          gsap.fromTo(flap, { rotationX: -90 }, { rotationX: 0, duration: 0.2, ease: 'power2.out' });
+          if (++count >= flips) { clearInterval(interval); flap.textContent = finalChar; }
+        }, 100 + Math.random() * 50);
+      });
+    }
+
+
+    const btnDep = document.getElementById('btn-departs');
+    const btnArr = document.getElementById('btn-arrivees');
+    btnDep.addEventListener('click', () => {
+      btnDep.classList.add('active'); btnArr.classList.remove('active');
+      document.getElementById('table-departs').style.display = '';
+      document.getElementById('table-arrivees').style.display = 'none';
+      animateFlaps();
     });
-  });
+    btnArr.addEventListener('click', () => {
+      btnArr.classList.add('active'); btnDep.classList.remove('active');
+      document.getElementById('table-departs').style.display = 'none';
+      document.getElementById('table-arrivees').style.display = '';
+      animateFlaps();
+    });
 
-})();
-</script>
-
+    window.addEventListener('load', () => {
+      populateTable('table-departs', DEPARTS);
+      populateTable('table-arrivees', ARRIVEES);
+      animateFlaps();
+    });
+  </script>
 </body>
+
 </html>

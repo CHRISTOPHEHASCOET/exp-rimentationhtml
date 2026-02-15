@@ -2,479 +2,565 @@
 <html lang="fr">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FLIGHT LOG // HALL DES DÉPARTS</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio Interactif – Christophe Hascoët</title>
 
-  <!-- Polices -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap"
-    rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
 
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* =========================================================
+     1. VOS COULEURS ET FONDS (STRICTEMENT RESPECTÉS)
+  ========================================================= */
+        :root {
+            --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+            --bg-card: #101e38;
+            /* Bordures et séparations */
 
-  <style>
-    /* =======================
-       VARIABLES & BASE
-    ======================= */
-    :root {
-      --clr-bg: #0a0d14;
-      --clr-panel: #111820;
-      --clr-accent: #1f6fea;
-      --clr-accent-soft: #8ec5ff;
-      --clr-text: #e6edf3;
-      --clr-muted: #909aa7;
-      --clr-green: #40b950;
-      --font-mono: 'JetBrains Mono', monospace;
-      --font-display: 'Rajdhani', sans-serif;
+            --color-primary: #1f6fea;
+            --color-accent: #00d2ff;
+            --color-green: #3fb950;
+            --color-amber: #ff9500;
+            --color-text: #e6edf3;
+            --color-muted: #909aa7;
 
-      --clr-bg: #0a0d14;
-      --clr-panel: #111820;
-      --clr-accent: #1f6fea;
-      --clr-accent-soft: #8ec5ff;
-      --clr-text: #e6edf3;
-      --clr-muted: #909aa7;
-      --clr-green: #40b950;
-      --font-mono: 'JetBrains Mono', monospace;
-      --font-display: 'Rajdhani', sans-serif;
-    }
+            --font-sans: 'Rajdhani', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+            --book-width: 480px;
+            --book-height: 700px;
+        }
 
-    body {
-      background-color: var(--clr-bg);
-      color: var(--clr-text);
-      font-family: var(--font-display);
-      -webkit-font-smoothing: antialiased;
-      background: radial-gradient(circle at top, #1b3957 0, #050b10 52%, #020407 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    .wrapper {
-      width: min(1200px, 100% - 32px);
-      margin-inline: auto;
-    }
+        body {
+            background: var(--bg-main);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 2500px;
+            color: var(--color-text);
+        }
 
-    main {
-      flex: 1;
-      padding-block: 2rem;
-    }
+        /* =========================================================
+     2. STRUCTURE GLOBALE (Pour votre vrai site)
+  ========================================================= */
+        .portfolio-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            /* Espace entre le titre et le passeport */
+            width: 100%;
+        }
 
-    /* =======================
-       HEADER (Simplifié pour la démo)
-    ======================= */
-    header.site-header {
-      padding: 2rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-      font-size: 1.5rem;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      font-family: var(--font-display);
-    }
+        /* Le Titre au-dessus */
+        .portfolio-header {
+            text-align: center;
+            z-index: 1;
+            /* Reste au-dessus de l'animation */
+        }
 
-    header.site-header span {
-      color: var(--clr-accent);
-      font-weight: 700;
-    }
+        .portfolio-header h1 {
+            font-family: var(--font-sans);
+            font-size: 3rem;
+            letter-spacing: 6px;
+            color: var(--color-text);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+            /* Léger halo cyan */
+        }
 
-    /* =======================
-       CONTROLES & TABLEAU
-    ======================= */
-    .board-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
+        .portfolio-header h2 {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--color-accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
 
-    .controls-group {
-      display: flex;
-      border: 1px solid #2f588b;
-      border-radius: 6px;
-      overflow: hidden;
-    }
+        /* =========================================================
+     3. MOTEUR 3D
+  ========================================================= */
+        .scene {
+            position: relative;
+            width: var(--book-width);
+            height: var(--book-height);
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 1.2s cubic-bezier(.25, 1, .5, 1);
+        }
 
-    .btn-cockpit {
-      background: transparent;
-      border: none;
-      color: var(--clr-muted);
-      padding: 10px 30px;
-      cursor: pointer;
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      transition: all 0.3s ease;
-      border-right: 1px solid #2f588b;
-    }
+        .scene.is-open {
+            transform: translateX(240px);
+            /* Ouvre pile au centre */
+        }
 
-    .btn-cockpit:last-child {
-      border-right: none;
-    }
+        /* =========================================================
+     4. STYLES COMMUNS DU PASSEPORT
+  ========================================================= */
+        .book-base,
+        .face-front,
+        .face-back {
+            background: var(--bg-main);
+            border: 2px solid var(--bg-card);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
 
-    .btn-cockpit.active {
-      background: var(--clr-accent);
-      color: white;
-      box-shadow: 0 0 15px rgba(31, 111, 234, 0.4);
-    }
+        .book-base {
+            position: absolute;
+            inset: 0;
+            border-radius: 4px 12px 12px 4px;
+            border-left: 2px solid var(--bg-card);
+            /* Séparation centrale */
+        }
 
-    .board-subtitle {
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-      color: var(--clr-muted);
-    }
+        .flip-page {
+            position: absolute;
+            inset: 0;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            z-index: 10;
+            cursor: pointer;
+            transition: transform 1.2s cubic-bezier(.25, 1, .5, 1);
+        }
 
-    /* Modification : Suppression du fond sombre pour le tableau */
-    .terminal-screen {
-      overflow-x: auto;
-      /* Empêche l'écrasement du tableau sur mobile */
-    }
+        .face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+        }
 
-    .flight-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-      table-layout: fixed;
-      /* Force le respect des largeurs de colonnes */
-    }
+        /* =========================================================
+     5. COUVERTURE FERMÉE
+  ========================================================= */
+        .face-front {
+            border-radius: 4px 12px 12px 4px;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
 
-    .flight-table th {
-      color: var(--clr-accent);
-      text-align: left;
-      padding: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border-bottom: 2px solid rgba(142, 197, 255, 0.2);
-    }
+        .face-front h2 {
+            font-size: 2.8rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
 
-    .flight-table td {
-      padding: 18px 12px;
-      font-size: 0.9rem;
-      color: var(--clr-text);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      white-space: nowrap;
-      /* Empêche le texte de passer à la ligne */
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 400;
-    }
+        .tech-icon {
+            font-size: 5rem;
+            color: var(--color-accent);
+            margin: auto 0;
+            filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.3));
+        }
 
-    .flight-table tr:last-child td {
-      border-bottom: none;
-    }
+        .title-pass {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            letter-spacing: 6px;
+            border: 1px solid var(--color-text);
+            padding: 12px 25px;
+        }
 
-    .flight-table .code-cell {
-      color: var(--clr-accent-soft);
-      font-weight: 700;
-    }
+        /* =========================================================
+     6. PAGE GAUCHE : IDENTIFICATION (Photo et Texte aligné)
+  ========================================================= */
+        .face-back {
+            transform: rotateY(180deg);
+            border-radius: 12px 4px 4px 12px;
+            border-right: 2px solid var(--bg-card);
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .flight-table .status-cell {
-      color: var(--clr-green);
-    }
+        .section-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
 
-    /* =======================
-   ÉCRAN TERMINAL (TABLEAU)
-======================= */
-    .terminal-screen {
-      background: linear-gradient(180deg,
-          rgba(255, 255, 255, 0.02),
-          rgba(0, 0, 0, 0.15));
-      border: 1px solid rgba(142, 197, 255, 0.25);
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-        0 30px 80px rgba(0, 0, 0, 0.6);
-      padding: 1rem;
-    }
+        .section-bar::before,
+        .section-bar::after {
+            content: "";
+            height: 12px;
+            background: #000;
+            flex: 1;
+            margin: 0 15px;
+            border-radius: 2px;
+        }
 
-    /* =======================
-   TABLEAU AÉROPORT
-======================= */
-    .flight-table {
-      background: transparent;
-    }
+        .section-bar span {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: var(--color-text);
+            text-transform: uppercase;
+        }
 
-    .flight-table thead th {
-      border-right: 1px solid rgba(142, 197, 255, 0.15);
-    }
+        .photo-card {
+            width: 150px;
+            margin: 0 auto 20px auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
 
-    .flight-table thead th:last-child,
-    .flight-table td:last-child {
-      border-right: none;
-    }
+        .photo-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            filter: contrast(1.1) grayscale(10%);
+            display: block;
+        }
 
-    .flight-table td {
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
-    }
+        .photo-role {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 5px;
+            text-align: center;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            font-weight: 700;
+        }
 
-    /* =======================
-   SPLIT-FLAP
-======================= */
-    .flap {
-      width: 22px;
-      height: 34px;
-      perspective: 600px;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-    }
+        .id-grid-align {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 6px 15px;
+            margin-bottom: 25px;
+        }
 
-    .flap-inner {
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+        .id-lbl {
+            text-align: right;
+            color: var(--color-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            align-self: start;
+            padding-top: 2px;
+        }
 
+        .id-val {
+            text-align: left;
+            color: var(--color-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+            align-self: start;
+        }
 
-    .flap.space {
-      background: transparent;
-      box-shadow: none;
-    }
+        .rapport-block {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    /* Ligne cliquable plus “machine” */
-    .flight-table tbody tr {
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
+        .rapport-block h3 {
+            font-size: 1rem;
+            color: var(--color-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
 
-    .flight-table tbody tr:hover {
-      background: rgba(31, 111, 234, 0.08);
-    }
-  </style>
+        .rapport-block p {
+            font-size: 0.85rem;
+            color: var(--color-muted);
+            text-align: justify;
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+     7. PAGE DROITE : MISSION & VISAS
+  ========================================================= */
+        .data-page {
+            position: absolute;
+            inset: 0;
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 4px 12px 12px 4px;
+        }
+
+        .ambient-shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, transparent 40%);
+            z-index: 20;
+            pointer-events: none;
+            opacity: 1;
+        }
+
+        .data-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .mission-block {
+            margin-bottom: 25px;
+        }
+
+        .mission-title {
+            font-size: 1rem;
+            color: var(--color-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .mission-text {
+            font-size: 0.85rem;
+            color: var(--color-muted);
+            line-height: 1.5;
+            text-align: justify;
+            margin-bottom: 10px;
+        }
+
+        .mission-text strong {
+            color: var(--color-text);
+        }
+
+        /* Zone des 5 Visas */
+        .visas-section {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .visas-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .visa {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            width: 72px;
+            height: 72px;
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            opacity: 0.9;
+            line-height: 1.2;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .visa-html {
+            border: 2px dashed var(--color-accent);
+            color: var(--color-accent);
+            transform: rotate(-5deg);
+        }
+
+        .visa-php {
+            border: 2px solid var(--color-amber);
+            color: var(--color-amber);
+            transform: rotate(8deg);
+            border-radius: 12px;
+        }
+
+        .visa-cahier {
+            border: 3px double var(--color-green);
+            color: var(--color-green);
+            transform: rotate(-8deg);
+        }
+
+        .visa-reunion {
+            border: 2px dotted var(--color-primary);
+            color: var(--color-primary);
+            transform: rotate(12deg);
+        }
+
+        .visa-coord {
+            border: 1px solid var(--color-text);
+            color: var(--color-text);
+            transform: rotate(-12deg);
+        }
+
+        .help-text {
+            position: absolute;
+            bottom: -40px;
+            width: 100%;
+            text-align: center;
+            color: var(--color-muted);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: opacity 0.5s;
+            font-family: var(--font-mono);
+        }
+    </style>
 </head>
 
 <body>
 
-  <header class="site-header">
-    Christophe Hascoët // <span>Commandant de Bord</span>
-  </header>
+    <!-- LE CONTENEUR GLOBAL POUR VOTRE VRAI SITE -->
+    <div class="portfolio-container">
 
-  <main class="wrapper">
-    <!-- Contrôles Cockpit -->
-    <div class="board-header">
-      <div class="controls-group" role="tablist">
-        <button class="btn-cockpit active" data-board="departs" role="tab" aria-selected="true">Départs</button>
-        <button class="btn-cockpit" data-board="arrivees" role="tab" aria-selected="false">Arrivées</button>
-      </div>
-      <p id="board-subtitle" class="board-subtitle">Tableau des départs — Compétences en montée</p>
-    </div>
+        <!-- LE TITRE HTML SÉMANTIQUE (Très bon pour le SEO) -->
+        <header class="portfolio-header">
+            <h1>AUTORISATION D'ACCÈS</h1>
+            <h2>Profil : Chef de projet & Développeur Web Junior</h2>
+        </header>
 
-    <!-- Tableau principal (sans fond sombre) -->
-    <div class="terminal-screen">
-      <table class="flight-table" id="main-board">
-        <thead>
-          <tr>
-            <th style="width: 10%;">VOL</th>
-            <th style="width: 40%;">DESTINATION</th>
-            <th style="width: 15%;">ETD</th>
-            <th style="width: 10%;">GATE</th>
-            <th style="width: 25%;">STATUS</th>
-          </tr>
-        </thead>
-        <tbody id="board-body">
-          <!-- Les lignes du tableau seront injectées ici par JavaScript -->
-        </tbody>
-      </table>
-    </div>
-  </main>
+        <!-- LE PASSEPORT 3D -->
+        <main class="scene" id="scene">
 
+            <!-- PAGE DROITE : MISSION & PROCÉDURES (Fixe) -->
+            <article class="book-base">
+                <section class="data-page">
+                    <div class="ambient-shadow" id="ambient-shadow"></div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const FLAP_CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-";
+                    <div class="data-content">
+                        <div class="section-bar"><span>MISSION & PROCÉDURES</span></div>
 
+                        <div class="mission-block">
+                            <h3 class="mission-title">NAVIGATION & EXPÉRIENCE</h3>
+                            <p class="mission-text"><strong>Gestion des turbulences :</strong> Résistance au stress et
+                                esprit d'équipe pour garder le cap.</p>
+                            <p class="mission-text"><strong>Contrôle aérien :</strong> Coordination Agile et
+                                synchronisation précise entre les parties prenantes et les équipes techniques.</p>
+                            <p class="mission-text"><strong>Cap :</strong> Concevoir des interfaces modernes et
+                                performantes, sans surcharge, comme un cockpit bien conçu.</p>
+                        </div>
 
-      /* ======================
-         DONNÉES DES TABLEAUX
-      ====================== */
-      const BOARDS = {
-        departs: {
-          subtitle: "Tableau des départs — Compétences en montée",
-          label: "DESTINATION",
-          timeLabel: "ETD",
-          data: [
-            { vol: "DEV01", loc: "TYPESCRIPT AVANCÉ", time: "--:--", gate: "A01", stat: "EN PRÉPARATION" },
-            { vol: "DEV02", loc: "TESTS AUTOMATISÉS", time: "--:--", gate: "A02", stat: "EN CONFIGURATION" },
-            { vol: "DEV03", loc: "ARCHITECTURE FRONT", time: "--:--", gate: "B01", stat: "EN MONTÉE" },
-            { vol: "DEV04", loc: "PERFORMANCE WEB", time: "--:--", gate: "B02", stat: "EN APPROCHE" },
-            { vol: "DEV05", loc: "GSAP AVANCÉ", time: "--:--", gate: "C01", stat: "PROCÉDURE EN COURS" }
-          ]
-        },
-        arrivees: {
-          subtitle: "Tableau des arrivées — Compétences maîtrisées",
-          label: "PROVENANCE",
-          timeLabel: "ATA",
-          data: [
-            { vol: "OPS01", loc: "HTML SÉMANTIQUE", time: "--:--", gate: "A", stat: "OPÉRATIONNEL" },
-            { vol: "OPS02", loc: "CSS / SASS", time: "--:--", gate: "A", stat: "MAÎTRISE CONFIRMÉE" },
-            { vol: "OPS03", loc: "JAVASCRIPT ES6+", time: "--:--", gate: "B", stat: "PROCÉDURE VALIDÉE" },
-            { vol: "OPS04", loc: "ACCESSIBILITÉ", time: "--:--", gate: "B", stat: "AUTORISÉ AU SERVICE" },
-            { vol: "OPS05", loc: "PHP / LARAVEL", time: "--:--", gate: "C", stat: "EN SERVICE ACTIF" },
-            { vol: "OPS06", loc: "GIT / WORKFLOW", time: "--:--", gate: "C", stat: "CERTIFIÉ INTERNE" }
-          ]
-        }
-      };
+                        <div class="mission-block">
+                            <h3 class="mission-title">OBJECTIF DE MISSION</h3>
+                            <p class="mission-text">
+                                Garantir un déploiement sans faille. Mon ambition est de livrer des projets où la
+                                lisibilité du code et la stratégie s'alignent pour assurer un atterrissage parfait :
+                                performance technique et satisfaction totale des passagers.
+                            </p>
+                        </div>
 
-      function animateFlapsRealistic() {
-        const flaps = document.querySelectorAll("#board-body .flap:not(.space)");
+                        <!-- LES 5 VISAS -->
+                        <div class="visas-section">
+                            <div class="visas-grid">
+                                <div class="visa visa-html">VISA<br>HTML/CSS3</div>
+                                <div class="visa visa-php">VISA<br>PHP</div>
+                                <div class="visa visa-cahier">VISA<br>CAHIER<br>DES CHARGES</div>
+                                <div class="visa visa-reunion">VISA<br>RÉUNIONS<br>CLIENTS</div>
+                                <div class="visa visa-coord">VISA<br>COORD.<br>UX/DEV</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </article>
 
-        flaps.forEach((flap, index) => {
-          const inner = flap.querySelector(".flap-inner");
-          const finalChar = inner.textContent;
-          const iterations = 6 + Math.floor(Math.random() * 6);
+            <!-- PAGE GAUCHE : COUVERTURE & IDENTITÉ (Qui tourne) -->
+            <aside class="flip-page" id="flip-page">
 
-          const chars = [];
-          for (let i = 0; i < iterations - 1; i++) {
-            chars.push(
-              FLAP_CHARS[Math.floor(Math.random() * FLAP_CHARS.length)]
-            );
-          }
-          chars.push(finalChar);
+                <!-- RECTO : COUVERTURE FERMÉE -->
+                <div class="face face-front">
+                    <!-- Remplacé h1 par h2 pour garder une bonne sémantique SEO (car le vrai h1 est au-dessus) -->
+                    <h2>DIGITAL<br>PASSPORT</h2>
+                    <div class="tech-icon">⎔</div>
+                    <div class="title-pass">ID_DÉVELOPPEUR</div>
+                </div>
 
-          const tl = gsap.timeline({
-            delay: index * 0.01
-          });
+                <!-- VERSO : IDENTITÉ -->
+                <div class="face face-back">
 
-          chars.forEach(char => {
-            tl.to(inner, {
-              rotationX: -90,
-              duration: 0.07,
-              ease: "power1.in",
-              onComplete: () => {
-                inner.textContent = char;
-              }
-            }).to(inner, {
-              rotationX: 0,
-              duration: 0.07,
-              ease: "power1.out"
-            });
-          });
-        });
-      }
+                    <div class="section-bar"><span>IDENTIFICATION DU PILOTE</span></div>
 
+                    <div class="photo-card">
+                        <!-- METTEZ VOTRE PHOTO ICI -->
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80"
+                            alt="Christophe Hascoët">
+                        <div class="photo-role">COMMANDANT DE BORD</div>
+                    </div>
 
+                    <div class="id-grid-align">
+                        <span class="id-lbl">NOM DE CODE</span> <span class="id-val">HASCOËT</span>
+                        <span class="id-lbl">PRÉNOM</span> <span class="id-val">Christophe</span>
+                        <span class="id-lbl">RÔLE À BORD</span> <span class="id-val">Chef de projet & dév web
+                            junior</span>
+                        <span class="id-lbl">STATUT</span> <span class="id-val">Actif – En approche finale</span>
+                        <span class="id-lbl">BASE PRINCIPALE</span> <span class="id-val">Région parisienne – CET</span>
+                    </div>
 
-      /* ======================
-         UTILITAIRES DOM
-      ====================== */
-      const $ = (selector) => document.querySelector(selector);
+                    <div class="rapport-block">
+                        <h3>RAPPORT D'IDENTIFICATION</h3>
+                        <p>Après une remise des gaz depuis les métiers de l'hôtellerie, je navigue désormais dans l'IT.
+                            J'allie rigueur et adaptabilité pour piloter des projets collaboratifs, centrés sur
+                            l'utilisateur et la fiabilité technique.</p>
+                    </div>
+                </div>
+            </aside>
 
-      const boardBody = $("#board-body");
-      const subtitle = $("#board-subtitle");
-      const thLocation = $("#main-board thead th:nth-child(2)");
-      const thTime = $("#main-board thead th:nth-child(3)");
+            <div class="help-text" id="help-text">[ CLIQUEZ POUR OUVRIR LE DOSSIER ]</div>
 
-      /* ======================
-         SPLIT-FLAP
-      ====================== */
-      function createFlapText(text) {
-        return [...text].map(char => {
-          if (char === " ") {
-            return `<span class="flap space"></span>`;
-          }
-          return `
-      <span class="flap">
-        <span class="flap-inner">${char}</span>
-      </span>
-    `;
-        }).join("");
-      }
+        </main>
+    </div> <!-- FIN DU CONTENEUR GLOBAL -->
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        const scene = document.getElementById('scene');
+        const flipPage = document.getElementById('flip-page');
+        const ambientShadow = document.getElementById('ambient-shadow');
+        const helpText = document.getElementById('help-text');
 
-      /* ======================
-         RENDER TABLEAU
-      ====================== */
-      function renderBoard(type) {
-        const board = BOARDS[type];
+        let isOpen = false;
+        let isAnimating = false;
 
-        // Labels
-        subtitle.textContent = board.subtitle;
-        thLocation.textContent = board.label;
-        thTime.textContent = board.timeLabel;
+        flipPage.addEventListener('click', () => {
+            if (isAnimating) return;
+            isAnimating = true;
 
-        // Reset tableau
-        boardBody.innerHTML = "";
+            const tl = gsap.timeline({ onComplete: () => isAnimating = false });
 
-        // Injection lignes
-        board.data.forEach(item => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-        <td class="code-cell">${item.vol}</td>
-        <td class="flap-text">${createFlapText(item.loc)}</td>
-        <td>${item.time}</td>
-        <td>${item.gate}</td>
-        <td class="status-cell">${item.stat}</td>
-      `;
-          boardBody.appendChild(row);
+            if (!isOpen) {
+                tl.to(flipPage, { duration: 1.5, rotationY: -180, ease: "power3.inOut" }, 0)
+                    .to(scene, { duration: 1.5, x: 240, rotateX: 0, rotateY: 0, ease: "power3.inOut" }, 0)
+                    .to(ambientShadow, { duration: 1.5, opacity: 0, ease: "power3.inOut" }, 0);
+
+                helpText.style.opacity = '0';
+                isOpen = true;
+            } else {
+                tl.to(flipPage, { duration: 1.5, rotationY: 0, ease: "power3.inOut" }, 0)
+                    .to(scene, { duration: 1.5, x: 0, rotateX: 0, rotateY: 0, ease: "power3.inOut" }, 0)
+                    .to(ambientShadow, { duration: 1.5, opacity: 1, ease: "power3.inOut" }, 0);
+
+                setTimeout(() => helpText.style.opacity = '1', 1000);
+                isOpen = false;
+            }
         });
 
-        animateRows();
-        animateFlapsRealistic();
-      }
-
-      /* ======================
-         ANIMATIONS GSAP
-      ====================== */
-      function animateRows() {
-        gsap.from("#board-body tr", {
-          opacity: 0,
-          y: 15,
-          duration: 0.4,
-          stagger: 0.08,
-          ease: "power2.out"
-        });
-      }
-
-      function animateFlaps() {
-        gsap.fromTo(
-          "#board-body .flap:not(.space)",
-          { rotationX: -90, opacity: 0 },
-          {
-            rotationX: 0,
-            opacity: 1,
-            duration: 0.35,
-            stagger: {
-              each: 0.015,
-              from: "random"
-            },
-            ease: "steps(6)"
-          }
-        );
-      }
-
-      /* ======================
-         CONTROLES
-      ====================== */
-      document.querySelectorAll(".btn-cockpit").forEach(button => {
-        button.addEventListener("click", () => {
-          document.querySelectorAll(".btn-cockpit").forEach(b => b.classList.remove("active"));
-          button.classList.add("active");
-          renderBoard(button.dataset.board);
-        });
-      });
-
-      /* ======================
-         INIT
-      ====================== */
-      renderBoard("departs");
-
-    });
-  </script>
-
+    </script>
 
 </body>
 

@@ -1,124 +1,328 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flight Log · Portfolio Développeur Web</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <meta name="description" content="Portfolio chef de projet & développeur web interactif.">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <title>Portfolio chef de projet & Développeur Web</title>
 
   <style>
+    /* ===========================
+           VARIABLES UNIQUES (NETTOYÉ)
+           =========================== */
     :root {
       --bg-page: #0a0d14;
       --bg-panel: #111820;
-      --primary-blue: #1f6fea;
-      --status-green: #40b950;
-      --text-main: #e6edf3;
-      --text-muted: #909aa7;
+      --bg-card: #101e38;
+
+      --color-primary: #1f6fea;
+      --color-accent: #00d2ff;
+      --color-green: #3fb950;
+      --color-amber: #ff9500;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
+
+      --font-sans: 'Rajdhani', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+
       --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+      --radius-panel: 20px;
+      --container-width: 1300px;
+    }
+
+    /* ===========================
+           RESET
+           =========================== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul,
+    li {
+      list-style: none;
     }
 
     body {
       background: var(--bg-main);
-      color: var(--text-main);
-      font-family: 'Rajdhani', sans-serif;
-      margin: 0;
+      color: var(--color-text);
+      font-family: var(--font-sans);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
     }
 
-    header.site-header {
+    /* ===========================
+           HEADER
+           =========================== */
+    .header {
       background-color: var(--bg-panel);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
       padding: 1.5rem 0;
-      margin-bottom: 2rem;
       position: relative;
-      border-top: 5px solid var(--primary-blue);
+      z-index: 10;
     }
 
-    .nav-inner {
-      max-width: 1400px;
+    .header__inner {
+      max-width: var(--container-width);
       margin: 0 auto;
       padding: 0 1.5rem;
       display: grid;
-      grid-template-columns: 240px 1fr 180px;
+      grid-template-columns: 260px 1fr 180px;
+      align-items: center;
       gap: 2rem;
-      align-items: center;
+      position: relative;
     }
 
-    /* PILOTE */
-    .pilot-panel {
-      background: #1a222d;
-      padding: 1rem;
-      border-radius: 5px;
-      border-left: 3px solid var(--primary-blue);
+    .header__inner::before,
+    .header__inner::after {
+      content: "";
+      position: absolute;
+      top: -1.5rem;
+      height: 5px;
+      border-radius: 999px;
+    }
+
+    .header__inner::before {
+      left: 0;
+      width: 20%;
+      background: var(--color-primary);
+    }
+
+    .header__inner::after {
+      left: 25%;
+      width: 10%;
+      background: var(--color-green);
+    }
+
+    /* ===========================
+           PILOT CARD
+           =========================== */
+    .pilot-card {
+      border: 5px solid var(--bg-card);
+      background: var(--bg-main);
+      border-radius: 14px;
+      padding: 0.9rem 1.3rem 1rem;
+      position: relative;
+      min-width: 238px;
+      max-width: 260px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      opacity: 0;
+      transform: translateY(20px);
+      filter: brightness(0);
+    }
+
+    .pilot-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      background: var(--color-primary);
+      border-radius: 3px;
+    }
+
+    .pilot-card__role {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--color-primary);
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .pilot-card__main {
       display: flex;
-      gap: 1rem;
       align-items: center;
-    }
-    .pilot-avatar { width: 50px; height: 50px; background: #000; border-radius: 4px; overflow: hidden; }
-    .pilot-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .pilot-name { font-weight: 700; font-size: 0.95rem; display: block; }
-
-    /* LE TABLEAU (FLIGHT BOARD) */
-    nav.flight-board {
-      background: #050a12;
-      border-radius: 8px;
-      padding: 15px;
-      border: 1px solid rgba(255,255,255,0.05);
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      gap: 0.9rem;
     }
 
-    table.flight-table {
+    .pilot-card__avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      border: 1px solid #2f588b;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .pilot-card__photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pilot-card__info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .pilot-card__name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .pilot-card__id {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--color-muted);
+    }
+
+    .pilot-card__status {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--color-green);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pilot-card__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-green);
+      animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7);
+      }
+
+      50% {
+        opacity: 0.8;
+        box-shadow: 0 0 0 4px rgba(63, 185, 80, 0);
+      }
+    }
+
+
+
+    /* ===========================
+           FLIGHT BOARD
+           =========================== */
+    .flight-board {
+      margin: 0 auto;
+      background: var(--bg-main);
+      border-radius: 20px;
+      padding: 0.7rem 1rem;
+      border: 5px solid var(--bg-card);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      max-width: 1180px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      filter: brightness(0);
+    }
+
+    .flight-table {
       width: 100%;
       border-collapse: separate;
-      border-spacing: 0 4px; /* Espace entre les lignes */
-      table-layout: fixed; /* FORCE l'alignement strict des colonnes */
+      border-spacing: 0 6px;
+      perspective: 900px;
     }
 
-    /* Largeurs fixes des colonnes pour éviter tout mouvement */
-    .col-vol { width: 100px; }
-    .col-dest { width: auto; }
-    .col-gate { width: 80px; }
-    .col-stat { width: 140px; }
+    .flight-table caption {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+      text-align: left;
+    }
 
     .flight-table th {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      text-align: left;
-      padding: 0 10px 10px;
+      font-size: .8rem;
+      color: var(--color-muted);
       letter-spacing: 2px;
+      padding: 0 10px 10px;
+      text-align: left;
     }
 
-    /* CONTENEUR DE MOT (SANS TREMBLEMENT) */
+    .flight-table td {
+      padding: 4px 8px;
+      white-space: nowrap;
+      transition: background 0.3s ease-out;
+    }
+
+    .flight-table tbody tr {
+      background: var(--bg-main);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), inset 0 -1px 0 rgba(0, 0, 0, .8);
+      transition: background .35s ease;
+      cursor: pointer;
+    }
+
+    .flight-table tbody tr:hover {
+      background: rgba(31, 111, 234, .12);
+    }
+
+    .flight-table tbody tr:hover td {
+      background: linear-gradient(90deg, rgba(31, 111, 234, 0.2), rgba(31, 111, 234, 0.05));
+    }
+
     .word {
       display: flex;
-      gap: 2px;
-      perspective: 400px;
+      gap: 0;
+      padding: 3px 4px;
+      background: var(--bg-main);
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, .06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), inset 0 -1px 0 rgba(0, 0, 0, .9);
+      transform-style: preserve-3d;
     }
 
-    /* CHAQUE CARACTÈRE (FLAP) */
     .flap {
-      display: inline-block;
-      width: 1.1rem; /* Largeur FIXE pour stopper le tremblement */
-      height: 1.6rem;
-      background: linear-gradient(180deg, #111 50%, #000 50%);
-      color: #fff;
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-      font-weight: 700;
+      width: 0.80rem;
+      height: 0.80rem;
+      line-height: 0.90rem;
       text-align: center;
-      line-height: 1.6rem;
+      background: var(--bg-main);
+      border: 1px solid rgba(0, 0, 0, .85);
       border-radius: 3px;
+      transform-origin: center bottom;
+      backface-visibility: hidden;
       position: relative;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .55);
+      font-size: .9rem;
+      font-family: var(--font-mono);
+      letter-spacing: .02rem;
     }
 
-    /* Ligne médiane sur chaque lettre */
     .flap::after {
       content: "";
       position: absolute;
@@ -126,158 +330,1538 @@
       left: 0;
       width: 100%;
       height: 1px;
-      background: rgba(0,0,0,0.6);
-      z-index: 2;
+      background: rgba(0, 0, 0, 0.3);
     }
 
-    /* Statuts en couleur avec lueur */
-    .text-green .flap { color: var(--status-green); text-shadow: 0 0 8px rgba(64, 185, 80, 0.6); }
-    .text-blue .flap { color: var(--primary-blue); text-shadow: 0 0 8px rgba(31, 111, 234, 0.6); }
+    .row-green .flap {
+      color: var(--color-green);
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.6);
+      background: linear-gradient(90deg,
+          rgba(255, 149, 0, 0.15),
+          transparent);
 
-    /* HORLOGE */
-    .time-module { text-align: right; font-family: var(--font-mono); }
-    .digital-clock { font-size: 2.2rem; font-weight: 700; color: #fff; line-height: 1; }
-    .digital-date { color: var(--text-muted); font-size: 0.8rem; margin-top: 5px; }
+    }
 
-    /* RESTE DU SITE */
+    .row-amber .flap {
+      color: var(--color-amber);
+      text-shadow: 0 0 8px rgba(255, 149, 0, 0.6);
+      background: linear-gradient(90deg,
+          rgba(31, 111, 234, 0.15),
+          transparent);
+    }
+
+    .row-blue .flap {
+      color: var(--color-primary);
+      text-shadow: 0 0 8px rgba(31, 111, 234, 0.6);
+      background: linear-gradient(90deg,
+          rgba(63, 185, 80, 0.15),
+          transparent);
+
+    }
+
+    .row-light {
+      background: linear-gradient(90deg, rgba(31, 111, 234, 0.35), rgba(31, 111, 234, 0.05));
+      transition: background 1.2s ease-out;
+    }
+
+    /* ===========================
+           CASIO WATCH
+           =========================== */
+    .casio {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(20px);
+      filter: brightness(0);
+    }
+
+    .casio__body {
+      width: 175px;
+      padding: 13px 16px 12px;
+      background: var(--bg-main);
+      border-radius: 18px;
+      border: 5px solid var(--bg-card);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      position: relative;
+      transform: translateY(2px);
+    }
+
+    .casio__body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 40%);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .casio__header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 4px;
+      margin-bottom: 4px;
+    }
+
+    .casio__brand,
+    .casio__model {
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      color: #dcdcdc;
+    }
+
+    .casio__model {
+      font-style: italic;
+      color: #a49666;
+    }
+
+    .casio__function-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px 3px;
+      margin-bottom: 3px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.3px;
+    }
+
+    .casio__alarm {
+      color: var(--color-accent);
+    }
+
+    .casio__screen-border {
+      border: 3px solid #1e56a0;
+      border-radius: 8px;
+      padding: 3px;
+      background: #050505;
+      position: relative;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.9), inset 0 0 4px rgba(0, 0, 0, 0.7);
+    }
+
+    .casio__screen-border::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 45%);
+      pointer-events: none;
+    }
+
+    .casio__screen {
+      padding: 9px 11px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      color: #111827;
+      background: linear-gradient(180deg, #d7dfb5 0%, #b7c09a 100%);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 -1px 1px rgba(255, 255, 255, 0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      filter: brightness(0.97) contrast(0.96) saturate(0.9);
+    }
+
+    .casio__top {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      width: 100%;
+      font-size: 10px;
+      margin-bottom: 2px;
+      font-weight: 600;
+      letter-spacing: 0.25px;
+    }
+
+    .casio__date {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .casio__date span {
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .casio__icons {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .casio__icon-bars,
+    .casio__icon-bell {
+      font-size: 9px;
+      color: rgba(0, 0, 0, 0.55);
+      transform: translateY(1px);
+    }
+
+    .casio__ampm {
+      font-size: 8px;
+      margin-left: 2px;
+      color: rgba(0, 0, 0, 0.75);
+    }
+
+    .casio__time {
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      margin-top: 2px;
+      text-shadow: 0 0 1px rgba(0, 0, 0, 0.25), 0 0 2px rgba(0, 0, 0, 0.15);
+    }
+
+    #casio-seconds {
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .casio__footer {
+      margin-top: 5px;
+      font-size: 9px;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      font-weight: 600;
+      letter-spacing: 0.25px;
+    }
+
+    .casio__wr {
+      border: 1px solid #a61c1c;
+      color: #f97373;
+      padding: 0 3px;
+      font-weight: 700;
+      font-size: 8px;
+      letter-spacing: 0.4px;
+      background: #111827;
+    }
+
+    .casio__btn {
+      position: absolute;
+      width: 4px;
+      height: 8px;
+      background: #afafaf;
+      border-radius: 2px;
+    }
+
+    .casio__btn--lt {
+      left: -4px;
+      top: 25%;
+    }
+
+    .casio__btn--lb {
+      left: -4px;
+      bottom: 25%;
+    }
+
+    .casio__btn--rb {
+      right: -4px;
+      bottom: 25%;
+    }
+
+    /* ===========================
+           MAIN CONTENT
+           =========================== */
+    .hero-header {
+      text-align: center;
+      margin: 3rem 0;
+      position: relative;
+    }
+
+    .terminal-label {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .2em;
+      color: var(--color-green);
+      margin-top: 2rem;
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.3);
+    }
+
+    /* TITRE STABILISÉ - SANS CLIGNOTEMENT */
+    .section-title {
+      font-family: var(--font-sans);
+      font-size: 2.8rem;
+      letter-spacing: .35em;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin: 1rem 0;
+
+      background: linear-gradient(90deg,
+          #1f6fea 0%,
+          #00d2ff 40%,
+          #3fb950 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow:
+        0 0 8px rgba(31, 111, 234, 0.4),
+        0 0 16px rgba(63, 185, 80, 0.3);
+    }
+
+    .hero-sub {
+      opacity: 0.9;
+      letter-spacing: 2px;
+      color: var(--color-green);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    .title-line {
+      width: 320px;
+      height: 2px;
+      margin: 1rem auto 2rem;
+      background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-green), var(--color-amber), transparent);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title-line::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, #ffffff, transparent);
+      animation: scanLine 2.5s infinite;
+    }
+
+    @keyframes scanLine {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+
     .terminal-wrapper {
-      max-width: 1200px;
-      margin: 4rem auto;
+      max-width: var(--container-width);
+      margin: 3rem auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 3rem;
+      gap: 2rem;
       padding: 0 1.5rem;
     }
+
     .terminal-panel {
-      border: 2px solid var(--status-green);
-      background: rgba(16, 30, 56, 0.4);
-      padding: 2rem;
-      border-radius: 15px;
+      background: var(--bg-main);
+      border: 5px solid var(--bg-card);
+      border-radius: var(--radius-panel);
+      padding: 2.4rem;
+      box-shadow: var(--shadow-strong);
+      line-height: 1.7;
+      opacity: 0;
+      transform: translateY(20px);
+      filter: brightness(0);
+    }
+
+    .panel-header {
+      margin-bottom: 1.5rem;
+    }
+
+
+    .label {
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      letter-spacing: .25em;
+      color: var(--color-green);
+      opacity: 0.8;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .intro-title {
+      font-size: 1.5rem;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+
+    .intro-title .accent {
+      color: var(--color-accent);
+    }
+
+    .intro-title .highlight {
+      color: var(--color-primary);
+    }
+
+    .intro-text {
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .intro-text .primary {
+      color: var(--color-primary);
+    }
+
+    .intro-text .accent {
+      color: var(--color-accent);
+    }
+
+    .flight-meta {
+      margin: 1rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--color-green);
+    }
+
+    .tag {
+      opacity: 0.9;
+      margin-right: 0.5rem;
+      color: var(--color-green);
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.2);
+    }
+
+    .status.ontime {
+      color: var(--color-green);
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.4);
+      animation: pulse 2s infinite;
+    }
+
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .8rem;
+      margin: 1.2rem 0;
+    }
+
+
+    .cockpit-card {
+      background: var(--bg-main);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      border-radius: 20px;
+      padding: .8rem;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cockpit-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--color-green);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+    }
+
+    .cockpit-card::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-green);
+      box-shadow: 0 0 8px var(--color-green);
+      animation: blinkLed 2s infinite;
+    }
+
+    .cockpit-card:nth-child(2)::after {
+      background: var(--color-accent);
+      box-shadow: 0 0 8px var(--color-accent);
+      animation-delay: 0.5s;
+    }
+
+    .cockpit-card:nth-child(3)::after {
+      background: var(--color-amber);
+      box-shadow: 0 0 8px var(--color-amber);
+      animation-delay: 1s;
+    }
+
+    @keyframes blinkLed {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    .panel-title {
+      font-family: var(--font-sans);
+      font-size: 1.2rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-green);
+      margin-bottom: 1.2rem;
+    }
+
+    .cockpit-card h3 {
+      color: var(--color-green);
+      font-size: .75rem;
+      letter-spacing: .12em;
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.2);
+    }
+
+    .cockpit-card p {
+      font-size: 0.9rem;
+      color: var(--color-text);
+      opacity: 0.9;
+    }
+
+    .cockpit-btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 1rem 2rem;
+      border-radius: 20px;
+      background: var(--bg-main);
+      border: 1px solid var(--bg-card);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      transition: all .3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cockpit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      border-color: var(--color-amber);
+    }
+
+    .cockpit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: 0.5s;
+    }
+
+    .cockpit-btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      letter-spacing: .25em;
+      color: var(--color-muted);
+    }
+
+    .btn-text {
+      display: block;
+      font-family: var(--font-sans);
+      letter-spacing: .15em;
+      color: var(--color-green);
+      font-size: .9rem;
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.3);
+    }
+
+    .panel-footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      color: var(--color-muted);
+    }
+
+    .flightplan-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* FLIGHTPLAN CARDS AVEC HOVER */
+    .flightplan-card {
+      background: var(--bg-main);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      border-radius: 20px;
+      padding: 1rem;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .flightplan-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--color-green);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+    }
+
+    .flightplan-card::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-green);
+      box-shadow: 0 0 8px var(--color-green);
+      animation: blinkLed 2s infinite;
+    }
+
+    .flightplan-card:nth-child(2)::after {
+      background: var(--color-accent);
+      box-shadow: 0 0 8px var(--color-accent);
+      animation-delay: 0.3s;
+    }
+
+    .flightplan-card h3 {
+      color: var(--color-green);
+      font-size: .9rem;
+      letter-spacing: .15em;
+      margin-bottom: 0.2rem;
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.2);
+    }
+
+    .flightplan-card span {
+      color: var(--color-green);
+      font-size: .7rem;
+      opacity: .9;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-mono);
+    }
+
+    .flightplan-card p {
+      color: var(--color-text);
+      opacity: 0.9;
+    }
+
+    .flight-checklist {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    .chip {
+      border: 1px solid var(--color-green);
+      color: var(--color-green);
+      padding: .35rem .7rem;
+      border-radius: 20px;
+      font-size: .7rem;
+      font-family: var(--font-mono);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(63, 185, 80, 0.1);
+      background: rgba(63, 185, 80, 0.05);
+    }
+
+    .long-text {
+      color: #cfefff;
+      line-height: 1.7;
+      margin: 1rem 0;
+    }
+
+    .seatbelt {
+      margin: 1.5rem 0;
+      padding: 0.8rem 1rem;
+      background: rgba(255, 149, 0, 0.08);
+      border-left: 3px solid var(--color-amber);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #ffb700;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .seatbelt::before {
+      content: "⚠";
+      color: var(--color-amber);
+      font-size: 1.2rem;
+      animation: pulse 2s infinite;
+    }
+
+    .system-status {
+      margin-top: 2rem;
+      border-top: 1px solid var(--bg-card);
+      padding-top: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: .75rem;
+    }
+
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .6rem;
+      padding: 0.3rem 0;
+    }
+
+    .status-line span:first-child {
+      color: var(--color-muted);
+    }
+
+    .status-line span:last-child {
+      color: var(--color-green);
+      text-shadow: 0 0 8px rgba(63, 185, 80, 0.4);
+    }
+
+    .status-line .active {
+      color: var(--color-green);
+      text-shadow: 0 0 12px rgba(63, 185, 80, 0.6);
+      animation: pulse 2s infinite;
+    }
+
+    /* ===========================
+           RUNWAY LIGHTS
+      =========================== */
+    .runway-lights {
+      position: relative;
+      width: 100%;
+      height: 18px;
+      background: transparent;
+      overflow: hidden;
+      margin: 2rem 0 0;
+    }
+
+    .runway-lights::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 4px;
+      transform: translateY(-50%);
+      background-image: radial-gradient(circle, #1e90ff 2px, transparent 3px);
+      background-size: 26px 4px;
+      background-repeat: repeat-x;
+      opacity: 0.9;
+      animation: runwayDotsPulse 1.6s ease-in-out infinite;
+    }
+
+    .runway-lights::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(37, 99, 235, 0.3), transparent 60%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    @keyframes runwayDotsPulse {
+
+      0%,
+      100% {
+        opacity: 0.4;
+        filter: drop-shadow(0 0 0px rgba(56, 189, 248, 0));
+      }
+
+      50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
+      }
+    }
+
+    /* ===========================
+           FOOTER
+           =========================== */
+    .footer {
+      background: var(--bg-panel);
+      padding: 2.4rem 0 1.9rem;
+      box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.9);
+      position: relative;
+      margin-top: auto;
+    }
+
+    .footer::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.85), transparent 70%);
+      pointer-events: none;
+    }
+
+    .footer__inner {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .footer__top {
+      display: grid;
+      grid-template-columns: minmax(0, 240px) minmax(0, 1.8fr) minmax(0, 240px);
+      gap: 2.5rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .footer-block {
+      position: relative;
+      background: radial-gradient(circle at top, #101828, #020617 75%);
+      border-radius: 18px;
+      border: 1px solid rgba(15, 23, 42, 0.95);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), inset 0 0 18px rgba(0, 0, 0, 0.95);
+      padding: 1.1rem 1.3rem 1.2rem;
+      overflow: hidden;
+    }
+
+    .footer-block::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.16), transparent 40%);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .footer-block__title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.6rem;
+      text-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
+    }
+
+    .footer-block__content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .tower__freq {
+      font-size: 2.4rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--color-text);
+      text-shadow: 0 0 12px rgba(30, 144, 255, .7);
+    }
+
+    .tower__sub {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--color-muted);
+    }
+
+    .tower__status {
+      font-size: 0.8rem;
+      color: var(--color-green);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 0.5rem;
+    }
+
+    .tower__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-green);
+      animation: pulse 2s infinite;
+    }
+
+    .comms {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .comms__item {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: linear-gradient(180deg, #0b1020, #060a14);
+      border: 1px solid rgba(30, 144, 255, 0.2);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .comms__item:hover {
+      border-color: var(--color-green);
+      background: #020617;
+      transform: translateY(-2px);
+    }
+
+    .comms__icon i {
+      font-size: 20px;
+      color: #38bdf8;
+      transition: transform 0.35s ease, color 0.25s ease;
+    }
+
+    .comms__item:hover i {
+      transform: rotate(360deg);
+      color: var(--color-green);
+    }
+
+    .comms__text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comms__label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--color-green);
+      font-weight: 600;
+    }
+
+    .comms__sub {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--color-primary);
+    }
+
+    .clearance--refined {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .clearance__code {
+      font-family: var(--font-mono);
+      color: var(--color-accent);
+      letter-spacing: 1px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .clearance__panel {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .clearance__tag {
+      font-size: 10px;
+      color: var(--color-green);
+      letter-spacing: 0.8px;
+    }
+
+    .clearance__cta {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(63, 185, 80, 0.8);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      color: #d8e3ec;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .clearance__cta::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--color-green);
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+      margin-right: 8px;
+    }
+
+    .clearance__cta span {
+      font-size: 0.6rem;
+      opacity: 0.7;
+      margin-left: 17px;
+    }
+
+    .clearance__cta:hover {
+      background: radial-gradient(circle at top, rgba(63, 185, 80, 0.2), #020617);
+      box-shadow: 0 0 12px rgba(63, 185, 80, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .footer__bottom {
+      border-top: 1px solid #154287;
+      padding-top: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #606a78;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer__rec-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #e5533d;
+      border-radius: 50%;
+      margin-right: 5px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    /* ===========================
+           RESPONSIVE
+           =========================== */
+    @media (max-width: 1024px) {
+      .header__inner {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .pilot-card {
+        max-width: 100%;
+      }
+
+      .casio {
+        justify-content: flex-start;
+      }
+
+      .terminal-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .footer__top {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .cockpit-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .comms {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        letter-spacing: 0.15em;
+      }
     }
   </style>
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="nav-inner">
-      <section class="pilot-panel">
-        <div class="pilot-avatar">
-          <img src="pilote christophehascoet3.png" alt="Pilote" />
-        </div>
-        <div class="pilot-text">
-          <span style="font-size: 0.6rem; color: var(--primary-blue); font-family: var(--font-mono);">COMMANDANT</span>
-          <span class="pilot-name">VOTRE NOM</span>
-          <span style="font-size: 0.6rem; color: var(--text-muted);">CPT-2025-001</span>
+
+  <!-- HEADER -->
+  <header class="header" role="banner">
+    <div class="header__inner">
+
+      <!-- Carte pilote -->
+      <section class="pilot-card" aria-labelledby="pilot-name">
+        <p class="pilot-card__role">Commandant de bord</p>
+        <div class="pilot-card__main">
+          <figure class="pilot-card__avatar">
+            <img src="./asset/images/pilote-christophehascoet5.jpeg" alt="Portrait du pilote"
+              class="pilot-card__photo" />
+          </figure>
+          <div class="pilot-card__info">
+            <p id="pilot-name" class="pilot-card__name">CHRISTOPHE HASCOET</p>
+            <p class="pilot-card__id">ID : CPT-2024-001</p>
+            <p class="pilot-card__status">
+              <span class="pilot-card__dot"></span>
+              En service
+            </p>
+          </div>
         </div>
       </section>
 
-      <nav class="flight-board">
+      <!-- Tableau des vols -->
+      <nav class="flight-board" aria-label="Tableau des vols">
         <table class="flight-table">
+          <caption>Vols en temps réel</caption>
           <thead>
             <tr>
-              <th class="col-vol">VOL</th>
-              <th class="col-dest">DESTINATION</th>
-              <th class="col-gate">PORTE</th>
-              <th class="col-stat">STATUT</th>
+              <th>VOL</th>
+              <th>DESTINATION</th>
+              <th>HEURE</th>
+              <th>PORTE</th>
+              <th>STATUT</th>
             </tr>
           </thead>
-          <tbody id="flight-body">
-            <!-- Injecté par JavaScript -->
-          </tbody>
+          <tbody id="flight-body"></tbody>
         </table>
       </nav>
 
-      <aside class="time-module">
-        <div id="clock" class="digital-clock">00:00</div>
-        <div id="date" class="digital-date">26 JAN 2025</div>
+      <!-- Montre Casio -->
+      <aside class="casio" aria-label="Horloge de bord">
+        <div class="casio__body">
+          <div class="casio__header">
+            <span class="casio__brand">CASIO</span>
+            <span class="casio__model">F‑91W</span>
+          </div>
+          <div class="casio__function-bar">
+            <span class="casio__light">LIGHT</span>
+            <span class="casio__alarm">ALARM CHRONOGRAPH</span>
+          </div>
+          <div class="casio__screen-border">
+            <div class="casio__screen">
+              <div class="casio__top">
+                <div class="casio__icons">
+                  <i class="fa-solid fa-signal casio__icon-bars"></i>
+                  <i class="fa-solid fa-bell casio__icon-bell"></i>
+                  <span id="casio-ampm" class="casio__ampm">PM</span>
+                </div>
+                <div class="casio__date">
+                  <span id="casio-day">SA</span>
+                  <span id="casio-date">31</span>
+                </div>
+              </div>
+              <div class="casio__time">
+                <span id="casio-time">11:04</span>
+                <span id="casio-seconds">33</span>
+              </div>
+            </div>
+          </div>
+          <div class="casio__footer">
+            <span>WATER</span>
+            <span class="casio__wr">WR</span>
+            <span>RESIST</span>
+          </div>
+          <div class="casio__btn casio__btn--lt"></div>
+          <div class="casio__btn casio__btn--lb"></div>
+          <div class="casio__btn casio__btn--rb"></div>
+        </div>
       </aside>
+
     </div>
   </header>
 
-  <main class="terminal-wrapper">
-    <article class="terminal-panel">
-      <h2>Chef de projet & Développeur Web</h2>
-      <p>Prêt pour le décollage de vos projets digitaux.</p>
-    </article>
-    <article class="terminal-panel" style="border-color: var(--primary-blue);">
-      <h2>Plan de vol</h2>
-      <p>Explorez les destinations techniques.</p>
-    </article>
+  <!-- MAIN -->
+  <main role="main">
+    <header class="hero-header">
+      <p class="terminal-label">TERMINAL DIGITAL • FLIGHT DEV-320</p>
+      <h1 class="section-title">CENTRE DE COMMANDE</h1>
+      <div class="title-line"></div>
+      <p class="hero-sub">Commandant de bord · Navigation numérique</p>
+    </header>
+
+    <section class="terminal-wrapper" aria-label="Poste de pilotage">
+
+      <!-- Panneau Gauche -->
+      <article class="terminal-panel">
+        <header class="panel-header">
+          <span class="label">CLEARANCE · PRE-FLIGHT</span>
+          <h2 class="intro-title">
+            <span class="accent">Chef de projet</span> & <span class="accent">Développeur Web</span><br>
+            <span class="highlight">Commandant de bord</span> de vos expériences digitales
+          </h2>
+        </header>
+
+        <p class="intro-text">
+          Je pilote vos projets comme un véritable <span class="primary">plan de vol</span> : briefing clair,
+          trajectoire maîtrisée, <span class="accent">performance optimisée</span> et expérience utilisateur contrôlée
+          comme une <span class="primary">tour de contrôle</span>.
+        </p>
+
+        <p class="flight-meta">
+          <span class="tag">FLIGHT DEV-320</span>
+          <span class="status ontime">ON TIME</span>
+          <span class="tag">ORIGINE · OBJECTIFS</span>
+        </p>
+
+        <div class="cockpit-grid">
+          <div class="cockpit-card">
+            <h3>CHECK-IN</h3>
+            <p>Analyse · Stack · Stratégie</p>
+          </div>
+          <div class="cockpit-card">
+            <h3>BOARDING</h3>
+            <p>Prototypes · UI · Tests</p>
+          </div>
+          <div class="cockpit-card">
+            <h3>TAKEOFF</h3>
+            <p>Déploiement · Perf · UX</p>
+          </div>
+        </div>
+
+        <a href="depart.html" class="cockpit-btn">
+          <span class="btn-label">FLIGHT ACCESS</span>
+          <span class="btn-text">Prendre les commandes</span>
+        </a>
+
+        <footer class="panel-footer">
+          <span>UX/UI comme tour de contrôle.</span>
+          <span><strong>Code</strong> comme plan de vol.</span>
+        </footer>
+      </article>
+
+      <!-- Panneau Droit -->
+      <article class="terminal-panel">
+        <header class="panel-header">
+          <span class="label">FLIGHT PLAN · PORTFOLIO</span>
+          <h2 class="panel-title">Plan de vol</h2>
+        </header>
+
+        <div class="flightplan-grid">
+          <div class="flightplan-card">
+            <h3>CVL</h3>
+            <span>Origine</span>
+            <p>Curriculum structuré</p>
+          </div>
+          <div class="flightplan-card">
+            <h3>PRD</h3>
+            <span>Destination</span>
+            <p>Produits utilisables</p>
+          </div>
+        </div>
+
+        <div class="flight-checklist">
+          <span class="chip">Check-in</span>
+          <span class="chip">Contrôles techniques</span>
+          <span class="chip">Boarding projets</span>
+          <span class="chip">Takeoff production</span>
+        </div>
+
+        <p class="long-text">
+          Navigation de précision : du concept au code, du prototype à la performance, avec une approche claire, lisible
+          et professionnelle.
+        </p>
+
+        <div class="seatbelt">
+          <span>SEATBELT SIGN · ON</span>
+          <span>Veuillez attacher vos ceintures.</span>
+        </div>
+
+        <div class="system-status">
+          <div class="status-line">
+            <span>ALTITUDE</span>
+            <span>38 000 FT</span>
+          </div>
+          <div class="status-line">
+            <span>TRAJECTOIRE</span>
+            <span>OPTIMISÉE</span>
+          </div>
+          <div class="status-line">
+            <span>SYSTÈME</span>
+            <span class="active">STABLE</span>
+          </div>
+        </div>
+      </article>
+
+    </section>
   </main>
 
-  <script type="module">
-    const FLIGHTS = [
-      { id: 'PF-000', dest: 'ACCUEIL', gate: 'T0', stat: 'OUVERT', class: 'text-green' },
-      { id: 'PF-001', dest: 'HALL DES DEPARTS', gate: 'A1', stat: 'EMBARQ.', class: 'text-blue' },
-      { id: 'PF-002', dest: 'PORTE PILOTE', gate: 'B2', stat: 'A L\'HEURE', class: 'text-green' },
-      { id: 'PF-003', dest: 'PLAN DE VOL', gate: 'C3', stat: 'A L\'HEURE', class: 'text-green' }
+  <!-- Runway Lights -->
+  <div class="runway-lights" aria-hidden="true"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <section class="footer__top">
+
+        <!-- Tour de contrôle -->
+        <article class="footer-block">
+          <h2 class="footer-block__title">Tour de contrôle</h2>
+          <div class="footer-block__content">
+            <p class="tower__freq">TWR 118.700</p>
+            <p class="tower__sub">CDG · PRIMARY</p>
+            <p class="tower__status">
+              <span class="tower__dot"></span>
+              ACTIVE
+            </p>
+          </div>
+        </article>
+
+        <!-- Comms -->
+        <article class="footer-block">
+          <h2 class="footer-block__title">Canaux de communication</h2>
+          <ul class="comms">
+            <li>
+              <a href="#" class="comms__item">
+                <span class="comms__icon"><i class="fa-solid fa-envelope"></i></span>
+                <span class="comms__text">
+                  <span class="comms__label">Email</span>
+                  <span class="comms__sub">Cabine / Direct</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="comms__item">
+                <span class="comms__icon"><i class="fa-brands fa-linkedin"></i></span>
+                <span class="comms__text">
+                  <span class="comms__label">LinkedIn</span>
+                  <span class="comms__sub">Contrôle trafic pro</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="comms__item">
+                <span class="comms__icon"><i class="fa-brands fa-github"></i></span>
+                <span class="comms__text">
+                  <span class="comms__label">GitHub</span>
+                  <span class="comms__sub">Hangar projets</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="comms__item">
+                <span class="comms__icon"><i class="fa-solid fa-headset"></i></span>
+                <span class="comms__text">
+                  <span class="comms__label">Radio</span>
+                  <span class="comms__sub">Contact direct tour</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </article>
+
+        <!-- Clearance -->
+        <article class="footer-block">
+          <h2 class="footer-block__title">Clearance</h2>
+          <div class="footer-block__content clearance--refined">
+            <p class="clearance__code">CLR TO PORTFOLIO VIA FLIGHT PLAN</p>
+            <div class="clearance__panel">
+              <span class="clearance__tag">STATUS : READY</span>
+              <a class="clearance__cta" href="#flight-plan">
+                REQUEST CLEARANCE
+                <span>Review flight plan & credentials</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+      <div class="footer__bottom">
+        <p><span class="footer__rec-dot"></span>REC — FLIGHT DATA ACTIVE</p>
+        <p>© 2025 — Cleared for Takeoff</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <script>
+    // Horloge Casio
+    function updateCasio() {
+      const now = new Date();
+      const hours24 = now.getHours();
+      const ampm = hours24 >= 12 ? "PM" : "AM";
+      const hours12 = hours24 % 12 || 12;
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const seconds = now.getSeconds().toString().padStart(2, "0");
+      const dayStr = now.toLocaleDateString("en-US", { weekday: "short" }).substring(0, 2).toUpperCase();
+      const dateStr = now.getDate();
+
+      document.getElementById("casio-time").textContent = `${hours12.toString().padStart(2, "0")}:${minutes}`;
+      document.getElementById("casio-seconds").textContent = seconds;
+      document.getElementById("casio-day").textContent = dayStr;
+      document.getElementById("casio-date").textContent = dateStr;
+      document.getElementById("casio-ampm").textContent = ampm;
+    }
+
+    setInterval(updateCasio, 1000);
+    updateCasio();
+
+    // Données du tableau
+    const FLIGHT_DATA = [
+      { v: 'PT-987', d: 'ACCUEIL', t: '06:45', g: 'A56', s: 'OUVERT', c: 'row-green', href: 'index.html' },
+      { v: 'PJ-251', d: 'HALL DEPARTS', t: '06:45', g: 'H12', s: "EMBARQUEMENT", next: "À L'HEURE", delay: 4000, c: 'row-blue', href: 'depart.html' },
+      { v: 'PK-365', d: 'PASSEPORT PILOTE', t: '08:00', g: 'P23', s: "À L'HEURE", c: 'row-amber', href: 'passeport.html' },
+      { v: 'PM-451', d: "PORTE D'EMBARQUEMENT", t: '09:00', g: 'I17', s: "À L'HEURE", c: 'row-green', href: 'embarquement.html' },
+      { v: 'PN-658', d: 'PLAN DE VOL', t: '07:40', g: 'V36', s: "À L'HEURE", c: 'row-blue', href: 'plan.html' },
+      { v: 'PR-854', d: 'POSTE DE PILOTAGE', t: '09:00', g: 'C48', s: 'EMBARQUEMENT', next: "À L'HEURE", delay: 6000, c: 'row-amber', href: 'pilotage.html' },
+      { v: 'PV-000', d: 'TOUR DE CONTRÔLE', t: '10:00', g: 'T00', s: "À L'HEURE", c: 'row-green', href: 'tour.html' }
     ];
 
-    const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.'-·";
+    const CHARS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.+-'";
 
-    // Création du HTML du tableau
-    const initBoard = () => {
-      const tbody = document.getElementById('flight-body');
-      FLIGHTS.forEach(f => {
-        const tr = document.createElement('tr');
-        tr.className = 'flight-row';
-        tr.innerHTML = `
-          <td>${createWord(f.id)}</td>
-          <td>${createWord(f.dest)}</td>
-          <td>${createWord(f.gate)}</td>
-          <td class="${f.class}">${createWord(f.stat)}</td>
-        `;
-        tbody.appendChild(tr);
+    function createWord(text, length = 15) {
+      const word = document.createElement('div');
+      word.className = 'word';
+      const safeText = text || "";
+
+      for (let i = 0; i < length; i++) {
+        const flap = document.createElement('span');
+        flap.className = 'flap';
+        const char = safeText[i] ?? " ";
+        flap.dataset.char = char;
+        flap.textContent = char === " " ? "\u00A0" : char;
+        word.appendChild(flap);
+      }
+      return word;
+    }
+
+    // Remplissage tableau
+    const tbody = document.getElementById('flight-body');
+
+    FLIGHT_DATA.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.className = row.c;
+      tr.dataset.href = row.href;
+      tr.setAttribute('role', 'button');
+      tr.setAttribute('tabindex', '0');
+
+      const cells = [
+        { content: row.v, len: 6 },
+        { content: row.d, len: 22 },
+        { content: row.t, len: 5 },
+        { content: row.g, len: 3 },
+        { content: row.s, len: 14, class: 'col-statut' }
+      ];
+
+      cells.forEach(cell => {
+        const td = document.createElement('td');
+        if (cell.class) td.classList.add(cell.class);
+        td.appendChild(createWord(cell.content, cell.len));
+        tr.appendChild(td);
       });
-    };
 
-    const createWord = (text) => {
-      return `<div class="word">${text.split('').map(char => 
-        `<span class="flap" data-target="${char.toUpperCase()}"> </span>`
-      ).join('')}</div>`;
-    };
+      tbody.appendChild(tr);
+    });
 
-    // Animation Split-Flap réaliste
-    const animateFlap = (el) => {
-      const target = el.dataset.target;
-      let iterations = 8 + Math.floor(Math.random() * 10);
-      
-      const tl = gsap.timeline();
+    // Navigation
+    tbody.addEventListener('click', e => {
+      const row = e.target.closest('tr[data-href]');
+      if (row) window.location.href = row.dataset.href;
+    });
 
-      tl.to(el, {
-        rotationX: -90,
-        duration: 0.05,
-        repeat: iterations,
-        ease: "none",
-        onRepeat: () => {
-          el.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
-        },
-        onComplete: () => {
-          el.textContent = target;
-          gsap.set(el, { rotationX: 0 });
-        }
+    // Animation Split-Flap
+    function animateFlaps() {
+      document.querySelectorAll('.flap').forEach(flap => {
+        const finalChar = flap.dataset.char;
+        if (finalChar === " ") return;
+
+        const delay = Math.random() * 900;
+        const flips = 10 + Math.floor(Math.random() * 8);
+
+        setTimeout(() => {
+          let count = 0;
+          const interval = setInterval(() => {
+            flap.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+
+            gsap.fromTo(flap,
+              { rotationX: -90 },
+              { rotationX: 0, duration: 0.25, ease: "power2.out" }
+            );
+
+            if (++count >= flips) {
+              clearInterval(interval);
+              flap.textContent = finalChar;
+              gsap.fromTo(flap,
+                { rotationX: -60 },
+                { rotationX: 0, duration: 0.35, ease: "back.out(1.7)" }
+              );
+            }
+          }, 120 + Math.random() * 40);
+        }, delay);
       });
-    };
+    }
 
-    const startGlobalAnimation = () => {
-      const allFlaps = document.querySelectorAll('.flap');
-      allFlaps.forEach((flap, i) => {
-        gsap.delayedCall(i * 0.02, () => animateFlap(flap));
+    // Mise à jour statuts
+    function scheduleUpdates() {
+      const rows = document.querySelectorAll('#flight-body tr');
+
+      FLIGHT_DATA.forEach((data, idx) => {
+        if (!data.next) return;
+
+        setTimeout(() => {
+          const tr = rows[idx];
+          const cell = tr.querySelector('.col-statut');
+          cell.innerHTML = '';
+          cell.appendChild(createWord(data.next, 14));
+
+          cell.querySelectorAll('.flap').forEach(flap => {
+            let count = 0;
+            const max = 8 + Math.random() * 6;
+            const final = flap.dataset.char;
+
+            const interval = setInterval(() => {
+              flap.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
+              gsap.fromTo(flap, { rotationX: -70 }, { rotationX: 0, duration: 0.2 });
+
+              if (++count >= max) {
+                clearInterval(interval);
+                flap.textContent = final;
+              }
+            }, 120);
+          });
+
+          tr.classList.add('row-light');
+          setTimeout(() => tr.classList.remove('row-light'), 1200);
+        }, data.delay);
       });
-    };
+    }
 
-    const updateTime = () => {
-      const n = new Date();
-      document.getElementById('clock').textContent = n.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-      document.getElementById('date').textContent = n.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
-    };
+    // ANIMATION D'ENTRÉE SÉQUENTIELLE
+    function powerOnSequence() {
+      const elements = ['.pilot-card', '.flight-board', '.casio', '.terminal-panel'];
 
-    document.addEventListener("DOMContentLoaded", () => {
-      initBoard();
-      updateTime();
-      setInterval(updateTime, 1000);
-      startGlobalAnimation();
+      gsap.set(elements, { opacity: 0, y: 20, filter: 'brightness(0)' });
+
+      elements.forEach((el, i) => {
+        setTimeout(() => {
+          const element = document.querySelectorAll(el);
+          if (element.length > 0) {
+            gsap.to(element, {
+              opacity: 1,
+              y: 0,
+              filter: 'brightness(1)',
+              duration: 0.8,
+              ease: "power2.out",
+              stagger: 0.2,
+              onComplete: function () {
+                gsap.to(this.targets(), {
+                  filter: 'brightness(1.3)',
+                  duration: 0.05,
+                  yoyo: true,
+                  repeat: 3,
+                  onComplete: function () {
+                    gsap.set(this.targets(), { filter: 'brightness(1)' });
+                  }
+                });
+              }
+            });
+          }
+        }, i * 600);
+      });
+    }
+
+    // Lancement
+    window.addEventListener('load', () => {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduced) {
+        powerOnSequence();
+        setTimeout(() => {
+          animateFlaps();
+          scheduleUpdates();
+        }, 2000);
+      } else {
+        gsap.set(['.pilot-card', '.flight-board', '.casio', '.terminal-panel'], {
+          opacity: 1, y: 0, filter: 'brightness(1)'
+        });
+        animateFlaps();
+      }
     });
   </script>
 </body>
+
 </html>

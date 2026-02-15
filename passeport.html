@@ -1,488 +1,717 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Passeport du pilote | Portfolio</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description"
-        content="Passeport du pilote – identité, mission et spécialités d’un développeur qui pilote son stack comme un cockpit.">
-    <style>
-        :root {
-            --passport-bg: #111319;
-            --passport-page-bg: #171a22;
-            --passport-border: #2e3340;
-            --passport-accent: #e1c48b;
-            --passport-text-muted: #a4a9b8;
-            --passport-text-strong: #f5f7ff;
-            --passport-radius: 0.75rem;
-            --passport-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.65);
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Passeport du pilote — À propos</title>
+  <meta name="description" content="À propos — Passeport du pilote (document fictionnel de portfolio)." />
 
-        .page-main {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 1.5rem;
-            background: radial-gradient(circle at top, #181c26 0, #06070a 55%);
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-        .passport {
-            max-width: 1100px;
-            width: 100%;
-            color: var(--passport-text-muted);
-        }
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 
-        .passport__header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+  <style>
+    :root {
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --bg-card: #101e38;
 
-        .passport__country {
-            font-size: 0.875rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--passport-text-muted);
-        }
+      --color-primary: #1f6fea;
+      --color-accent: #00d2ff;
+      --color-green: #3fb950;
+      --color-amber: #ff9500;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
 
-        .passport__title {
-            font-size: 1.9rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--passport-text-strong);
-            margin: 0.25rem 0;
-        }
+      --font-sans: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
 
-        .passport__subtitle {
-            font-size: 0.95rem;
-            color: var(--passport-text-muted);
-        }
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --shadow-strong: 0 18px 45px rgba(0, 0, 0, 0.7);
+      --radius-panel: 20px;
+      --container-width: 1300px;
 
-        .passport__book {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-            gap: 0;
-            background: var(--passport-bg);
-            border-radius: var(--passport-radius);
-            box-shadow: var(--passport-shadow);
-            border: 1px solid var(--passport-border);
-            position: relative;
-            overflow: hidden;
-        }
+      --shadow-passport: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      --stroke: 1px solid rgba(16, 30, 56, .95);
+    }
 
-        /* Simule la reliure centrale */
-        .passport__book::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #272b37, #181b25);
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0.9;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    ul, li { list-style: none; }
 
-        .passport__page {
-            padding: 2rem 2.5rem;
-            background: radial-gradient(circle at top, #202534 0, var(--passport-page-bg) 55%);
-            position: relative;
-        }
+    body{
+      background: var(--bg-main);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        /* Légère variation visuelle */
-        .passport__page--left {
-            border-right: 1px solid rgba(0, 0, 0, 0.6);
-        }
+    /* ===== DRY UI atoms ===== */
+    .container{
+      width: min(100%, var(--container-width));
+      margin-inline: auto;
+      padding-inline: 1rem;
+    }
+    .ui-mono{ font-family: var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+    .ui-label{ font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--color-muted); }
 
-        .passport__page-header {
-            margin-bottom: 1.5rem;
-        }
+    .ui-badge{
+      display:inline-flex; align-items:center;
+      padding: .32rem .5rem;
+      border-radius: 999px;
+      border: var(--stroke);
+      background: rgba(16,30,56,.35);
+      font-family: var(--font-mono);
+      font-size: .70rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: rgba(230,237,243,.92);
+    }
+    .ui-badge--ok{ border-color: rgba(63,185,80,.35); background: rgba(63,185,80,.10); color: var(--color-green); }
+    .ui-badge--info{ border-color: rgba(0,210,255,.30); background: rgba(0,210,255,.08); color: var(--color-accent); }
+    .ui-badge--warn{ border-color: rgba(255,149,0,.35); background: rgba(255,149,0,.10); color: var(--color-amber); }
+    .ui-badge--tech{ border-color: rgba(31,111,234,.28); background: rgba(31,111,234,.10); color: rgba(31,111,234,.92); }
 
-        .passport__label {
-            font-size: 0.75rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--passport-accent);
-        }
+    .ui-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      width: 100%;
+      padding: .70rem .85rem;
+      border-radius: 14px;
+      border: var(--stroke);
+      background: rgba(16,30,56,.30);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      font-size: .78rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease, filter .2s ease;
+      cursor: pointer;
+    }
+    .ui-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(0,210,255,.45);
+      background: rgba(0,210,255,.08);
+      filter: drop-shadow(0 0 10px rgba(0,210,255,.10));
+    }
+    .ui-btn:focus-visible{ outline: 2px solid rgba(0,210,255,.75); outline-offset: 3px; }
+    .ui-btn--primary{ border-color: rgba(63,185,80,.35); background: rgba(63,185,80,.10); }
+    .ui-btn--primary:hover{ border-color: rgba(63,185,80,.65); background: rgba(63,185,80,.14); }
+    .ui-btn--ghost{ border-color: rgba(31,111,234,.28); }
+    .ui-btn__hint{ opacity: .72; margin-left: .35rem; }
 
-        /* Identité */
+    /* ===== page head ===== */
+    .page{ padding: 2rem 0 3rem; }
+    .page__kicker{
+      color: var(--color-muted);
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    .page__title{
+      margin-top: .55rem;
+      font-size: clamp(1.7rem, 2.6vw, 2.3rem);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(0,210,255,.82);
+    }
+    .page__subtitle{
+      margin-top: .65rem;
+      color: var(--color-muted);
+      max-width: 88ch;
+      line-height: 1.55;
+    }
+    .page__rule{
+      margin-top: 1.2rem;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,210,255,.25), transparent);
+    }
 
-        .passport__identity {
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr);
-            gap: 1.5rem;
-            align-items: flex-start;
-        }
+    /* ===== Passport vertical (NO SCROLL) ===== */
+    .passport{
+      margin-top: 1.4rem;
+      display:grid;
+      justify-items: center;
+    }
 
-        .passport__photo-frame {
-            border-radius: 0.5rem;
-            padding: 0.35rem;
-            border: 1px solid rgba(225, 196, 139, 0.35);
-            background: radial-gradient(circle at top, #292f3e 0, #151821 60%);
-            max-width: 180px;
-        }
+    .passport__stage{
+      perspective: 1600px;
+      perspective-origin: 50% 35%;
+      width: min(520px, 100%);
+    }
 
-        .passport__photo {
-            display: block;
-            width: 100%;
-            border-radius: 0.375rem;
-            object-fit: cover;
-        }
+    .passport__book{
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4.2;
+      border-radius: 22px;
+      border: var(--stroke);
+      box-shadow: var(--shadow-passport);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      background: var(--bg-main);
+    }
 
-        .passport__photo-caption {
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--passport-text-muted);
-        }
+    .passport__page-stack{
+      position:absolute;
+      inset: 12px;
+      z-index: 1;
+      pointer-events:none;
+    }
+    .passport__page-shadow{
+      position:absolute;
+      inset: 0;
+      border-radius: 18px;
+      border: 1px solid rgba(16,30,56,.85);
+      background: rgba(16,30,56,.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .passport__page-shadow--2{ transform: translate(6px, 6px); opacity: .55; }
+    .passport__page-shadow--3{ transform: translate(10px, 10px); opacity: .35; }
 
-        .passport__details {
-            display: grid;
-            gap: 0.45rem;
-            margin: 0;
-        }
+    .passport__thickness{
+      position:absolute;
+      top: 12px;
+      bottom: 12px;
+      right: 10px;
+      width: 14px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(230,237,243,.04), rgba(0,0,0,0));
+      box-shadow: inset -1px 0 0 rgba(16,30,56,.85);
+      opacity: .85;
+      z-index: 1;
+      pointer-events: none;
+    }
 
-        .passport__detail-row {
-            display: grid;
-            grid-template-columns: minmax(0, 35%) minmax(0, 65%);
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
+    /* Cover */
+    .passport__cover{
+      position:absolute;
+      inset: 0;
+      z-index: 8;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      background: var(--bg-main);
+    }
+    .passport__cover::before{
+      content:"";
+      position:absolute;
+      inset: 12px;
+      border-radius: 16px;
+      border: var(--stroke);
+      opacity: .95;
+      pointer-events:none;
+    }
+    .passport__cover-front{
+      position:absolute;
+      inset:0;
+      backface-visibility:hidden;
+      display:grid;
+      align-content:center;
+      justify-items:center;
+      gap:.8rem;
+      padding: 1.2rem;
+      text-align:center;
+    }
+    .passport__cover-back{
+      position:absolute;
+      inset:0;
+      transform: rotateY(180deg);
+      backface-visibility:hidden;
+      background: var(--bg-main);
+      box-shadow: inset 0 0 0 1px rgba(16,30,56,.95);
+    }
+    .passport__cover-title{
+      font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    .passport__cover-subtitle{
+      color: var(--color-muted);
+      max-width: 55ch;
+      line-height: 1.55;
+      font-size: .95rem;
+    }
+    .passport__cover-actions{
+      width: min(420px, 100%);
+      display:grid;
+      gap:.6rem;
+      margin-top: .35rem;
+    }
+    .passport__cover-note{
+      margin-top:.35rem;
+      color: rgba(144,154,167,.80);
+      font-size:.72rem;
+    }
 
-        .passport__detail-label {
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.75rem;
-            color: var(--passport-text-muted);
-        }
+    /* Pages (fit without scroll) */
+    .passport__pages{ position: relative; z-index: 2; height: 100%; }
+    .passport__page{
+      position:absolute;
+      inset:0;
+      padding: 1rem 1rem 0.9rem;
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      background: var(--bg-main);
+    }
+    .passport__page-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 1rem;
+      margin-bottom: .7rem;
+    }
+    .passport__doc{
+      font-size: .78rem;
+      color: var(--color-accent);
+      opacity: .9;
+    }
 
-        .passport__detail-value {
-            color: var(--passport-text-strong);
-        }
+    .passport__page-body{
+      overflow: hidden; /* NO scroll */
+      display:grid;
+      gap: .65rem;
+      align-content: start;
+    }
 
-        /* Sections de texte à droite */
+    .passport__page-foot{
+      margin-top: .7rem;
+      padding-top: .55rem;
+      border-top: 1px dashed rgba(144,154,167,.20);
+      display:grid;
+      gap: .6rem;
+    }
+    .passport__micro{ color: rgba(144,154,167,.85); font-size: .72rem; }
 
-        .passport__section {
-            margin-bottom: 1.5rem;
-        }
+    /* Photo centered */
+    .passport__photo-frame{
+      position: relative;
+      border-radius: 18px;
+      border: var(--stroke);
+      background: rgba(16,30,56,.18);
+      box-shadow: var(--shadow-passport);
+      overflow: hidden;
+      height: 210px;
+    }
+    .passport__photo{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 30%; /* better centering */
+      opacity: .95;
+      filter: contrast(1.02) saturate(1.02);
+    }
+    .passport__photo-frame::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(rgba(0,210,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,210,255,.08) 1px, transparent 1px);
+      background-size: 22px 22px;
+      opacity: .18;
+      pointer-events:none;
+    }
 
-        .passport__section-title {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--passport-accent);
-            margin-bottom: 0.5rem;
-        }
+    .passport__grid-2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .6rem;
+    }
 
-        .passport__section-text {
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
+    .passport__field{
+      border: var(--stroke);
+      background: rgba(16,30,56,.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      border-radius: 16px;
+      padding: .6rem .65rem;
+    }
+    .passport__field--wide{ grid-column: 1 / -1; }
 
-        .passport__list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: grid;
-            gap: 0.5rem;
-        }
+    .passport__value{
+      margin-top: .25rem;
+      line-height: 1.45;
+      color: rgba(230,237,243,.92);
+      font-size: .98rem;
+    }
 
-        .passport__list-item {
-            display: flex;
-            gap: 0.75rem;
-            align-items: baseline;
-            font-size: 0.9rem;
-        }
+    /* Short About blocks */
+    .passport__block{
+      border: var(--stroke);
+      border-radius: 16px;
+      background: rgba(16,30,56,.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      padding: .65rem .65rem;
+    }
+    .passport__block-title{
+      color: var(--color-accent);
+      opacity: .9;
+      font-size: .74rem;
+      margin-bottom: .35rem;
+    }
+    .passport__block-text{
+      color: rgba(144,154,167,.92);
+      line-height: 1.5;
+      font-size: .92rem;
+    }
 
-        .passport__list-code {
-            font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--passport-accent);
-            letter-spacing: 0.08em;
-        }
+    .passport__list{
+      display:grid;
+      gap: .45rem;
+      margin-top: .35rem;
+    }
+    .passport__list-item{
+      display:grid;
+      grid-template-columns: auto 1fr;
+      gap: .5rem;
+      align-items: start;
+    }
+    .passport__list-text{ color: rgba(144,154,167,.92); line-height: 1.35; font-size: .90rem; }
 
-        .passport__list-label {
-            color: var(--passport-text-strong);
-        }
+    /* Visas (compact) */
+    .passport__visas{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .6rem;
+    }
+    .passport__visa{
+      border: var(--stroke);
+      border-radius: 16px;
+      background: rgba(16,30,56,.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+      padding: .55rem .6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .passport__visa::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: radial-gradient(circle, rgba(0,210,255,.10), transparent 60%);
+      transform: rotate(12deg);
+      opacity: .5;
+      pointer-events:none;
+    }
+    .passport__visa-title{
+      font-family: var(--font-mono);
+      font-size: .66rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(230,237,243,.92);
+    }
+    .passport__visa-meta{
+      margin-top: .25rem;
+      color: rgba(144,154,167,.92);
+      font-size: .78rem;
+      line-height: 1.25;
+    }
 
-        /* Bas de page / tampon */
+    /* Nav */
+    .passport__nav{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .6rem;
+    }
 
-        .passport__page-footer {
-            margin-top: 2rem;
-            font-size: 0.8rem;
-            color: var(--passport-text-muted);
-        }
+    /* Flip overlay */
+    .passport__flip{
+      position:absolute;
+      inset:0;
+      z-index: 7;
+      pointer-events:none;
+      transform-style: preserve-3d;
+    }
+    .passport__flip-sheet{
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(230,237,243,.03), rgba(0,0,0,0));
+      border-left: 1px solid rgba(16,30,56,.75);
+      box-shadow: inset 0 0 0 1px rgba(16,30,56,.55);
+      transform-origin: left center;
+      opacity: 0;
+    }
 
-        .passport__note {
-            line-height: 1.5;
-        }
-
-        .passport__stamp-label {
-            text-transform: uppercase;
-            letter-spacing: 0.16em;
-            font-size: 0.7rem;
-            color: var(--passport-text-muted);
-            margin-bottom: 0.35rem;
-        }
-
-        .passport__stamp {
-            display: inline-block;
-            padding: 0.6rem 1.1rem;
-            border-radius: 999px;
-            border: 1px dashed rgba(225, 196, 139, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 0.18em;
-            font-size: 0.68rem;
-            color: var(--passport-accent);
-        }
-
-        /* Responsive */
-
-        @media (max-width: 900px) {
-            .passport__book {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            .passport__book::before {
-                display: none;
-            }
-
-            .passport__page--left {
-                border-right: none;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.6);
-            }
-
-            .passport__identity {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            .page-main {
-                padding-top: 6rem;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .passport__page {
-                padding: 1.5rem 1.25rem;
-            }
-
-            .passport__title {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    @media (max-width: 520px){
+      .passport__stage{ width: min(460px, 100%); }
+      .passport__photo-frame{ height: 190px; }
+      .passport__visas{ grid-template-columns: 1fr; }
+      .passport__nav{ grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
-<body class="theme-dark">
-    <header class="site-header" role="banner">
-        <div class="site-header__inner">
-            <a class="site-header__logo" href="index.html">
-                <span class="site-header__logo-code">FL-2025</span>
-                <span class="site-header__logo-label">Terminal développeur</span>
-            </a>
+<body>
+  <main class="page">
+    <div class="container">
+      <header class="page__head">
+        <p class="page__kicker">PASSEPORT DU PILOTE — À PROPOS (FICTIONNEL)</p>
+        <h1 class="page__title">Passeport du pilote</h1>
+        <p class="page__subtitle">
+          Présentation verticale au format passeport : identité, mission, cap et validations fictives (portfolio).
+        </p>
+        <div class="page__rule" aria-hidden="true"></div>
+      </header>
 
-            <nav class="site-nav" aria-label="Navigation principale">
-                <ul class="site-nav__list">
-                    <li class="site-nav__item">
-                        <a href="index.html" class="site-nav__link">Hall des départs</a>
-                    </li>
-                    <li class="site-nav__item">
-                        <a href="passeport.html" class="site-nav__link site-nav__link--active">Passeport du pilote</a>
-                    </li>
-                    <li class="site-nav__item">
-                        <a href="embarquement.html" class="site-nav__link">Zone d’embarquement</a>
-                    </li>
-                    <li class="site-nav__item">
-                        <a href="plandevol.html" class="site-nav__link">Plan de vol</a>
-                    </li>
-                    <li class="site-nav__item">
-                        <a href="profile.html" class="site-nav__link">Cockpit</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="pilot-badge" aria-label="Badge du pilote">
-                <figure class="pilot-badge__figure">
-                    <img src="assets/img/pilot-photo.jpg" alt="Photographie du pilote de bord, développeur"
-                        class="pilot-badge__photo">
-                    <figcaption class="pilot-badge__caption">
-                        <span class="pilot-badge__id-label">ID PILOTE</span>
-                        <span class="pilot-badge__id-code">CH-75001</span>
-                    </figcaption>
-                </figure>
+      <section class="passport" aria-label="Passeport du pilote (portfolio)">
+        <div class="passport__stage">
+          <div class="passport__book" data-passport-book>
+            <div class="passport__page-stack" aria-hidden="true">
+              <div class="passport__page-shadow passport__page-shadow--2"></div>
+              <div class="passport__page-shadow passport__page-shadow--3"></div>
             </div>
-        </div>
-    </header>
+            <div class="passport__thickness" aria-hidden="true"></div>
 
-    <main class="page-main" id="contenu-principal">
-        <section class="passport" aria-label="Passeport du pilote développeur">
-            <header class="passport__header">
-                <p class="passport__country">République du Code – Section Aviation Numérique</p>
-                <h1 class="passport__title">Passeport du pilote</h1>
-                <p class="passport__subtitle">Autorisation de vol en environnement web</p>
-            </header>
+            <!-- Couverture -->
+            <section class="passport__cover" data-passport-cover aria-label="Couverture du document">
+              <div class="passport__cover-front">
+                <p class="ui-badge ui-badge--info">PORTFOLIO DOCUMENT</p>
+                <h2 class="passport__cover-title">PASSEPORT DU PILOTE</h2>
+                <p class="passport__cover-subtitle">
+                  Identité professionnelle & briefing de mission.
+                </p>
 
-            <div class="passport__book" aria-live="polite">
-                <!-- Page gauche : identité visuelle -->
-                <section class="passport__page passport__page--left" aria-label="Identité du pilote">
-                    <header class="passport__page-header">
-                        <p class="passport__label">Zone d’identification du commandant de bord</p>
-                    </header>
+                <div class="passport__cover-actions">
+                  <button class="ui-btn ui-btn--primary" type="button" data-passport-toggle>
+                    Ouvrir le document <span class="ui-btn__hint">(Clearance)</span>
+                  </button>
+                  <a class="ui-btn ui-btn--ghost" href="embarquement.html">
+                    Accéder aux projets <span class="ui-btn__hint">(Embarquement)</span>
+                  </a>
+                </div>
 
-                    <div class="passport__identity">
-                        <figure class="passport__photo-frame">
-                            <img src="assets/img/pilot-photo.jpg" alt="Photo d’identité du pilote développeur"
-                                class="passport__photo">
-                            <figcaption class="passport__photo-caption">
-                                Commandant de bord<br>
-                                Développement front & intégration
-                            </figcaption>
-                        </figure>
+                <p class="passport__cover-note ui-mono">
+                  Document fictionnel • aucune valeur officielle
+                </p>
+              </div>
 
-                        <dl class="passport__details">
-                            <div class="passport__detail-row">
-                                <dt class="passport__detail-label">Nom de code</dt>
-                                <dd class="passport__detail-value">HASCOET</dd>
-                            </div>
-                            <div class="passport__detail-row">
-                                <dt class="passport__detail-label">Prénom</dt>
-                                <dd class="passport__detail-value">Christophe</dd>
-                            </div>
-                            <div class="passport__detail-row">
-                                <dt class="passport__detail-label">Rôle à bord</dt>
-                                <dd class="passport__detail-value">Pilote de stack front / intégrateur</dd>
-                            </div>
-                            <div class="passport__detail-row">
-                                <dt class="passport__detail-label">Type d’appareil</dt>
-                                <dd class="passport__detail-value">Applications web, interfaces immersives, systèmes
-                                    embarqués UX</dd>
-                            </div>
-                            <div class="passport__detail-row">
-                                <dt class="passport__detail-label">Base principale</dt>
-                                <dd class="passport__detail-value">Région parisienne – fuseau CET</dd>
-                            </div>
-                        </dl>
+              <div class="passport__cover-back" aria-hidden="true"></div>
+            </section>
+
+            <!-- Pages -->
+            <section class="passport__pages" aria-label="Pages du passeport">
+              <div class="passport__flip" aria-hidden="true">
+                <div class="passport__flip-sheet" data-passport-flip></div>
+              </div>
+
+              <!-- Page 1 -->
+              <article class="passport__page" data-passport-page="1" aria-label="Page 1 — Identité">
+                <header class="passport__page-head">
+                  <p class="passport__doc ui-mono">PAGE 01 / IDENTITÉ</p>
+                  <p class="ui-badge ui-badge--ok">VALIDÉ</p>
+                </header>
+
+                <div class="passport__page-body">
+                  <div class="passport__photo-frame">
+                    <img class="passport__photo"
+                         src="asset/images/pilote-christophehascoet3.png"
+                         alt="Portrait du pilote (Christophe Hascoët)"
+                         loading="lazy" />
+                  </div>
+
+                  <div class="passport__grid-2">
+                    <div class="passport__field">
+                      <p class="ui-label">Nom</p>
+                      <p class="passport__value">HASCOËT</p>
                     </div>
+                    <div class="passport__field">
+                      <p class="ui-label">Prénom</p>
+                      <p class="passport__value">Christophe</p>
+                    </div>
+                    <div class="passport__field passport__field--wide">
+                      <p class="ui-label">Rôle</p>
+                      <p class="passport__value">Chef de projet & Développeur web junior</p>
+                    </div>
+                    <div class="passport__field passport__field--wide">
+                      <p class="ui-label">Briefing</p>
+                      <p class="passport__value">
+                        Remise des gaz vers la Tech : je co-pilote la stratégie et le code pour livrer des interfaces claires et fiables.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-                    <footer class="passport__page-footer">
-                        <p class="passport__note">
-                            Ce passeport atteste que le pilote est qualifié pour assurer la stabilité, la performance
-                            et la lisibilité des vols front-end.
-                        </p>
-                    </footer>
-                </section>
+                <footer class="passport__page-foot">
+                  <p class="passport__micro ui-mono">CLEARANCE: OK • TERMINAL: CH-2025</p>
+                  <div class="passport__nav">
+                    <button class="ui-btn ui-btn--ghost" type="button" data-passport-next>Page suivante</button>
+                    <button class="ui-btn ui-btn--ghost" type="button" data-passport-close>Fermer le document</button>
+                  </div>
+                </footer>
+              </article>
 
-                <!-- Page droite : mission, spécialités, parcours -->
-                <section class="passport__page passport__page--right" aria-label="Mission et spécialités du pilote">
-                    <header class="passport__page-header">
-                        <p class="passport__label">Autorisation de mission</p>
-                    </header>
+              <!-- Page 2 -->
+              <article class="passport__page" data-passport-page="2" aria-label="Page 2 — Mission" hidden>
+                <header class="passport__page-head">
+                  <p class="passport__doc ui-mono">PAGE 02 / MISSION</p>
+                  <p class="ui-badge ui-badge--info">BRIEFING</p>
+                </header>
 
-                    <article class="passport__section" aria-labelledby="mission-titre">
-                        <h2 id="mission-titre" class="passport__section-title">Mission de vol</h2>
-                        <p class="passport__section-text">
-                            Concevoir, développer et piloter des interfaces web fiables, lisibles et performantes,
-                            du briefing technique jusqu’à l’atterrissage en production.
-                        </p>
-                    </article>
+                <div class="passport__page-body">
+                  <div class="passport__field passport__field--wide">
+                    <p class="ui-label">Objectif de mission</p>
+                    <p class="passport__value">
+                      Livrer des projets digitaux performants, accessibles et lisibles — du cadrage au déploiement.
+                    </p>
+                  </div>
 
-                    <article class="passport__section" aria-labelledby="specialites-titre">
-                        <h2 id="specialites-titre" class="passport__section-title">Spécialités cockpit</h2>
-                        <ul class="passport__list">
-                            <li class="passport__list-item">
-                                <span class="passport__list-code">SK-01</span>
-                                <span class="passport__list-label">HTML5 sémantique & accessibilité embarquée</span>
-                            </li>
-                            <li class="passport__list-item">
-                                <span class="passport__list-code">SK-02</span>
-                                <span class="passport__list-label">CSS / SASS structuré & systèmes de design</span>
-                            </li>
-                            <li class="passport__list-item">
-                                <span class="passport__list-code">SK-03</span>
-                                <span class="passport__list-label">JavaScript ES6+ & animations contrôlées (GSAP)</span>
-                            </li>
-                            <li class="passport__list-item">
-                                <span class="passport__list-code">SK-04</span>
-                                <span class="passport__list-label">Intégration responsive & performance en montée</span>
-                            </li>
-                        </ul>
-                    </article>
+                  <div class="passport__block">
+                    <p class="passport__block-title ui-mono">Cap & navigation</p>
+                    <ul class="passport__list" aria-label="Cap et navigation">
+                      <li class="passport__list-item">
+                        <span class="ui-badge ui-badge--info">Clarté</span>
+                        <span class="passport__list-text">Pas de complexité inutile : UX intuitive.</span>
+                      </li>
+                      <li class="passport__list-item">
+                        <span class="ui-badge ui-badge--warn">Contrôle</span>
+                        <span class="passport__list-text">Itérations maîtrisées, priorités nettes.</span>
+                      </li>
+                      <li class="passport__list-item">
+                        <span class="ui-badge ui-badge--ok">Atterrissage</span>
+                        <span class="passport__list-text">Déploiement stable : perf, A11y, satisfaction.</span>
+                      </li>
+                    </ul>
+                  </div>
 
-                    <article class="passport__section" aria-labelledby="parcours-titre">
-                        <h2 id="parcours-titre" class="passport__section-title">Historique de vol</h2>
-                        <p class="passport__section-text">
-                            Vols effectués sur des projets web variés : intégration complète, refonte de systèmes,
-                            optimisation de parcours utilisateurs et mise en place de workflows Git structurés.
-                        </p>
-                    </article>
+                  <div class="passport__visas" aria-label="Visas fictifs (portfolio)">
+                    <div class="passport__visa">
+                      <p class="passport__visa-title">VISA / DELIVERY</p>
+                      <p class="passport__visa-meta"><span class="ui-badge ui-badge--ok">OK</span> Déploiement validé</p>
+                    </div>
+                    <div class="passport__visa">
+                      <p class="passport__visa-title">VISA / A11Y</p>
+                      <p class="passport__visa-meta"><span class="ui-badge ui-badge--info">CLEAR</span> Accessibilité contrôlée</p>
+                    </div>
+                  </div>
+                </div>
 
-                    <footer class="passport__page-footer">
-                        <p class="passport__stamp-label">Visa technique</p>
-                        <p class="passport__stamp">Aptitude au vol<br>Environnement front-end</p>
-                    </footer>
-                </section>
-            </div>
-        </section>
-    </main>
+                <footer class="passport__page-foot">
+                  <p class="passport__micro ui-mono">SIGNED: C. HASCOËT • STATUS: STABLE</p>
+                  <div class="passport__nav">
+                    <button class="ui-btn ui-btn--ghost" type="button" data-passport-prev>Page précédente</button>
+                    <a class="ui-btn ui-btn--primary" href="embarquement.html">Zone d’embarquement <span class="ui-btn__hint">(Projets)</span></a>
+                  </div>
+                </footer>
+              </article>
+            </section>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 
-    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
-    <script>
-        // js/passeport.js
-        const book = document.querySelector(".passport__book");
-        const leftPage = document.querySelector(".passport__page--left");
-        const rightPage = document.querySelector(".passport__page--right");
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const hasGSAP = typeof gsap !== "undefined";
 
-        if (book && leftPage && rightPage && window.gsap) {
-            const tl = gsap.timeline({
-                defaults: {
-                    duration: 0.7,
-                    ease: "power2.out"
-                }
-            });
+      const book = document.querySelector("[data-passport-book]");
+      const cover = document.querySelector("[data-passport-cover]");
+      const flipSheet = document.querySelector("[data-passport-flip]");
 
-            // État initial
-            gsap.set(book, {
-                opacity: 0,
-                rotateY: -10,
-                transformOrigin: "50% 50%"
-            });
+      const toggleBtn = document.querySelector("[data-passport-toggle]");
+      const closeBtn = document.querySelector("[data-passport-close]");
 
-            gsap.set(leftPage, {
-                opacity: 0,
-                x: -30
-            });
+      const page1 = document.querySelector('[data-passport-page="1"]');
+      const page2 = document.querySelector('[data-passport-page="2"]');
 
-            gsap.set(rightPage, {
-                opacity: 0,
-                x: 30
-            });
+      const nextBtn = document.querySelector("[data-passport-next]");
+      const prevBtn = document.querySelector("[data-passport-prev]");
 
-            // Animation d’ouverture
-            tl.to(book, {
-                opacity: 1,
-                rotateY: 0
-            })
-                .to(
-                    leftPage,
-                    {
-                        opacity: 1,
-                        x: 0
-                    },
-                    "-=0.3"
-                )
-                .to(
-                    rightPage,
-                    {
-                        opacity: 1,
-                        x: 0
-                    },
-                    "-=0.45"
-                );
+      if (!book || !cover || !page1 || !page2) return;
+
+      let isOpen = false;
+
+      const showPage = (pageToShow) => {
+        page1.hidden = pageToShow !== 1;
+        page2.hidden = pageToShow !== 2;
+      };
+
+      const setToggleLabel = () => {
+        if (!toggleBtn) return;
+        toggleBtn.innerHTML = isOpen
+          ? 'Fermer le document <span class="ui-btn__hint">(Return)</span>'
+          : 'Ouvrir le document <span class="ui-btn__hint">(Clearance)</span>';
+      };
+
+      // Initial state
+      setToggleLabel();
+      showPage(1);
+
+      if (hasGSAP && !reduceMotion) {
+        gsap.set(book, { opacity: 0, y: 12, scale: 0.985, transformPerspective: 1600 });
+        gsap.set(cover, { rotateY: 0, transformOrigin: "left center" });
+        gsap.set(flipSheet, { opacity: 0, rotateY: 0, transformOrigin: "left center" });
+        gsap.to(book, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power2.out" });
+      }
+
+      const openPassport = () => {
+        isOpen = true;
+        setToggleLabel();
+
+        if (!hasGSAP || reduceMotion) {
+          cover.style.display = "none";
+          return;
         }
 
-    </script>
-</body>
+        cover.style.display = "block";
+        cover.style.pointerEvents = "none";
 
+        gsap.to(cover, { rotateY: -160, duration: 0.75, ease: "power2.out" });
+      };
+
+      const closePassport = () => {
+        isOpen = false;
+        setToggleLabel();
+        showPage(1);
+
+        if (!hasGSAP || reduceMotion) {
+          cover.style.display = "block";
+          cover.style.pointerEvents = "auto";
+          return;
+        }
+
+        cover.style.display = "block";
+        cover.style.pointerEvents = "auto";
+        gsap.to(cover, { rotateY: 0, duration: 0.65, ease: "power2.inOut" });
+      };
+
+      const flipTo = (toPage) => {
+        if (!hasGSAP || reduceMotion || !flipSheet) {
+          showPage(toPage);
+          return;
+        }
+
+        const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
+        tl.set(flipSheet, { opacity: 0.85, rotateY: 0 }, 0)
+          .to(flipSheet, { rotateY: -125, duration: 0.55 }, 0)
+          .add(() => showPage(toPage), 0.28)
+          .to(flipSheet, { opacity: 0, duration: 0.2 }, 0.55);
+      };
+
+      // Cover button toggles open/close
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          if (!isOpen) openPassport();
+          else closePassport();
+        });
+      }
+
+      if (closeBtn) closeBtn.addEventListener("click", closePassport);
+
+      if (nextBtn) nextBtn.addEventListener("click", () => flipTo(2));
+      if (prevBtn) prevBtn.addEventListener("click", () => flipTo(1));
+
+      // Hover lift
+      if (hasGSAP && !reduceMotion) {
+        book.addEventListener("mouseenter", () => gsap.to(book, { y: -2, duration: 0.18, ease: "power2.out" }));
+        book.addEventListener("mouseleave", () => gsap.to(book, { y: 0, duration: 0.18, ease: "power2.out" }));
+      }
+    });
+  </script>
+</body>
 </html>

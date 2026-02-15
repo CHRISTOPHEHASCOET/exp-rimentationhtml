@@ -1,596 +1,641 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Terminal CH-2025 · Écran de contrôle des vols</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projets - Cartes d'Embarquement | Christophe Hascoët</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet" />
-
-  <!-- Reset éventuel -->
-  <link rel="stylesheet" href="css/normalize.css" />
+  <!-- IMPORT GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <style>
+    /* ===========================
+       VARIABLES (DESIGN SYSTEM)
+       =========================== */
     :root {
-      /* Fond / surfaces */
-      --background: #0c1235;
-      --primary: #0a0e27;
-      --secondary: #1a1f3a;
-      --board-bg: #020308;
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --bg-card: #101e38;
 
-      /* Accents */
-      --accent: #ff3b3b;
-      --bordeaux: #8b1e3f;
-      --cyan-soft: #00d9ff;
+      --color-primary: #1f6fea;
+      --color-accent: #00d2ff;
+      --color-green: #3fb950;
+      --color-amber: #ff9500;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
 
-      /* Texte */
-      --text-main: #f5f7ff;
-      --text-muted: #b0b8ff;
+      --font-sans: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
 
-      /* Typo */
-      --font: 'Oswald', sans-serif;
-
-      /* Tuiles FIDS */
-      --flap-w: 14px;
-      --flap-h: 22px;
-      --flap-gap: 2px;
-
-      --container-width: 1250px;
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --shadow-strong: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05);
+      --radius-panel: 12px;
+      --container-width: 1100px; /* Réduit pour des cartes plus compactes */
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* ===========================
+       RESET DRY & BASE
+       =========================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
     body {
+      background: var(--bg-main);
+      color: var(--color-text);
+      font-family: var(--font-sans);
       min-height: 100vh;
-      background: radial-gradient(circle at top, #3443a3 0%, #12173f 40%, #050819 100%);
-      color: var(--text-main);
-      font-family: var(--font);
+      overflow-x: hidden;
+      padding: 4rem 1rem;
     }
+    img { display: block; max-width: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    /* Classes utilitaires DRY */
+    .txt-mono { font-family: var(--font-mono); }
+    .txt-accent { color: var(--color-accent); }
+    .txt-green { color: var(--color-green); }
+    .txt-amber { color: var(--color-amber); }
+    .txt-muted { color: var(--color-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;}
+    .flex-center { display: flex; align-items: center; justify-content: center; }
 
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    /* ========= HEADER COCKPIT + NAV ========= */
-
-    header.site-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
-    }
-
-    .cockpit-bar {
-      background: #151c3b;
-      padding: 8px 4vw;
-      border-bottom: 1px solid rgba(0, 217, 255, 0.35);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-    }
-
-    .cockpit-left {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .pilot-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid var(--cyan-soft);
-    }
-
-    .cockpit-left strong {
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .cockpit-center span + span::before {
-      content: "·";
-      margin: 0 0.35rem;
-      color: rgba(199, 204, 232, 0.7);
-    }
-
-    .cockpit-right b {
-      color: var(--cyan-soft);
-    }
-
-    nav.terminal-nav {
-      background: linear-gradient(145deg, #252b4b 0%, #1a1f3a 35%, #101633 100%);
-      border-bottom: 2px solid var(--accent);
-      padding: 10px 4vw 12px;
-    }
-
-    .terminal-nav ul {
-      list-style: none;
-      display: flex;
-      justify-content: center;
-      gap: 1.2rem;
-    }
-
-    .terminal-nav a {
-      display: inline-flex;
-      flex-direction: column;
-      gap: 0.16rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: #c7cce8;
-      padding: 0.45rem 0.9rem 0.4rem;
-      border-radius: 7px;
-      background: radial-gradient(circle at top, #343d68 0%, rgba(21, 28, 59, 0.96) 55%, rgba(10, 14, 39, 0.96) 100%);
-      box-shadow:
-        0 8px 18px rgba(0, 0, 0, 0.7),
-        inset 0 0 0 1px rgba(52, 60, 106, 0.95);
-      border-top: 1px solid rgba(230, 238, 248, 0.25);
-      position: relative;
-      transition:
-        transform 0.18s ease-out,
-        box-shadow 0.18s ease-out,
-        background 0.18s ease-out,
-        color 0.18s ease-out;
-    }
-
-    .terminal-nav a::before {
-      content: attr(data-gate);
-      font-size: 0.55rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(199, 204, 232, 0.9);
-    }
-
-    .terminal-nav a::after {
-      content: "";
-      position: absolute;
-      left: 12%;
-      right: 12%;
-      bottom: 3px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--cyan-soft), transparent);
-      opacity: 0;
-      transform: scaleX(0.4);
-      transform-origin: center;
-      transition: opacity 0.18s ease-out, transform 0.18s ease-out;
-    }
-
-    .terminal-nav a:hover {
-      color: #fff;
-      background: radial-gradient(circle at top, #3e4b78 0%, #222a52 55%, #101633 100%);
-      box-shadow:
-        0 14px 28px rgba(0, 0, 0, 0.9),
-        0 0 16px rgba(0, 217, 255, 0.5);
-      transform: translateY(-1px);
-    }
-
-    .terminal-nav a:hover::after {
-      opacity: 1;
-      transform: scaleX(1);
-    }
-
-    /* ========= MAIN / HERO ========= */
-
-    main {
-      max-width: var(--container-width);
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .hero-line {
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .hero-title {
-      font-size: 2.1rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      background: linear-gradient(90deg, #f97373 0%, #faccb0 50%, #f97373 100%);
-      -webkit-background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .controls button {
-      background: #151c3b;
-      border: 1px solid var(--bordeaux);
-      color: #fff;
-      padding: 6px 12px;
-      cursor: pointer;
-      font-family: var(--font);
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .controls button.active {
-      background: var(--bordeaux);
-      color: #000;
-    }
-
-    /* ========= TABLEAU ========= */
-
-    .board {
-      background: #020308;
-      border: 4px solid #1e293b;
-      border-radius: 10px;
-      box-shadow: 0 40px 100px rgba(0, 0, 0, .9);
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .board-table {
-      border-collapse: collapse;
-      min-width: 1100px;
-      width: max-content;
-    }
-
-    .board-table th,
-    .board-table td {
-      padding: 10px 4px;
-      text-align: left;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    .board-table th {
-      background: #0f1426;
-      color: var(--red);
-      letter-spacing: .15em;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      padding-top: 12px;
-      padding-bottom: 12px;
-    }
-
-    .col-vol  { width: 100px; }
-    .col-dest { width: 350px; }
-    .col-time { width: 80px;  }
-    .col-type { width: 190px; }
-    .col-stat { width: 220px; }
-    .col-gate { width: 60px;  }
-    .col-obs  { width: 210px; }
-
-    .board-table tbody tr:nth-child(even) {
-      background: rgba(255,255,255,0.02);
-    }
-
-    .board-table tbody tr:hover {
-      background: rgba(255, 255, 255, .05);
-      cursor: pointer;
-    }
-
-    .flap-group {
-      display: flex;
-      gap: var(--gap);
-      justify-content: flex-start;
-    }
-
-    .flap {
-      width: var(--flap-w);
-      height: var(--flap-h);
-      background: #0a0e27;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow:
-        inset 0 -1px 0 rgba(0,0,0,.6),
-        inset 0  1px 0 rgba(255,255,255,.05);
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #e5e7f8;
-    }
-
-    .col-time .flap-group,
-    .col-gate .flap-group {
-      justify-content: center;
-    }
-
-    .cyan .flap { color: var(--cyan-soft); }
-    .red  .flap { color: var(--bordeaux); }
-
-    .board footer {
-      padding: 10px;
-      text-align: right;
-      font-size: .65rem;
-      letter-spacing: .12em;
-      background: #05070a;
-      text-transform: uppercase;
-      color: #cbd5f5;
-    }
-
-    /* ========= FOOTER ========= */
-
-    footer.site-footer {
-      margin-top: 40px;
-      padding-top: 20px;
-      font-size: 0.75rem;
-    }
-
-    .footer-inner {
+    /* ===========================
+       HEADER DE ZONE
+       =========================== */
+    .boarding-zone {
+      width: 100%;
       max-width: var(--container-width);
       margin: 0 auto;
-      padding: 20px;
-      background: linear-gradient(145deg, #151c3b 0%, #101633 40%, #050b23 100%);
-      border-radius: 12px 12px 0 0;
-      border-top: 2px solid var(--bordeaux);
-      border-left: 1px solid #343c6a;
-      border-right: 1px solid #343c6a;
-      box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.85);
+    }
+
+    .zone-header {
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--bg-card);
+      padding-bottom: 1rem;
+    }
+
+    .zone-header__title {
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .zone-header__subtitle {
+      font-size: 0.9rem;
+      color: var(--color-accent);
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    /* Ticker d'état */
+    .ticker-bar {
+      background: var(--bg-panel);
+      border: 1px solid var(--color-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 0.8rem;
+    }
+
+    /* ===========================
+       COMPOSANT : FLIGHT-PASS (BEM)
+       =========================== */
+    .flight-pass-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-panel);
+      padding: 5px; 
+      margin-bottom: 2rem;
+    }
+
+    .flight-pass {
+      display: flex;
+      background: var(--bg-main);
+      border: 2px solid var(--bg-card);
+      border-radius: var(--radius-panel);
+      box-shadow: var(--shadow-strong);
+      position: relative;
+      clip-path: inset(0 0 100% 0); /* Caché pour GSAP */
+      transition: border-color 0.3s;
+    }
+
+    .flight-pass:hover {
+      border-color: var(--color-primary);
+    }
+
+    /* MAIN SECTION (Gauche) */
+    .flight-pass__main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem; /* Réduit par rapport à avant */
+    }
+
+    .flight-pass__header {
       display: flex;
       justify-content: space-between;
-      gap: 3rem;
+      border-bottom: 2px dashed var(--bg-card);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
     }
 
-    .footer-col h3 {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--cyan-soft);
-      margin-bottom: 0.5rem;
+    .flight-pass__meta {
+      display: flex;
+      flex-direction: column;
     }
 
-    .footer-col p,
-    .footer-col a {
-      color: #cbd5f5;
+    .flight-pass__meta--center {
+      flex: 1;
+      margin: 0 1.5rem;
+    }
+
+    .flight-pass__value { font-weight: 700; font-size: 1.2rem; }
+    .flight-pass__value--title { font-size: 1.5rem; letter-spacing: 1px; text-transform: uppercase; }
+
+    /* BODY SECTION */
+    .flight-pass__body {
+      display: grid;
+      grid-template-columns: 200px 1fr; /* Image plus petite */
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .flight-pass__visual {
+      background: var(--bg-panel);
+      border: 2px solid var(--bg-card);
+      border-radius: 8px;
+      height: 130px; /* Hauteur réduite */
+      overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .flight-pass__visual img { width: 100%; height: 100%; }
+
+    .flight-pass__desc {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0.5rem 0 1rem 0;
+    }
+
+    /* BADGES TECH */
+    .tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .tech-list__item {
+      background: rgba(31, 111, 234, 0.15);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
       font-size: 0.75rem;
-      text-decoration: none;
+      font-weight: 700;
     }
 
-    .runway-strip {
-      margin-top: 10px;
-      padding: 0.55rem 1rem 0.65rem;
-      text-align: center;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: #f9fafb;
-      background: linear-gradient(90deg, #2b0d17 0%, #511426 35%, #2b0d17 100%);
-      border-top: 1px solid rgba(248, 202, 69, 0.45);
-      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85);
+    /* FOOTER MAIN */
+    .flight-pass__footer {
+      margin-top: auto;
+      background: var(--bg-panel);
+      border: 1px solid var(--bg-card);
+      padding: 0.75rem;
+      border-radius: 6px;
+      display: flex;
+      gap: 1rem;
+    }
+
+    /* STUB SECTION (Talon Droit) */
+    .flight-pass__stub {
+      width: 250px; /* Plus fin */
+      background: var(--bg-panel);
+      border-left: 2px dashed var(--bg-card);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Les encoches */
+    .flight-pass__stub::before,
+    .flight-pass__stub::after {
+      content: '';
+      position: absolute;
+      left: -13px;
+      width: 24px;
+      height: 24px;
+      background: var(--bg-page);
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      z-index: 2;
+    }
+    .flight-pass__stub::before { top: -12px; border-bottom-color: transparent; border-left-color: transparent; border-right-color: transparent;}
+    .flight-pass__stub::after { bottom: -12px; border-top-color: transparent; border-left-color: transparent; border-right-color: transparent;}
+
+    .flight-pass__gate { font-size: 2.5rem; line-height: 1; margin-top: 0.5rem; }
+
+    /* CODE BARRE & SCANNER */
+    .flight-pass__barcode-box {
+      width: 100%;
+      height: 60px;
+      position: relative;
+      overflow: hidden;
+      margin: 1.5rem 0;
+      opacity: 0.4;
+      transition: opacity 0.3s;
+    }
+
+    .flight-pass__barcode {
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to right,
+        var(--color-text) 0, var(--color-text) 2px, transparent 2px, transparent 4px,
+        var(--color-text) 4px, var(--color-text) 6px, transparent 6px, transparent 9px,
+        var(--color-text) 9px, var(--color-text) 10px, transparent 10px, transparent 14px
+      );
+    }
+
+    .flight-pass__scanner {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: var(--color-green);
+      box-shadow: 0 0 15px 2px var(--color-green);
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    .flight-pass:hover .flight-pass__barcode-box { opacity: 0.8; }
+
+    /* BOUTONS D'ACTION (BEM) */
+    .btn-action-group { width: 100%; display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--color-primary);
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-action:hover {
+      background: var(--color-primary);
+      color: var(--color-text);
+      box-shadow: 0 0 15px rgba(31, 111, 234, 0.4);
+    }
+
+    .btn-action--outline {
+      background: transparent;
+      border-color: rgba(255,255,255,0.2);
+    }
+    
+    .btn-action--outline:hover {
+      border-color: var(--color-text);
+      background: rgba(255,255,255,0.05);
+      box-shadow: none;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .flight-pass__body { grid-template-columns: 1fr; }
+      .flight-pass__visual { height: 180px; }
+      .flight-pass { flex-direction: column; }
+      .flight-pass__header { flex-direction: column; gap: 1rem; }
+      .flight-pass__meta--center { margin: 0; }
+      
+      .flight-pass__stub {
+        width: 100%;
+        border-left: none;
+        border-top: 2px dashed var(--bg-card);
+        padding: 1.5rem;
+      }
+      .flight-pass__stub::before, .flight-pass__stub::after { top: -12px; left: auto; }
+      .flight-pass__stub::before { left: -12px; border-top-color: transparent; border-bottom-color: var(--bg-card);}
+      .flight-pass__stub::after { right: -12px; border-top-color: transparent; border-bottom-color: var(--bg-card);}
     }
   </style>
 </head>
-
 <body>
 
-  <header class="site-header">
-    <div class="cockpit-bar">
-      <div class="cockpit-left">
-        <img src="pilote christophehascoet3.png" alt="Portrait du commandant de bord" class="pilot-avatar">
-        <strong>CMD · WEB & MOBILE</strong>
-        <span>Vol CH‑2025</span>
-      </div>
-      <div class="cockpit-center">
-        <span>Secteur FR–EU</span>
-        <span>Alt FL350</span>
-        <span>Spd 480KT</span>
-        <span>AP engaged</span>
-      </div>
-      <div class="cockpit-right">
-        <span>Statut : <b>Opérationnel</b></span>
-      </div>
+  <main class="boarding-zone">
+    
+    <!-- HEADER -->
+    <header class="zone-header">
+      <h1 class="zone-header__title"><span class="txt-accent">✈</span> HISTORIQUE DE VOLS</h1>
+      <p class="zone-header__subtitle txt-mono">ARCHIVES DES DÉPLOIEMENTS : MISSIONS CERTIFIANTES ET PROJETS PERSONNELS</p>
+    </header>
+
+    <div class="ticker-bar txt-mono txt-green">
+      ÉTAT DU SYSTÈME : TOUS LES VOLETS AU VERT • PROJETS DÉPLOYÉS : 100 % • DESTINATION : EXCELLENCE FRONT-END
     </div>
 
-    <nav class="terminal-nav" aria-label="Navigation principale">
-      <ul>
-        <li><a href="index.html"        data-gate="T1 · GATE D01">Hall des départs</a></li>
-        <li><a href="passeport.html"    data-gate="T1 · GATE P02">Passeport du pilote</a></li>
-        <li><a href="embarquement.html" data-gate="T2 · GATE E12">Zone d’embarquement</a></li>
-        <li><a href="plandevol.html"    data-gate="T2 · GATE V03">Plan de vol</a></li>
-        <li><a href="profile.html"      data-gate="T3 · GATE C05">Profil / cockpit</a></li>
-        <li><a href="contact.html"      data-gate="T3 · GATE CTL">Tour de contrôle</a></li>
-      </ul>
-    </nav>
-  </header>
+    <!-- PROJETS CONTAINER -->
+    <div class="flights-container">
 
-  <main>
-    <section aria-labelledby="screen-title">
-      <div class="hero-line">
-        <h1 id="screen-title" class="hero-title">ÉCRAN DE CONTRÔLE DES VOLS</h1>
+      <!-- ==========================================
+           PROJET 1 : BOOKI
+           ========================================== -->
+      <div class="flight-pass-wrapper">
+        <article class="flight-pass">
+          <div class="flight-pass__main">
+            
+            <header class="flight-pass__header">
+              <div class="flight-pass__meta gs-reveal">
+                <span class="txt-muted">FLIGHT / VOL</span>
+                <span class="flight-pass__value txt-accent txt-mono">BK-01</span>
+              </div>
+              <div class="flight-pass__meta flight-pass__meta--center gs-reveal">
+                <span class="txt-muted">DESTINATION</span>
+                <span class="flight-pass__value flight-pass__value--title txt-mono">BOOKI</span>
+              </div>
+              <div class="flight-pass__meta gs-reveal">
+                <span class="txt-muted">STATUS</span>
+                <span class="flight-pass__value txt-green txt-mono">LANDED / TERMINÉ</span>
+              </div>
+            </header>
+
+            <div class="flight-pass__body">
+              <div class="flight-pass__visual gs-reveal">
+                <img src="asset/images/booki.jpg" alt="Aperçu du site Booki">
+              </div>
+
+              <div class="flight-pass__info gs-reveal">
+                <span class="txt-muted">MISSION BRIEF</span>
+                <p class="flight-pass__desc">
+                  Intégration d'une maquette pour une plateforme de réservation d'hébergements. Site responsive (mobile-first) respectant scrupuleusement le design Figma.
+                </p>
+                <span class="txt-muted">EQUIPMENT / STACK</span>
+                <ul class="tech-list txt-mono">
+                  <li class="tech-list__item">HTML5</li>
+                  <li class="tech-list__item">CSS3</li>
+                  <li class="tech-list__item">FLEXBOX</li>
+                </ul>
+              </div>
+            </div>
+            
+            <footer class="flight-pass__footer gs-reveal">
+              <div class="flight-pass__meta">
+                <span class="txt-muted">CLASSE</span>
+                <span class="txt-mono">HTML/CSS</span>
+              </div>
+              <div class="flight-pass__meta">
+                <span class="txt-muted">FLIGHT TIME</span>
+                <span class="txt-mono">2 MOIS</span>
+              </div>
+            </footer>
+          </div>
+
+          <aside class="flight-pass__stub">
+            <div class="flight-pass__meta flex-center gs-reveal">
+              <span class="txt-muted">GATE / PORTE</span>
+              <span class="flight-pass__gate txt-amber txt-mono">A1</span>
+            </div>
+
+            <div class="flight-pass__barcode-box" aria-hidden="true">
+              <div class="flight-pass__barcode"></div>
+              <div class="flight-pass__scanner"></div>
+            </div>
+
+            <div class="btn-action-group gs-reveal">
+              <!-- BOUTON SITE -->
+              <a href="https://christophehascoet.github.io/booki/" target="_blank"  rel="noopener noreferrer" class="btn-action txt-mono txt-accent">
+                [ INIT ] VOL DIRECT ↗
+              </a>
+              <!-- BOUTON CODE -->
+              <a href="https://github.com/CHRISTOPHEHASCOET/booki" target="_blank"  rel="noopener noreferrer" class="btn-action btn-action--outline txt-mono">
+                [ INSP ] PLAN DE VOL ⚙
+              </a>
+            </div>
+          </aside>
+        </article>
       </div>
-      <p class="subtitle">
-        Situation opérationnelle — missions, compétences et formations du pilote.
-      </p>
 
-      <div class="controls" aria-label="Filtre des vols">
-        <button id="btn-dep" type="button" class="active">DÉPARTS</button>
-        <button id="btn-arr" type="button">ARRIVÉES</button>
+      <!-- ==========================================
+           PROJET 2 : OHMYFOOD
+           ========================================== -->
+      <div class="flight-pass-wrapper">
+        <article class="flight-pass">
+          <div class="flight-pass__main">
+            
+            <header class="flight-pass__header">
+              <div class="flight-pass__meta gs-reveal">
+                <span class="txt-muted">FLIGHT / VOL</span>
+                <span class="flight-pass__value txt-accent txt-mono">OMF-02</span>
+              </div>
+              <div class="flight-pass__meta flight-pass__meta--center gs-reveal">
+                <span class="txt-muted">DESTINATION</span>
+                <span class="flight-pass__value flight-pass__value--title txt-mono">OHMYFOOD</span>
+              </div>
+              <div class="flight-pass__meta gs-reveal">
+                <span class="txt-muted">STATUS</span>
+                <span class="flight-pass__value txt-green txt-mono">LANDED / TERMINÉ</span>
+              </div>
+            </header>
+
+            <div class="flight-pass__body">
+              <div class="flight-pass__visual gs-reveal">
+                <img src="asset/images/ohmyfood.jpg" alt="Aperçu OhMyFood">
+              </div>
+
+              <div class="flight-pass__info gs-reveal">
+                <span class="txt-muted">MISSION BRIEF</span>
+                <p class="flight-pass__desc">
+                  Site "mobile-first" pour répertorier les menus de restaurants gastronomiques. Animations CSS avancées (loader, checkmark) sans JavaScript.
+                </p>
+                <span class="txt-muted">EQUIPMENT / STACK</span>
+                <ul class="tech-list txt-mono">
+                  <li class="tech-list__item">SASS / SCSS</li>
+                  <li class="tech-list__item">ANIMATIONS CSS</li>
+                  <li class="tech-list__item">GIT</li>
+                </ul>
+              </div>
+            </div>
+            
+            <footer class="flight-pass__footer gs-reveal">
+              <div class="flight-pass__meta">
+                <span class="txt-muted">CLASSE</span>
+                <span class="txt-mono">ANIMATION</span>
+              </div>
+              <div class="flight-pass__meta">
+                <span class="txt-muted">FLIGHT TIME</span>
+                <span class="txt-mono">1 MOIS</span>
+              </div>
+            </footer>
+          </div>
+
+          <aside class="flight-pass__stub">
+            <div class="flight-pass__meta flex-center gs-reveal">
+              <span class="txt-muted">GATE / PORTE</span>
+              <span class="flight-pass__gate txt-amber txt-mono">B2</span>
+            </div>
+
+            <div class="flight-pass__barcode-box" aria-hidden="true">
+              <div class="flight-pass__barcode"></div>
+              <div class="flight-pass__scanner"></div>
+            </div>
+
+            <div class="btn-action-group gs-reveal">
+              <a href="https://christophehascoet.github.io/ohmyfood/" target="_blank"  rel="noopener noreferrer" class="btn-action txt-mono txt-accent">
+                [ INIT ] VOL DIRECT ↗
+              </a>
+              <a href="https://github.com/CHRISTOPHEHASCOET/ohmyfood" target="_blank" rel="noopener noreferrer"  class="btn-action btn-action--outline txt-mono">
+                [ INSP ] PLAN DE VOL ⚙
+              </a>
+            </div>
+          </aside>
+        </article>
       </div>
 
-      <section class="board" aria-label="Tableau des départs et arrivées">
-        <p id="table-desc" class="sr-only">
-          Tableau de type panneau d’aéroport listant les vols numériques, leurs destinations, horaires, types,
-          statuts, portes et pages correspondantes du site.
-        </p>
-        <table class="board-table" role="table" aria-describedby="table-desc">
-          <caption class="sr-only">
-            Tableau des vols – départs et arrivées du pilote CH-2025
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col" class="col-vol">VOL</th>
-              <th scope="col" class="col-dest">DESTINATION</th>
-              <th scope="col" class="col-time">HEURE</th>
-              <th scope="col" class="col-type">TYPE</th>
-              <th scope="col" class="col-stat">STATUT</th>
-              <th scope="col" class="col-gate">PORTE</th>
-              <th scope="col" class="col-obs">OBSERVATIONS</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-        <footer>● Ground control — sélectionnez un vol pour consulter la zone</footer>
-      </section>
-    </section>
+      <!-- ==========================================
+           PROJET 3 : LA PANTHÈRE
+           ========================================== -->
+      <div class="flight-pass-wrapper">
+        <article class="flight-pass">
+          <div class="flight-pass__main">
+            
+            <header class="flight-pass__header">
+              <div class="flight-pass__meta gs-reveal">
+                <span class="txt-muted">FLIGHT / VOL</span>
+                <span class="flight-pass__value txt-accent txt-mono">LP-03</span>
+              </div>
+              <div class="flight-pass__meta flight-pass__meta--center gs-reveal">
+                <span class="txt-muted">DESTINATION</span>
+                <span class="flight-pass__value flight-pass__value--title txt-mono">LA PANTHÈRE</span>
+              </div>
+              <div class="flight-pass__meta gs-reveal">
+                <span class="txt-muted">STATUS</span>
+                <span class="flight-pass__value txt-green txt-mono">LANDED / TERMINÉ</span>
+              </div>
+            </header>
+
+            <div class="flight-pass__body">
+              <div class="flight-pass__visual gs-reveal">
+                <img src="asset/images/lapanthère.jpg" alt="Aperçu La Panthère">
+              </div>
+
+              <div class="flight-pass__info gs-reveal">
+                <span class="txt-muted">MISSION BRIEF</span>
+                <p class="flight-pass__desc">
+                  Optimisation d'un site existant pour améliorer son référencement (SEO) et son accessibilité. Amélioration des performances et de la structure sémantique.
+                </p>
+                <span class="txt-muted">EQUIPMENT / STACK</span>
+                <ul class="tech-list txt-mono">
+                  <li class="tech-list__item">SEO</li>
+                  <li class="tech-list__item">ACCESSIBILITÉ (WCAG)</li>
+                  <li class="tech-list__item">OPTIMISATION</li>
+                </ul>
+              </div>
+            </div>
+            
+            <footer class="flight-pass__footer gs-reveal">
+              <div class="flight-pass__meta">
+                <span class="txt-muted">CLASSE</span>
+                <span class="txt-mono">SEO</span>
+              </div>
+              <div class="flight-pass__meta">
+                <span class="txt-muted">FLIGHT TIME</span>
+                <span class="txt-mono">1 MOIS</span>
+              </div>
+            </footer>
+          </div>
+
+          <aside class="flight-pass__stub">
+            <div class="flight-pass__meta flex-center gs-reveal">
+              <span class="txt-muted">GATE / PORTE</span>
+              <span class="flight-pass__gate txt-amber txt-mono">C3</span>
+            </div>
+
+            <div class="flight-pass__barcode-box" aria-hidden="true">
+              <div class="flight-pass__barcode"></div>
+              <div class="flight-pass__scanner"></div>
+            </div>
+
+            <div class="btn-action-group gs-reveal">
+              <a href="https://christophehascoet.github.io/la-panth/" target="_blank"  rel="noopener noreferrer" class="btn-action txt-mono txt-accent">
+                [ INIT ] VOL DIRECT ↗
+              </a>
+              <a href="https://github.com/CHRISTOPHEHASCOET/la-panth" target="_blank"  rel="noopener noreferrer" class="btn-action btn-action--outline txt-mono">
+                [ INSP ] PLAN DE VOL ⚙
+              </a>
+            </div>
+          </aside>
+        </article>
+      </div>
+
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <section class="footer-col" aria-label="Coordonnées de la tour de contrôle">
-        <h3>GROUND_CONTROL</h3>
-        <p>Email : flight-control@ch-2025.dev</p>
-        <p>Base : Lorient, France</p>
-      </section>
-      <section class="footer-col" aria-label="Canaux de navigation">
-        <h3>NAV_CHANNELS</h3>
-        <p><a href="#">GitHub</a></p>
-        <p><a href="#">LinkedIn</a></p>
-      </section>
-      <section class="footer-col" aria-label="Documents de vol">
-        <h3>FLIGHT_DOCS</h3>
-        <p><a href="#">CV · PDF</a></p>
-        <p>Portfolio 2025 · Thème aéroportuaire</p>
-      </section>
-    </div>
-    <div class="runway-strip">
-      STOP // END OF RUNWAY // T3 · ZONE COCKPIT
-    </div>
-  </footer>
-
+  <!-- SCRIPT GSAP -->
   <script>
-    const CONFIG = {
-      chars: " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/",
-      slots: {
-        vol:  6,
-        dest: 20,
-        time: 5,
-        type: 13,
-        stat: 14,
-        gate: 3,
-        obs:  12
-      }
-    };
-
-    const DEPARTS = [
-      { time:"09:30", vol:"CHBK01", dest:"Booki intégration",      type:"Projet",        stat:"En vol",         gate:"E12", obs:"Zone projets",  link:"embarquement.html#booki" },
-      { time:"10:45", vol:"CHPF25", dest:"Portfolio 2025",        type:"Projet",        stat:"En vol",         gate:"E15", obs:"Zone projets",  link:"embarquement.html#portfolio-2025" },
-      { time:"11:30", vol:"CHJS06", dest:"JavaScript ES6+",       type:"Langage",       stat:"En reprise",     gate:"C03", obs:"Profil",        link:"profile.html#skills-js" },
-      { time:"13:00", vol:"CHRT01", dest:"React & TypeScript",    type:"Langage",       stat:"En préparation", gate:"C05", obs:"Profil",        link:"profile.html#skills-front" },
-      { time:"14:15", vol:"CHGS01", dest:"Animations GSAP",       type:"Compétence",    stat:"En préparation", gate:"C07", obs:"Profil",        link:"profile.html#skills-anim" },
-      { time:"15:45", vol:"CHPL01", dest:"Études de cas clients", type:"Étude de cas",  stat:"En préparation", gate:"V03", obs:"Plan de vol",   link:"plandevol.html" }
-    ];
-
-    const ARRIVEES = [
-      { time:"08:00", vol:"CHHT01", dest:"HTML5 / CSS3",           type:"Langage",       stat:"Acquis",         gate:"---", obs:"Profil",        link:"profile.html#skills-front" },
-      { time:"08:30", vol:"CHOC01", dest:"Projets OpenClassrooms", type:"Projets",      stat:"Validé",         gate:"---", obs:"Zone projets",  link:"embarquement.html" },
-      { time:"09:15", vol:"CHLV01", dest:"Laravel & PHP",          type:"Backend",      stat:"En pratique",    gate:"---", obs:"Plan de vol",   link:"plandevol.html" },
-      { time:"10:00", vol:"CHCC01", dest:"Cahiers des charges",    type:"Documentation",stat:"Expérimenté",    gate:"---", obs:"Plan de vol",   link:"plandevol.html#cahiers" }
-    ];
-
-    function createFlapGroup(text, slotCount) {
-      const target = (text || "").toUpperCase().padEnd(slotCount, " ").slice(0, slotCount);
-      return `<div class="flap-group">${[...target]
-        .map(c => `<span class="flap" data-char="${c}"></span>`)
-        .join("")}</div>`;
-    }
-
-    function animateFlaps() {
-      const flaps = document.querySelectorAll(".flap");
-      if (!flaps.length) return;
-
-      flaps.forEach((flap, index) => {
-        const target = flap.dataset.char;
-        let cycles = 0;
-        const maxCycles = 6 + (index % 4); // léger décalage par ligne
-        const delay = index * 10;
-
-        setTimeout(() => {
-          const interval = setInterval(() => {
-            const chars = CONFIG.chars;
-            flap.textContent = chars[Math.floor(Math.random() * chars.length)];
-            if (++cycles > maxCycles) {
-              clearInterval(interval);
-              flap.textContent = target;
-            }
-          }, 45);
-        }, delay);
-      });
-    }
-
-    function renderFlights(data) {
-      const tbody = document.getElementById("tbody");
-      tbody.innerHTML = "";
-
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td data-label="VOL">${createFlapGroup(row.vol,  CONFIG.slots.vol)}</td>
-          <td data-label="DESTINATION">${createFlapGroup(row.dest, CONFIG.slots.dest)}</td>
-          <td data-label="HEURE">${createFlapGroup(row.time, CONFIG.slots.time)}</td>
-          <td data-label="TYPE">${createFlapGroup(row.type, CONFIG.slots.type)}</td>
-          <td data-label="STATUT" class="cyan">${createFlapGroup(row.stat, CONFIG.slots.stat)}</td>
-          <td data-label="PORTE">${createFlapGroup(row.gate, CONFIG.slots.gate)}</td>
-          <td data-label="OBSERVATIONS" class="red">${createFlapGroup(row.obs, CONFIG.slots.obs)}</td>
-        `;
-        tr.addEventListener("click", () => {
-          if (row.link) window.location.href = row.link;
-        });
-        tbody.appendChild(tr);
-      });
-
-      animateFlaps();
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
-      const btnDep = document.getElementById("btn-dep");
-      const btnArr = document.getElementById("btn-arr");
+      gsap.registerPlugin(ScrollTrigger);
 
-      btnDep.addEventListener("click", () => {
-        renderFlights(DEPARTS);
-        btnDep.classList.add("active");
-        btnArr.classList.remove("active");
+      const passes = document.querySelectorAll('.flight-pass');
+
+      passes.forEach((pass) => {
+        // Animation d'impression
+        let tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: pass,
+            start: "top 85%",
+            toggleActions: "play none none none"
+          }
+        });
+
+        tl.to(pass, {
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: 1,
+          ease: "power3.out"
+        });
+
+        const reveals = pass.querySelectorAll('.gs-reveal');
+        tl.fromTo(reveals, 
+          { y: 15, opacity: 0 }, 
+          { y: 0, opacity: 1, duration: 0.4, stagger: 0.05, ease: "back.out(1.5)" }, 
+          "-=0.5"
+        );
+
+        // Animation Scanner Laser
+        const barcodeContainer = pass.querySelector('.flight-pass__barcode-box');
+        const scanner = pass.querySelector('.flight-pass__scanner');
+
+        let scanAnim = gsap.to(scanner, {
+          y: 60,
+          duration: 1,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          paused: true
+        });
+
+        pass.addEventListener("mouseenter", () => {
+          gsap.to(barcodeContainer, { opacity: 1, duration: 0.3 });
+          gsap.to(scanner, { opacity: 1, duration: 0.2 });
+          scanAnim.play();
+        });
+
+        pass.addEventListener("mouseleave", () => {
+          gsap.to(barcodeContainer, { opacity: 0.4, duration: 0.3 });
+          gsap.to(scanner, { opacity: 0, duration: 0.2 });
+          scanAnim.pause(0);
+        });
       });
-
-      btnArr.addEventListener("click", () => {
-        renderFlights(ARRIVEES);
-        btnArr.classList.add("active");
-        btnDep.classList.remove("active");
-      });
-
-      // affichage initial : DÉPARTS
-      renderFlights(DEPARTS);
     });
   </script>
 

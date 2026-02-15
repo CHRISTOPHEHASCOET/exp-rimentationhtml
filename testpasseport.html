@@ -1,327 +1,606 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Passeport professionnel — Christophe</title>
-    <style>
-        /* =========================
-   RESET MINIMAL
-========================= */
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projets - Cartes d'Embarquement | Christophe Hascoët</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 
-        body {
-            margin: 0;
-            font-family: "JetBrains Mono", monospace;
-            background-color: #f4f6f8;
-            color: #0f172a;
-            line-height: 1.6;
-        }
+  <!-- IMPORT GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-        /* =========================
-   STRUCTURE GÉNÉRALE
-========================= */
-        main {
-            max-width: 900px;
-            margin: 3rem auto;
-            padding: 2.5rem 3rem;
-            background-color: #ffffff;
-            border: 2px solid #0f172a;
-        }
+  <style>
+    /* ===========================
+       VARIABLES UNIQUES (NETTOYÉ)
+       =========================== */
+    :root {
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --bg-card: #101e38;
 
-        /* =========================
-   TITRES
-========================= */
-        h1 {
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin-bottom: 1.5rem;
-        }
+      --color-primary: #1f6fea;
+      --color-accent: #00d2ff;
+      --color-green: #3fb950;
+      --color-amber: #ff9500;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
 
-        h2 {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #0f172a;
-            padding-bottom: 0.4rem;
-        }
+      --font-sans: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
 
-        /* =========================
-   SECTIONS
-========================= */
-        section {
-            margin-bottom: 2.2rem;
-        }
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --shadow-strong: 0 10px 22px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.05); /* VOTRE OMBRE AJOUTÉE */
+      --radius-panel: 20px;
+      --container-width: 1300px;
+    }
 
-        header p {
-            margin: 0.2rem 0;
-        }
+    /* ===========================
+       RESET
+       =========================== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* =========================
-   LISTES FACTUELLES
-========================= */
-        ul,
-        ol {
-            padding-left: 1.2rem;
-            margin: 0.5rem 0;
-        }
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
 
-        li {
-            margin: 0.3rem 0;
-        }
+    img {
+      display: block;
+      max-width: 100%;
+    }
 
-        /* =========================
-   LISTE DÉFINITION (DL)
-========================= */
-        dl {
-            display: grid;
-            grid-template-columns: 220px 1fr;
-            gap: 0.4rem 1.2rem;
-        }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
-        dt {
-            font-weight: 700;
-        }
+    ul,
+    li {
+      list-style: none;
+    }
 
-        dd {
-            margin: 0;
-        }
+    body {
+      background: var(--bg-main);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-top: 4rem;
+    }
 
-        /* =========================
-   PORTRAIT
-========================= */
-        figure {
-            margin: 0;
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
+    /* ===========================
+       DIGITAL BOARDING PASS
+       =========================== */
+    .boarding-zone {
+      width: 100%;
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 2rem;
+    }
 
-        figure img {
-            width: 120px;
-            height: auto;
-            border: 2px solid #0f172a;
-        }
+    .zone-header {
+      margin-bottom: 3rem;
+      border-bottom: 2px solid var(--bg-card);
+      padding-bottom: 1rem;
+    }
 
-        figcaption {
-            font-size: 0.75rem;
-        }
+    .terminal-breadcrumbs {
+      font-family: var(--font-mono);
+      color: var(--color-accent);
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
-        /* =========================
-   ZONE MRZ
-========================= */
-        pre {
-            background-color: #0f172a;
-            color: #e5e7eb;
-            padding: 1rem;
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            overflow-x: auto;
-        }
+    .flights-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
 
-        /* =========================
-   FOOTER
-========================= */
-        footer {
-            text-align: center;
-            font-size: 0.7rem;
-            margin-top: 2rem;
-            color: #475569;
-        }
+    /* Wrapper pour l'effet d'impression GSAP */
+    .pass-wrapper {
+      position: relative;
+      /* On cache ce qui dépasse pour donner l'illusion que ça sort d'une fente */
+      overflow: hidden; 
+      border-radius: var(--radius-panel);
+      padding: 5px; /* Laisse de la place pour l'ombre interne/externe */
+    }
 
-        /* =========================
-   SÉPARATEURS
-========================= */
-        hr {
-            border: none;
-            border-top: 1px dashed #0f172a;
-            margin: 2rem 0;
-        }
-    </style>
+    /* La Carte / Billet - INTÉGRATION DE VOS COULEURS ET OMBRES */
+    .digital-pass {
+      display: flex;
+      background: var(--bg-main); /* VOTRE CHOIX : bg-main au lieu de bg-panel */
+      border: 2px solid var(--bg-card); /* VOTRE CHOIX : bordure bg-card */
+      border-radius: var(--radius-panel);
+      box-shadow: var(--shadow-strong); /* VOTRE OMBRE EXTREME 3D */
+      position: relative;
+      /* Masqué au départ pour l'animation GSAP */
+      clip-path: inset(0 0 100% 0); 
+    }
+
+    .digital-pass:hover {
+      border-color: var(--color-primary);
+    }
+
+    /* --- PARTIE GAUCHE (MAIN) --- */
+    .pass-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .pass-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px dashed var(--bg-card);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .flight-data {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .flight-data:nth-child(2) {
+      flex: 1;
+      margin: 0 2rem;
+    }
+
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.25rem;
+    }
+
+    .value {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .value.accent { color: var(--color-accent); font-size: 1.5rem; }
+    .value.title { color: var(--color-text); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
+    .value.green { color: var(--color-green); font-size: 1rem; margin-top: auto; padding-bottom: 0.3rem;}
+    .value.amber { color: var(--color-amber); font-size: 3rem; line-height: 1; }
+
+    /* Corps du billet */
+    .pass-body {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .project-visual {
+      background: var(--bg-panel);
+      border: 2px solid var(--bg-card);
+      border-radius: 10px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      color: var(--color-muted);
+      font-size: 0.8rem;
+      overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .detail-block { margin-bottom: 1.5rem; }
+
+    .description {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--color-text);
+      margin-top: 0.5rem;
+    }
+
+    .tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .tech-list li {
+      background: rgba(31, 111, 234, 0.15);
+      color: var(--color-accent);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 210, 255, 0.3);
+    }
+
+    .pass-footer {
+      margin-top: auto;
+      background: var(--bg-panel);
+      border: 1px solid var(--bg-card);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .methodology {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--color-text);
+      margin-left: 0.5rem;
+    }
+
+    /* --- PARTIE DROITE (TALON / STUB) --- */
+    .pass-stub {
+      width: 320px;
+      background: var(--bg-panel); /* Contraste avec le bg-main de la carte */
+      border-left: 2px dashed var(--bg-card);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Encoches du billet */
+    .pass-stub::before,
+    .pass-stub::after {
+      content: '';
+      position: absolute;
+      left: -17px;
+      width: 32px;
+      height: 32px;
+      background: var(--bg-page);
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      z-index: 2;
+    }
+
+    .pass-stub::before { top: -16px; border-bottom-color: transparent; border-left-color: transparent; border-right-color: transparent;}
+    .pass-stub::after { bottom: -16px; border-top-color: transparent; border-left-color: transparent; border-right-color: transparent;}
+
+    .stub-header { text-align: center; }
+
+    /* Le Code-barre */
+    .barcode-container {
+      width: 100%;
+      height: 80px;
+      position: relative;
+      overflow: hidden;
+      margin: 2rem 0;
+      opacity: 0.4; /* Etat inactif par défaut */
+      transition: opacity 0.3s;
+    }
+
+    .barcode {
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to right,
+        var(--color-text) 0,
+        var(--color-text) 3px,
+        transparent 3px,
+        transparent 6px,
+        var(--color-text) 6px,
+        var(--color-text) 8px,
+        transparent 8px,
+        transparent 12px,
+        var(--color-text) 12px,
+        var(--color-text) 14px,
+        transparent 14px,
+        transparent 18px
+      );
+    }
+
+    /* Ligne laser animée par JS/CSS */
+    .laser-scanner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--color-green);
+      box-shadow: 0 0 15px 2px var(--color-green);
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    .pass-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .btn-flight {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      color: var(--color-accent);
+      border: 1px solid var(--color-primary);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-flight:hover {
+      background: var(--color-primary);
+      color: var(--color-text);
+      box-shadow: 0 0 15px rgba(31, 111, 234, 0.5);
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 1024px) {
+      .pass-body { grid-template-columns: 1fr; }
+      .project-visual { height: 250px; }
+    }
+
+    @media (max-width: 768px) {
+      .digital-pass { flex-direction: column; }
+      .pass-header { flex-direction: column; gap: 1rem; }
+      .flight-data:nth-child(2) { margin: 0; }
+      
+      .pass-stub {
+        width: 100%;
+        border-left: none;
+        border-top: 2px dashed var(--bg-card);
+        padding: 2rem 1.5rem;
+      }
+
+      .pass-stub::before,
+      .pass-stub::after { top: -17px; left: auto; }
+      .pass-stub::before { left: -16px; border-top-color: transparent; border-bottom-color: var(--bg-card);}
+      .pass-stub::after { right: -16px; border-top-color: transparent; border-bottom-color: var(--bg-card);}
+    }
+  </style>
 </head>
-
 <body>
 
-    <main aria-labelledby="passport-title">
+  <h1 class="sr-only" style="position:absolute; opacity:0; pointer-events:none;">Projets de Christophe Hascoët</h1>
 
-        <!-- 1. EN-TÊTE D’AUTORITÉ -->
-        <header>
-            <h1 id="passport-title">Passeport professionnel</h1>
-            <p><strong>Autorité émettrice :</strong> Portfolio de développement — Flight Authority</p>
-            <p><strong>Type de document :</strong> Passeport professionnel — Développement web</p>
-            <p><strong>Numéro :</strong> PASS-DEV-JR-001</p>
-            <p><strong>Date d’émission :</strong> 2026</p>
-            <p><strong>Statut :</strong> Valide — Profil junior</p>
-        </header>
+  <section class="boarding-zone" aria-labelledby="boarding-title">
+    
+    <header class="zone-header">
+      <div class="terminal-breadcrumbs" id="zone-title">TERMINAL 1 • ZONE D'EMBARQUEMENT PROJETS</div>
+    </header>
 
-        <hr />
+    <div class="flights-container">
 
-        <!-- 2. IDENTIFICATION DU TITULAIRE -->
-        <section aria-labelledby="identification-title">
-            <h2 id="identification-title">Identification du titulaire</h2>
+      <!-- ==============================================
+           CARTE D'EMBARQUEMENT : PROJET 1
+           ============================================== -->
+      <div class="pass-wrapper">
+        <article class="digital-pass">
+          
+          <div class="pass-main">
+            <header class="pass-header">
+              <div class="flight-data gs-reveal">
+                <span class="label">FLIGHT / VOL</span>
+                <span class="value accent">PRJ-001</span>
+              </div>
+              <div class="flight-data gs-reveal">
+                <span class="label">DESTINATION</span>
+                <span class="value title">PORTFOLIO IMMERSIF</span>
+              </div>
+              <div class="flight-data gs-reveal">
+                <span class="label">STATUS</span>
+                <span class="value green">CLEARED FOR TAKEOFF</span>
+              </div>
+            </header>
 
-            <dl>
-                <dt>Nom</dt>
-                <dd>Christophe</dd>
+            <div class="pass-body">
+              <div class="project-visual gs-reveal">
+                [ VISUAL DATA STREAM ] 
+              </div>
 
-                <dt>Fonction principale</dt>
-                <dd>Chef de projet & Développeur web junior</dd>
+              <div class="project-details">
+                <div class="detail-block gs-reveal">
+                  <span class="label">MISSION BRIEF</span>
+                  <p class="description">Conception d'un portfolio fondé sur une métaphore aéroportuaire stricte. Interface immersive et standard web 2025.</p>
+                </div>
+                
+                <div class="tech-stack gs-reveal">
+                  <span class="label">EQUIPMENT / STACK</span>
+                  <ul class="tech-list">
+                    <li>HTML5 Sémantique</li>
+                    <li>CSS3 / Variables</li>
+                    <li>JS ES6+</li>
+                    <li>GSAP 3</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <footer class="pass-footer gs-reveal">
+              <span class="label">FLIGHT PLAN:</span> <span class="methodology">Méthodologie Agile • Mobile First</span>
+            </footer>
+          </div>
 
-                <dt>Niveau</dt>
-                <dd>Junior</dd>
+          <div class="pass-stub">
+            <div class="stub-header gs-reveal">
+              <span class="label">GATE</span>
+              <span class="value amber">T-01</span>
+            </div>
 
-                <dt>Statut opérationnel</dt>
-                <dd>En reprise active de pratique</dd>
+            <!-- Code barre scanné au hover via JS -->
+            <div class="barcode-container" aria-hidden="true">
+              <div class="barcode"></div>
+              <div class="laser-scanner"></div>
+            </div>
 
-                <dt>Domaine</dt>
-                <dd>Développement web & intégration front-end</dd>
+            <div class="pass-actions gs-reveal">
+              <a href="#" class="btn-flight" aria-label="Accéder au site">
+                INITIATE APPROACH
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
 
-                <dt>Base principale</dt>
-                <dd>France</dd>
+      <!-- ==============================================
+           CARTE D'EMBARQUEMENT : PROJET 2
+           ============================================== -->
+      <div class="pass-wrapper">
+        <article class="digital-pass">
+          
+          <div class="pass-main">
+            <header class="pass-header">
+              <div class="flight-data gs-reveal">
+                <span class="label">FLIGHT / VOL</span>
+                <span class="value accent">PRJ-002</span>
+              </div>
+              <div class="flight-data gs-reveal">
+                <span class="label">DESTINATION</span>
+                <span class="value title">APPLICATION METEO AERONAUTIQUE</span>
+              </div>
+              <div class="flight-data gs-reveal">
+                <span class="label">STATUS</span>
+                <span class="value green">LANDED</span>
+              </div>
+            </header>
 
-                <dt>Disponibilité</dt>
-                <dd>Projets web — apprentissage encadré</dd>
-            </dl>
-        </section>
+            <div class="pass-body">
+              <div class="project-visual gs-reveal">
+                [ VISUAL DATA STREAM ] 
+              </div>
 
-        <hr />
+              <div class="project-details">
+                <div class="detail-block gs-reveal">
+                  <span class="label">MISSION BRIEF</span>
+                  <p class="description">Développement d'une application d'analyse météo en temps réel (API REST) pour la navigation aérienne.</p>
+                </div>
+                
+                <div class="tech-stack gs-reveal">
+                  <span class="label">EQUIPMENT / STACK</span>
+                  <ul class="tech-list">
+                    <li>Vue.js 3</li>
+                    <li>API REST</li>
+                    <li>Tailwind CSS</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <footer class="pass-footer gs-reveal">
+              <span class="label">FLIGHT PLAN:</span> <span class="methodology">Architecture Composables • Tests E2E</span>
+            </footer>
+          </div>
 
-        <!-- 3. PORTRAIT & AUTHENTIFICATION -->
-        <section aria-labelledby="auth-title">
-            <h2 id="auth-title">Portrait & authentification</h2>
+          <div class="pass-stub">
+            <div class="stub-header gs-reveal">
+              <span class="label">GATE</span>
+              <span class="value amber">T-02</span>
+            </div>
 
-            <figure>
-                <img src="portrait.jpg" alt="Portrait du titulaire" />
-                <figcaption>Photographie du titulaire</figcaption>
-            </figure>
+            <div class="barcode-container" aria-hidden="true">
+              <div class="barcode"></div>
+              <div class="laser-scanner"></div>
+            </div>
 
-            <p>
-                Document valide sans signature manuscrite.<br />
-                Identification numérique interne.
-            </p>
-        </section>
+            <div class="pass-actions gs-reveal">
+              <a href="#" class="btn-flight" aria-label="Accéder au site">
+                INITIATE APPROACH
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
 
-        <hr />
+    </div>
+  </section>
 
-        <!-- 4. RÔLE & AUTORISATIONS -->
-        <section aria-labelledby="role-title">
-            <h2 id="role-title">Rôle & autorisations</h2>
+  <!-- ==============================================
+       LOGIQUE JS / GSAP
+       ============================================== -->
+  <script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+      // Enregistrement du plugin ScrollTrigger
+      gsap.registerPlugin(ScrollTrigger);
 
-            <p><strong>Fonction autorisée :</strong></p>
-            <p>
-                Participation à des projets web en tant que développeur junior
-                et chef de projet débutant.
-            </p>
+      // 1. ANIMATION D'IMPRESSION DES BILLETS
+      const passes = document.querySelectorAll('.digital-pass');
 
-            <p><strong>Périmètre d’intervention :</strong></p>
-            <ul>
-                <li>Intégration front-end</li>
-                <li>Développement web sous encadrement ou cahier des charges défini</li>
-                <li>Contribution au suivi et à l’organisation de projet</li>
-            </ul>
-        </section>
+      passes.forEach((pass, index) => {
+        
+        // Création d'une timeline pour chaque billet
+        let tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: pass,
+            start: "top 85%", // Déclenche quand le haut du billet atteint 85% du viewport
+            toggleActions: "play none none none"
+          }
+        });
 
-        <hr />
+        // Effet "Sortie d'imprimante" (dévoilement de haut en bas)
+        tl.to(pass, {
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: 1.2,
+          ease: "power3.out"
+        });
 
-        <!-- 5. COMPÉTENCES TECHNIQUES -->
-        <section aria-labelledby="skills-title">
-            <h2 id="skills-title">Compétences techniques déclarées</h2>
+        // Apparition progressive des données à l'intérieur du billet
+        const reveals = pass.querySelectorAll('.gs-reveal');
+        tl.fromTo(reveals, 
+          { y: 20, opacity: 0 }, 
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: "back.out(1.7)" }, 
+          "-=0.6" // Commence un peu avant la fin de l'impression
+        );
+      });
 
-            <ul>
-                <li>HTML sémantique</li>
-                <li>CSS (bases, responsive)</li>
-                <li>JavaScript (fondamentaux)</li>
-                <li>Notions de TypeScript</li>
-                <li>Bases de React</li>
-                <li>Bases PHP</li>
-                <li>Découverte de Laravel</li>
-                <li>Outils collaboratifs (Git, GitHub)</li>
-            </ul>
+      // 2. GESTION DU SCANNER CODE-BARRE AU SURVOL (via GSAP)
+      passes.forEach(pass => {
+        const barcodeContainer = pass.querySelector('.barcode-container');
+        const scanner = pass.querySelector('.laser-scanner');
 
-            <p>
-                Les compétences listées sont en cours de consolidation par la pratique.
-            </p>
-        </section>
+        // Création de l'animation du laser
+        let scanAnim = gsap.to(scanner, {
+          y: 80, // Descend jusqu'en bas du code-barres
+          duration: 1.2,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          paused: true // En pause par défaut
+        });
 
-        <hr />
+        // Événements de survol
+        pass.addEventListener("mouseenter", () => {
+          gsap.to(barcodeContainer, { opacity: 1, duration: 0.3 }); // Allume le code-barre
+          gsap.to(scanner, { opacity: 1, duration: 0.2 }); // Fait apparaitre le laser
+          scanAnim.play(); // Lance le balayage
+        });
 
-        <!-- 6. PROCÉDURES OPÉRATIONNELLES -->
-        <section aria-labelledby="procedures-title">
-            <h2 id="procedures-title">Procédures opérationnelles connues</h2>
+        pass.addEventListener("mouseleave", () => {
+          gsap.to(barcodeContainer, { opacity: 0.4, duration: 0.3 }); // Grise le code-barre
+          gsap.to(scanner, { opacity: 0, duration: 0.2 }); // Cache le laser
+          scanAnim.pause(0); // Remet le laser au point de départ
+        });
+      });
 
-            <ol>
-                <li>Analyse d’un besoin fonctionnel</li>
-                <li>Lecture et compréhension d’un cahier des charges</li>
-                <li>Structuration d’interfaces web</li>
-                <li>Intégration HTML / CSS</li>
-                <li>Ajout d’interactions simples en JavaScript</li>
-                <li>Tests et ajustements</li>
-            </ol>
-        </section>
-
-        <hr />
-
-        <!-- 7. EXPÉRIENCE CONSIGNÉE -->
-        <section aria-labelledby="experience-title">
-            <h2 id="experience-title">Expérience consignée</h2>
-
-            <ul>
-                <li>Projets web personnels et pédagogiques</li>
-                <li>Création de pages et d’interfaces web</li>
-                <li>Approche de la gestion de projet</li>
-                <li>Travail orienté apprentissage et amélioration continue</li>
-            </ul>
-        </section>
-
-        <hr />
-
-        <!-- 8. OBSERVATIONS OFFICIELLES -->
-        <section aria-labelledby="observations-title">
-            <h2 id="observations-title">Observations officielles</h2>
-
-            <p>
-                Profil junior en reprise de pratique, sérieux, méthodique,
-                orienté apprentissage et progression continue.
-                Attentif à la clarté, à la structure et à l’expérience utilisateur.
-            </p>
-        </section>
-
-        <hr />
-
-        <!-- 9. VALIDATION & VISA -->
-        <section aria-labelledby="validation-title">
-            <h2 id="validation-title">Validation & visa</h2>
-
-            <p><strong>Visa technique :</strong> Apte à participer à des projets web dans un cadre junior</p>
-            <p><strong>Mention :</strong> Document établi à des fins de présentation professionnelle</p>
-        </section>
-
-        <hr />
-
-        <!-- 10. ZONE TECHNIQUE -->
-        <section aria-labelledby="mrz-title">
-            <h2 id="mrz-title">Zone technique</h2>
-
-            <pre aria-label="Zone de lecture symbolique">
-DEV&lt;CHRISTOPHE&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
-FRA&lt;WEB&lt;JUNIOR&lt;2026&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
-PASS&lt;PORTFOLIO&lt;VALID&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
-    </pre>
-        </section>
-
-    </main>
-
-    <footer>
-        <address>
-            Document consultable à des fins professionnelles uniquement.
-        </address>
-    </footer>
+    });
+  </script>
 
 </body>
-
 </html>

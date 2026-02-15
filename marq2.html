@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio Interactif – Christophe Hascoët</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-page: #0a0d14;
+      --bg-panel: #111820;
+      --bg-card: #101e38;
+
+      --color-primary: #1f6fea;
+      --color-accent: #00d2ff;
+      --color-green: #3fb950;
+      --color-amber: #ff9500;
+      --color-text: #e6edf3;
+      --color-muted: #909aa7;
+
+      --font-sans: 'Rajdhani', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --bg-main: radial-gradient(circle at top, #1b3957, #050b10 60%);
+      --radius-panel: 20px;
+
+      --book-width: 500px;
+      --book-height: 660px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 2500px;
+      overflow: hidden;
+      color: var(--color-text);
+    }
+
+    /* HEADER GLOBAL */
+    .site-header {
+      position: absolute;
+      top: 40px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .site-header__title {
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .site-header__subtitle {
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--color-muted);
+      margin-top: 8px;
+      letter-spacing: 2px;
+    }
+
+    /* BLOC PASSEPORT */
+    .passport {
+      position: relative;
+      width: var(--book-width);
+      height: var(--book-height);
+      transition: transform 1.2s cubic-bezier(.25, 1, .5, 1);
+    }
+
+    .passport::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%,
+          rgba(255, 255, 255, 0.08),
+          transparent 60%);
+      pointer-events: none;
+      transition: transform .6s ease;
+    }
+
+    .passport--open {
+      transform: translateX(240px);
+    }
+
+    .passport__base {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-main);
+      border-radius: 4px var(--radius-panel) var(--radius-panel) 4px;
+      border: 3px solid var(--bg-card);
+      box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.9),
+        inset 0 2px 6px rgba(255, 255, 255, 0.05);
+    }
+
+    .passport__flip {
+      position: absolute;
+      inset: 0;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 1.2s cubic-bezier(.25, 1, .5, 1);
+    }
+
+    .passport__face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+    }
+
+    /* COUVERTURE */
+    .passport__face--front {
+      background: var(--bg-main);
+      border-radius: 4px var(--radius-panel) var(--radius-panel) 4px;
+      border: 3px solid var(--bg-card);
+      padding: 60px 26px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: inset -5px 0 20px rgba(0, 0, 0, .5);
+    }
+
+    .passport__disclaimer {
+      background: rgba(255, 149, 0, .1);
+      border: 1px dashed var(--color-amber);
+      color: var(--color-amber);
+      padding: 5px 15px;
+      font-size: .75rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      border-radius: 4px;
+      margin-bottom: 32px;
+    }
+
+    .passport__title {
+      font-size: 2.4rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+    }
+
+    .passport__subtitle {
+      color: var(--color-accent);
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      margin-top: 10px;
+      letter-spacing: 2px;
+    }
+
+    .passport__divider {
+      width: 70px;
+      height: 2px;
+      background: var(--color-accent);
+      margin: 70px 0;
+      box-shadow: 0 0 12px rgba(0, 210, 255, .6);
+    }
+
+    .passport__label {
+      margin-top: auto;
+      font-family: var(--font-mono);
+      border: 1px solid var(--color-text);
+      padding: 10px 24px;
+      letter-spacing: 6px;
+      border-radius: 999px;
+    }
+
+    /* INTÉRIEUR GAUCHE – TEXTE */
+    .passport__face--back {
+      background: var(--bg-main);
+      transform: rotateY(180deg);
+      border: 3px solid var(--bg-card);
+      padding: 26px 24px;
+      border-radius: var(--radius-panel) 4px 4px var(--radius-panel);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+
+    .passport__face--back::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right,
+          rgba(0, 0, 0, 0.4) 0%,
+          transparent 8%,
+          transparent 92%,
+          rgba(0, 0, 0, 0.4) 100%);
+      pointer-events: none;
+    }
+
+    .passport__section {
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .passport__section:last-child {
+      margin-bottom: 0;
+    }
+
+    .passport__section-title {
+      color: var(--color-primary);
+      border-bottom: 1px solid rgba(31, 111, 234, .3);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      padding-bottom: 3px;
+      letter-spacing: .12em;
+    }
+
+    .passport__text {
+      color: var(--color-muted);
+      font-weight: 600;
+      font-size: .78rem;
+      line-height: 1.4;
+    }
+
+    .passport__section ul {
+      margin-top: 4px;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .passport__section li+li {
+      margin-top: 3px;
+    }
+
+    .accent {
+      color: var(--color-accent);
+    }
+
+    .green {
+      color: var(--color-green);
+    }
+
+    .amber {
+      color: var(--color-amber);
+    }
+
+    /* PAGE DROITE IDENTITÉ */
+    .passport__data {
+      position: absolute;
+      inset: 0;
+      padding: 28px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 4px var(--radius-panel) var(--radius-panel) 4px;
+      background: var(--bg-main);
+      border: 3px solid var(--bg-card);
+    }
+
+    .passport__id-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--bg-card);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .passport__id-header h2 {
+      letter-spacing: 3px;
+    }
+
+    .passport__status {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: var(--color-amber);
+      border: 1px solid var(--color-amber);
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+    }
+
+    .passport__grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    /* COLONNE GAUCHE : TEXTE ID */
+    .passport__left {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .passport__value-small {
+      font-size: .8rem;
+      font-family: var(--font-mono);
+      color: var(--color-muted);
+    }
+
+    .passport__fullname {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .passport__role {
+      color: var(--color-muted);
+      margin-top: 2px;
+      font-size: .9rem;
+      letter-spacing: .5px;
+    }
+
+    .passport__meta {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-family: var(--font-mono);
+      font-size: .78rem;
+      color: var(--color-primary);
+      opacity: .9;
+    }
+
+    /* COLONNE DROITE : PHOTO + IDENTITÉ ALIGNÉE SOUS LA PHOTO */
+    .passport__right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .passport__photo {
+      width: 170px;
+      height: 220px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--color-primary);
+      position: relative;
+      box-shadow:
+        0 0 18px rgba(31, 111, 234, .35),
+        inset 0 0 20px rgba(0, 0, 0, .6);
+    }
+
+    .passport__photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.18),
+          transparent 40%);
+      pointer-events: none;
+    }
+
+    .passport__photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .passport__signature {
+      margin-top: 4px;
+      font-size: .7rem;
+      font-family: var(--font-mono);
+      letter-spacing: 2px;
+      color: var(--color-accent);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .passport__photo-meta {
+      width: 100%;
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+
+    .passport__photo-meta-line {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      column-gap: 8px;
+    }
+
+    .passport__photo-label {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--color-muted);
+      font-size: 0.7rem;
+    }
+
+    .passport__photo-value {
+      font-weight: 700;
+      font-size: 0.72rem;
+    }
+
+    /* VISAS – RÉDUITS POUR NE PLUS DÉPASSER */
+    .passport__visas {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--bg-card);
+    }
+
+    .passport__visa-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .passport__visa {
+      width: 70px;
+      height: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      font-size: .58rem;
+      font-family: var(--font-mono);
+      text-align: center;
+      text-transform: uppercase;
+      background: rgba(0, 0, 0, .4);
+      transition: transform .3s ease;
+      padding: 3px;
+    }
+
+    .passport__visa:hover {
+      transform: scale(1.05);
+    }
+
+    .passport__visa--react {
+      border: 2px solid var(--color-accent);
+      color: var(--color-accent);
+    }
+
+    .passport__visa--ia {
+      border: 2px solid var(--color-amber);
+      color: var(--color-amber);
+    }
+
+    .passport__visa--api {
+      border: 2px solid var(--color-green);
+      color: var(--color-green);
+    }
+
+    .passport__visa--ecom {
+      border: 2px solid var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .passport__help {
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--color-muted);
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <h1 class="site-header__title">Portfolio Interactif</h1>
+    <p class="site-header__subtitle">Digital Passport – Chef de projet &amp; Développeur Web Junior</p>
+  </header>
+
+  <main class="passport" id="passport">
+
+    
+    <aside class="passport__flip" id="flip">
+
+      <!-- COUVERTURE -->
+      <div class="passport__face passport__face--front">
+        <div class="passport__disclaimer">Document fictif – Portfolio créatif</div>
+        <h1 class="passport__title">Digital Passport</h1>
+        <div class="passport__subtitle">Creative Portfolio – Non Governmental</div>
+        <div class="passport__divider"></div>
+        <div class="passport__label">ID_DÉVELOPPEUR</div>
+      </div>
+
+      <!-- INTÉRIEUR GAUCHE -->
+      <div class="passport__face passport__face--back">
+
+        <div class="passport__section">
+          <h3 class="passport__section-title">
+            CHRISTOPHE HASCOËT – Co‑pilote Web &amp; Projet
+          </h3>
+        </div>
+
+        <div class="passport__section">
+          <h3 class="passport__section-title">Plan de vol</h3>
+          <p class="passport__text">
+            Après une remise des gaz depuis les métiers de l'hôtellerie, je navigue désormais dans l'IT.
+            J'allie rigueur et adaptabilité pour piloter des projets collaboratifs,
+            centrés sur l'utilisateur et la fiabilité technique.
+          </p>
+        </div>
+
+        <div class="passport__section">
+          <h3 class="passport__section-title">Navigation &amp; expérience</h3>
+          <p class="passport__text">
+            <span class="accent">Gestion des turbulences :</span>
+            Résistance au stress et esprit d'équipe pour garder le cap.
+          </p>
+          <p class="passport__text">
+            <span class="green">Contrôle aérien :</span>
+            Coordination Agile et synchronisation précise entre les parties prenantes
+            et les équipes techniques.
+          </p>
+          <p class="passport__text">
+            <span class="amber">Cap :</span>
+            Concevoir des interfaces modernes et performantes, sans surcharge,
+            comme un cockpit bien conçu.
+          </p>
+        </div>
+
+        <div class="passport__section">
+          <h3 class="passport__section-title">Objectif de mission</h3>
+          <p class="passport__text">
+            Garantir un déploiement sans faille. Mon ambition est de livrer des projets où
+            la lisibilité du code et la stratégie s'alignent pour assurer un atterrissage parfait :
+            performance technique et satisfaction totale des passagers.
+          </p>
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- PAGE DROITE IDENTITÉ -->
+    <article class="passport__base">
+      <section class="passport__data">
+        <header class="passport__id-header">
+          <h2>PORTFOLIO ID</h2>
+          <div class="passport__status">En approche finale</div>
+        </header>
+
+        <div class="passport__grid">
+
+          <!-- TEXTE GAUCHE -->
+          <div class="passport__left">
+            <p class="passport__value-small">DEV-2026-001</p>
+            <p class="passport__fullname">CHRISTOPHE HASCOËT</p>
+            <p class="passport__role">Chef de projet &amp; développeur web junior</p>
+
+            <div class="passport__meta">
+              <span>Stack : HTML/CSS3 · PHP · MySQL</span>
+              <span>Compétences : cahiers des charges, réunions clients</span>
+              <span>Mode : coordination UX / dev · Agile</span>
+            </div>
+          </div>
+
+          <!-- PHOTO + LIGNES ALIGNÉES SOUS LA PHOTO -->
+          <div class="passport__right">
+            <figure class="passport__photo">
+              <!-- Remplace par ta vraie photo -->
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80"
+                alt="Christophe Hascoët">
+            </figure>
+            <div class="passport__signature">Co‑pilote web &amp; projet</div>
+
+            <div class="passport__photo-meta">
+              <div class="passport__photo-meta-line">
+                <span class="passport__photo-label">Nom de code</span>
+                <span class="passport__photo-value">HASCOËT</span>
+              </div>
+              <div class="passport__photo-meta-line">
+                <span class="passport__photo-label">Prénom</span>
+                <span class="passport__photo-value">Christophe</span>
+              </div>
+              <div class="passport__photo-meta-line">
+                <span class="passport__photo-label">Rôle à bord</span>
+                <span class="passport__photo-value">Chef de projet &amp; dév web junior</span>
+              </div>
+              <div class="passport__photo-meta-line">
+                <span class="passport__photo-label">Statut</span>
+                <span class="passport__photo-value">Actif – En approche finale</span>
+              </div>
+              <div class="passport__photo-meta-line">
+                <span class="passport__photo-label">Base principale</span>
+                <span class="passport__photo-value">Région parisienne – CET</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- VISAS (RÉDUITS) -->
+        <div class="passport__visas">
+          <div class="passport__visa-grid">
+            <div class="passport__visa passport__visa--react">VISA<br>HTML/CSS3</div>
+            <div class="passport__visa passport__visa--ia">VISA<br>PHP</div>
+            <div class="passport__visa passport__visa--api">VISA<br>CAHIER<br>DES CHARGES</div>
+            <div class="passport__visa passport__visa--ecom">VISA<br>RÉUNIONS<br>CLIENTS</div>
+            <div class="passport__visa passport__visa--react">VISA<br>COORDINATION<br>UX/DEV</div>
+          </div>
+        </div>
+
+      </section>
+    </article>
+
+    <div class="passport__help">[ CLIQUEZ POUR OUVRIR ]</div>
+
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script>
+    const passport = document.getElementById('passport');
+    const flip = document.getElementById('flip');
+    let open = false;
+
+    flip.addEventListener('click', () => {
+      const tl = gsap.timeline();
+      if (!open) {
+        tl.to(flip, { duration: 1.5, rotationY: -180, ease: "power2.inOut" }, 0)
+          .to(passport, { duration: 1.5, x: 240, ease: "power2.inOut" }, 0);
+        open = true;
+      } else {
+        tl.to(flip, { duration: 1.5, rotationY: 0, ease: "power2.inOut" }, 0)
+          .to(passport, { duration: 1.5, x: 0, ease: "power2.inOut" }, 0);
+        open = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
